@@ -23,19 +23,19 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home, color: "text-primary" },
-    { id: "shipments", label: "Shipments", icon: Truck, color: "text-blue-400" },
-    { id: "inventory", label: "Inventory", icon: Package, color: "text-green-400" },
-    { id: "analytics", label: "Analytics", icon: BarChart3, color: "text-purple-400" },
-    { id: "tracking", label: "Tracking", icon: MapPin, color: "text-orange-400" },
-    { id: "finance", label: "Finance", icon: DollarSign, color: "text-yellow-400" },
-    { id: "alerts", label: "Alerts", icon: AlertTriangle, color: "text-red-400" },
-    { id: "reports", label: "Reports", icon: TrendingUp, color: "text-pink-400" },
+    { id: "dashboard", label: "Kontrolna tabla", icon: Home, color: "text-primary" },
+    { id: "shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400" },
+    { id: "inventory", label: "Inventar", icon: Package, color: "text-green-400" },
+    { id: "analytics", label: "Analitika", icon: BarChart3, color: "text-purple-400" },
+    { id: "tracking", label: "Praćenje", icon: MapPin, color: "text-orange-400" },
+    { id: "finance", label: "Finansije", icon: DollarSign, color: "text-yellow-400" },
+    { id: "alerts", label: "Upozorenja", icon: AlertTriangle, color: "text-red-400" },
+    { id: "reports", label: "Izvještaji", icon: TrendingUp, color: "text-pink-400" },
   ];
 
   const bottomItems = [
-    { id: "team", label: "Team", icon: Users },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "team", label: "Tim", icon: Users },
+    { id: "settings", label: "Postavke", icon: Settings },
   ];
 
   return (
@@ -109,7 +109,7 @@ const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
             {isOpen && (
-              <span className="text-xs text-muted-foreground">System Online</span>
+              <span className="text-xs text-muted-foreground">Sistem Online</span>
             )}
           </div>
         </div>

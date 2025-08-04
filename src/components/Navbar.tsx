@@ -25,12 +25,16 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
           </Button>
           
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <Truck className="h-4 w-4 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+              <img 
+                src="/lovable-uploads/f1d022d5-0fd3-4e59-bb9b-5e6cfe58fd7e.png" 
+                alt="DaorsForge AI Systems"
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold gradient-text">DaorsLink</h1>
-              <p className="text-xs text-muted-foreground">AI Supply Chain Intelligence</p>
+              <h1 className="text-xl font-bold gradient-text">DaorsForge</h1>
+              <p className="text-xs text-muted-foreground">AI Sistemi za Logistiku</p>
             </div>
           </div>
         </div>
@@ -39,7 +43,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" className="hidden md:flex hover:bg-primary/10">
             <BarChart3 className="h-4 w-4 mr-2" />
-            Analytics
+            Analitika
           </Button>
           
           <Button variant="ghost" size="sm" className="relative hover:bg-primary/10">

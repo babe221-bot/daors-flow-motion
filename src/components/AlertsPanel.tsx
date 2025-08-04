@@ -18,33 +18,33 @@ const AlertsPanel = () => {
     {
       id: "1",
       type: "warning",
-      title: "Delayed Shipment",
-      description: "Shipment BG-2024-001 is 2 hours behind schedule due to border delays at Dimitrovgrad",
-      timestamp: "2 min ago",
+      title: "Zakašnjela pošiljka",
+      description: "Pošiljka BG-2024-001 kasni 2 sata zbog granične kontrole u Dimitrovgradu",
+      timestamp: "prije 2 min",
       priority: "high"
     },
     {
       id: "2",
       type: "error",
-      title: "Route Blocked",
-      description: "Alternative route suggested for shipment to Sarajevo. EU customs documentation required.",
-      timestamp: "15 min ago",
+      title: "Blokirana ruta",
+      description: "Predložena alternativna ruta za pošiljku u Sarajevo. Potrebna EU carinska dokumentacija.",
+      timestamp: "prije 15 min",
       priority: "high"
     },
     {
       id: "3",
       type: "info",
-      title: "CEFTA Documentation",
-      description: "New trade agreement updates affecting RS-BA corridor. Review required.",
-      timestamp: "1 hour ago",
+      title: "CEFTA dokumentacija",
+      description: "Nove promjene trgovinskog sporazuma za RS-BA koridor. Potreban pregled.",
+      timestamp: "prije 1 sat",
       priority: "medium"
     },
     {
       id: "4",
       type: "success",
-      title: "Delivery Completed",
-      description: "Shipment MK-2024-089 successfully delivered to Skopje logistics center",
-      timestamp: "2 hours ago",
+      title: "Dostava završena",
+      description: "Pošiljka MK-2024-089 uspješno isporučena u logistički centar Skopje",
+      timestamp: "prije 2 sata",
       priority: "low"
     }
   ]);
@@ -107,9 +107,9 @@ const AlertsPanel = () => {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-warning" />
-          Live Alerts
+          Uživo upozorenja
           <span className="ml-auto text-sm font-normal text-muted-foreground">
-            {alerts.length} active
+            {alerts.length} aktivnih
           </span>
         </CardTitle>
       </CardHeader>
@@ -152,8 +152,8 @@ const AlertsPanel = () => {
         {alerts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <CheckCircle className="h-8 w-8 text-success mb-2" />
-            <p className="text-sm text-muted-foreground">No active alerts</p>
-            <p className="text-xs text-muted-foreground">All systems operational</p>
+            <p className="text-sm text-muted-foreground">Nema aktivnih upozorenja</p>
+            <p className="text-xs text-muted-foreground">Svi sistemi operativni</p>
           </div>
         )}
       </CardContent>
