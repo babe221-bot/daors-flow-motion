@@ -1,6 +1,21 @@
-import { useState, useEffect } from "react";
+import {
+  Bar,
+  BarChart,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 interface ChartData {
   label: string;
@@ -16,143 +31,144 @@ interface AnimatedChartProps {
   delay?: number;
 }
 
-const AnimatedChart = ({ 
-  title, 
-  data, 
-  type = "bar", 
-  className, 
-  delay = 0 
+import { TooltipProps } from "recharts";
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border bg-background p-2 shadow-sm">
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex flex-col space-y-1">
+            <span className="text-[0.7rem] uppercase text-muted-foreground">
+              {label || payload[0].payload.label}
+            </span>
+            <span className="font-bold text-muted-foreground">
+              {payload[0].value}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+const resolveColor = (color: string): string => {
+    const colorName = color.replace('bg-', '');
+    switch (colorName) {
+        case 'primary':
+            return 'hsl(189 75% 55%)';
+        case 'success':
+            return 'hsl(142 76% 36%)';
+        case 'warning':
+            return 'hsl(45 93% 47%)';
+        case 'destructive':
+            return 'hsl(0 75% 60%)';
+        case 'blue-500':
+            return '#3b82f6';
+        case 'green-500':
+            return '#22c55e';
+        case 'purple-500':
+            return '#8b5cf6';
+        case 'orange-500':
+            return '#f97316';
+        default:
+            return color;
+    }
+};
+
+
+const AnimatedChart = ({
+  title,
+  data,
+  type = "bar",
+  className,
+  delay = 0,
 }: AnimatedChartProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [animatedData, setAnimatedData] = useState(data.map(item => ({ ...item, value: 0 })));
-
-  const maxValue = Math.max(...data.map(item => item.value));
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-      
-      // Animate chart data
-      let progress = 0;
-      const animationDuration = 1500; // 1.5 seconds
-      const steps = 60; // 60fps
-      const stepTime = animationDuration / steps;
-      
-      const animationInterval = setInterval(() => {
-        progress += 1 / steps;
-        if (progress >= 1) {
-          progress = 1;
-          clearInterval(animationInterval);
-        }
-        
-        setAnimatedData(data.map(item => ({
-          ...item,
-          value: item.value * progress
-        })));
-      }, stepTime);
-
-      return () => clearInterval(animationInterval);
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [data, delay]);
+  }, [delay]);
 
   const renderBarChart = () => (
-    <div className="space-y-4">
-      {animatedData.map((item, index) => (
-        <div key={item.label} className="space-y-2" style={{ animationDelay: `${index * 100}ms` }}>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">{item.label}</span>
-            <span className="font-medium">{Math.round(item.value)}</span>
-          </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <div 
-              className={cn("h-full rounded-full transition-all duration-1000 ease-out", item.color)}
-              style={{ 
-                width: `${maxValue > 0 ? (item.value / maxValue) * 100 : 0}%`,
-                animationDelay: `${index * 150}ms`
-              }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
+    <ResponsiveContainer width="100%" height={200}>
+      <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground)/.2)" />
+        <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--primary)/.1)' }} />
+        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={resolveColor(entry.color)} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
   );
 
   const renderLineChart = () => (
-    <div className="h-32 flex items-end space-x-2 border-b border-border">
-      {animatedData.map((item, index) => (
-        <div key={item.label} className="flex-1 flex flex-col items-center space-y-1">
-          <div 
-            className={cn("w-full rounded-t transition-all duration-1000 ease-out", item.color)}
-            style={{ 
-              height: `${maxValue > 0 ? (item.value / maxValue) * 120 : 0}px`,
-              animationDelay: `${index * 100}ms`
-            }}
-          />
-          <span className="text-xs text-muted-foreground">{item.label}</span>
-        </div>
-      ))}
-    </div>
+    <ResponsiveContainer width="100%" height={200}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground)/.2)" />
+        <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+        <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary)/.1)', strokeWidth: 2 }} />
+        <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--primary))' }} activeDot={{ r: 6, fill: 'hsl(var(--primary))' }} />
+      </LineChart>
+    </ResponsiveContainer>
   );
 
-  const renderDonutChart = () => {
-    const total = animatedData.reduce((sum, item) => sum + item.value, 0);
-    let cumulativeValue = 0;
+import { PieLabelRenderProps } from "recharts";
 
+  const renderDonutChart = () => {
+    const RADIAN = Math.PI / 180;
+    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: PieLabelRenderProps) => {
+        if (innerRadius === undefined || outerRadius === undefined || cx === undefined || cy === undefined || midAngle === undefined || percent === undefined) return null;
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        return (
+            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                {`${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    };
     return (
-      <div className="flex items-center justify-center h-32">
-        <div className="relative w-24 h-24">
-          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="transparent"
-              stroke="hsl(var(--muted))"
-              strokeWidth="8"
-            />
-            {animatedData.map((item, index) => {
-              const percentage = total > 0 ? (item.value / total) * 100 : 0;
-              const strokeDasharray = `${percentage * 2.51} 251.2`;
-              const strokeDashoffset = -cumulativeValue * 2.51;
-              cumulativeValue += percentage;
-              
-              return (
-                <circle
-                  key={index}
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="transparent"
-                  stroke={item.color.includes('bg-') ? `hsl(var(--${item.color.split('-')[1]}))` : item.color}
-                  strokeWidth="8"
-                  strokeDasharray={strokeDasharray}
-                  strokeDashoffset={strokeDashoffset}
-                  className="transition-all duration-1000 ease-out"
-                  style={{ animationDelay: `${index * 200}ms` }}
-                />
-              );
-            })}
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-sm font-semibold">{Math.round(total)}</span>
-          </div>
-        </div>
-        <div className="ml-4 space-y-1">
-          {animatedData.map((item, index) => (
-            <div key={index} className="flex items-center space-x-2 text-xs">
-              <div className={cn("w-3 h-3 rounded-full", item.color)} />
-              <span className="text-muted-foreground">{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+        <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+                <Tooltip content={<CustomTooltip />} />
+                <Pie
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    isAnimationActive={true}
+                    animationDuration={800}
+                >
+                    {data.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={resolveColor(entry.color)} />
+                    ))}
+                </Pie>
+                <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" />
+            </PieChart>
+        </ResponsiveContainer>
     );
-  };
+};
+
 
   return (
-    <Card 
+    <Card
       className={cn(
         "glass hover-lift transition-all duration-300",
         isVisible && "animate-slide-up-fade",

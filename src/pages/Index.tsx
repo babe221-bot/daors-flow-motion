@@ -2,14 +2,10 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { 
   Truck, 
-  Package, 
   DollarSign, 
-  TrendingUp, 
-  MapPin, 
   Clock, 
   Shield,
-  BarChart3,
-  Users,
+  MapPin,
   Globe
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -21,16 +17,22 @@ import AlertsPanel from "@/components/AlertsPanel";
 import EnhancedFeatures from "@/components/EnhancedFeatures";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-logistics.jpg";
 
 const Index = () => {
-  // TODO: Replace with actual authentication logic
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  // For now, let's simulate a login after 2 seconds to see the page
+  // Simulate login after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => setIsAuthenticated(true), 2000);
     return () => clearTimeout(timer);
@@ -40,6 +42,7 @@ const Index = () => {
     return <Navigate to="/login" />;
   }
 
+  // Mock data for charts
   const shipmentData = [
     { label: "U tranzitu", value: 156, color: "bg-primary" },
     { label: "Dostavljeno", value: 243, color: "bg-success" },
@@ -64,42 +67,10 @@ const Index = () => {
   ];
 
   const liveRoutes = [
-    { 
-      id: "RT-001", 
-      from: "Beograd", 
-      to: "Sarajevo", 
-      status: "aktivna", 
-      progress: 67,
-      eta: "2s 15m",
-      driver: "Miloš P."
-    },
-    { 
-      id: "RT-002", 
-      from: "Zagreb", 
-      to: "Ljubljana", 
-      status: "završena", 
-      progress: 100,
-      eta: "Dostavljeno",
-      driver: "Ana K."
-    },
-    { 
-      id: "RT-003", 
-      from: "Skoplje", 
-      to: "Tirana", 
-      status: "kašnjenje", 
-      progress: 23,
-      eta: "4s 30m",
-      driver: "Stefan V."
-    },
-    { 
-      id: "RT-004", 
-      from: "Podgorica", 
-      to: "Pristina", 
-      status: "aktivna", 
-      progress: 89,
-      eta: "45m",
-      driver: "Marko D."
-    }
+    { id: "RT-001", from: "Beograd", to: "Sarajevo", status: "aktivna", progress: 67, eta: "2s 15m", driver: "Miloš P." },
+    { id: "RT-002", from: "Zagreb", to: "Ljubljana", status: "završena", progress: 100, eta: "Dostavljeno", driver: "Ana K." },
+    { id: "RT-003", from: "Skoplje", to: "Tirana", status: "kašnjenje", progress: 23, eta: "4s 30m", driver: "Stefan V." },
+    { id: "RT-004", from: "Podgorica", to: "Pristina", status: "aktivna", progress: 89, eta: "45m", driver: "Marko D." }
   ];
 
   const getStatusColor = (status: string) => {
@@ -111,12 +82,20 @@ const Index = () => {
     }
   };
 
+  const generateHistoricalData = (baseValue: number, days = 30) => {
+    return Array.from({ length: days }, (_, i) => ({
+      label: `Dan ${i + 1}`,
+      value: baseValue + (Math.random() - 0.5) * baseValue * 0.2 + i * Math.random() * 2,
+      color: 'bg-primary'
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* TODO: Replace with the actual video file path */}
       <VideoBackground videoSrc="https://www.w3schools.com/html/mov_bbb.mp4" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/80 to-background/90 z-10" />
       
-      <div className="relative z-10">
+      <div className="relative z-20">
         <Navbar 
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
           sidebarOpen={sidebarOpen} 
@@ -128,142 +107,121 @@ const Index = () => {
           onTabChange={setActiveTab} 
         />
         
-        <main className={cn(
-          "transition-all duration-300 pt-header",
-          sidebarOpen ? "ml-64" : "ml-16"
-        )}>
+        <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
-            {/* Header */}
             <div className="space-y-2 animate-slide-up-fade">
-              <h1 className="text-3xl font-bold gradient-text">
-                Logistička inteligencija Zapadnog Balkana
-              </h1>
-              <p className="text-muted-foreground">
-                Optimizacija logistike u realnom vremenu pomoću AI-ja kroz CEFTA trgovinske rute
-              </p>
+              <h1 className="text-3xl font-bold gradient-text">Logistička inteligencija Zapadnog Balkana</h1>
+              <p className="text-muted-foreground">Optimizacija logistike u realnom vremenu pomoću AI-ja kroz CEFTA trgovinske rute</p>
             </div>
 
-            {/* Metrics Grid */}
+            {/* ... rest of the component remains unchanged ... */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <MetricCard
-                title="Aktivne pošiljke"
-                value={478}
-                change="+12% od prošle sedmice"
-                changeType="positive"
-                icon={Truck}
-                delay={100}
-              />
-              <MetricCard
-                title="Ukupni prihod"
-                value={125840}
-                change="+8.2% od prošlog mjeseca"
-                changeType="positive"
-                icon={DollarSign}
-                delay={200}
-                currency="€"
-              />
-              <MetricCard
-                title="Dostava na vrijeme"
-                value="94.8"
-                change="+2.1% poboljšanje"
-                changeType="positive"
-                icon={Clock}
-                delay={300}
-                currency="%"
-              />
-              <MetricCard
-                title="Granični prelazi"
-                value={1247}
-                change="23 aktivna kontrolna punkta"
-                changeType="neutral"
-                icon={Shield}
-                delay={400}
-              />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard title="Aktivne pošiljke" value={478} change="+12% od prošle sedmice" changeType="positive" icon={Truck} delay={100} />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>Istorijski podaci za: Aktivne pošiljke</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(478)} type="line" />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard title="Ukupni prihod" value={125840} change="+8.2% od prošlog mjeseca" changeType="positive" icon={DollarSign} delay={200} currency="€" />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>Istorijski podaci za: Ukupni prihod</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(125840)} type="line" />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard title="Dostava na vrijeme" value="94.8" change="+2.1% poboljšanje" changeType="positive" icon={Clock} delay={300} currency="%" />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>Istorijski podaci za: Dostava na vrijeme</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(94.8)} type="line" />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard title="Granični prelazi" value={1247} change="23 aktivna kontrolna punkta" changeType="neutral" icon={Shield} delay={400} />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>Istorijski podaci za: Granični prelazi</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(1247)} type="line" />
+                </DialogContent>
+              </Dialog>
             </div>
 
-            {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <AnimatedChart
-                title="Distribucija statusa pošiljki"
-                data={shipmentData}
-                type="donut"
-                delay={500}
-              />
-              <AnimatedChart
-                title="Mjesečni trend prihoda (€000)"
-                data={revenueData}
-                type="line"
-                delay={600}
-              />
-              <AnimatedChart
-                title="Popularne trgovinske rute"
-                data={routeData}
-                type="bar"
-                delay={700}
-              />
+              <AnimatedChart title="Distribucija statusa pošiljki" data={shipmentData} type="donut" delay={500} />
+              <AnimatedChart title="Mjesečni trend prihoda (€000)" data={revenueData} type="line" delay={600} />
+              <AnimatedChart title="Popularne trgovinske rute" data={routeData} type="bar" delay={700} />
             </div>
 
-            {/* Bottom Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Live Routes */}
               <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "800ms" }}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    Praćenje ruta uživo
+                    <MapPin className="h-5 w-5 text-primary" /> Praćenje ruta uživo
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {liveRoutes.map((route, index) => (
-                    <div 
-                      key={route.id} 
-                      className="p-3 rounded-lg border border-border/50 bg-gradient-card hover-lift transition-all duration-200"
-                      style={{ animationDelay: `${900 + index * 100}ms` }}
-                    >
+                    <div key={route.id} className="p-3 rounded-lg border border-border/50 bg-gradient-card hover-lift transition-all duration-200" style={{ animationDelay: `${900 + index * 100}ms` }}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <Badge className={getStatusColor(route.status)}>
-                            {route.status}
-                          </Badge>
+                          <Badge className={getStatusColor(route.status)}>{route.status}</Badge>
                           <span className="font-medium text-sm">{route.id}</span>
                         </div>
                         <span className="text-sm text-muted-foreground">{route.eta}</span>
                       </div>
-                      
                       <div className="flex items-center justify-between text-sm mb-2">
                         <span>{route.from} → {route.to}</span>
                         <span className="text-muted-foreground">Vozač: {route.driver}</span>
                       </div>
-                      
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs">
                           <span>Napredak</span>
                           <span>{route.progress}%</span>
                         </div>
                         <div className="h-2 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out"
-                            style={{ width: `${route.progress}%` }}
-                          />
+                          <div className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${route.progress}%` }} />
                         </div>
                       </div>
                     </div>
                   ))}
                 </CardContent>
               </Card>
-
-              {/* Alerts Panel */}
               <div className="animate-slide-up-fade" style={{ animationDelay: "900ms" }}>
                 <AlertsPanel />
               </div>
             </div>
 
-            {/* Regional Stats */}
             <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "1000ms" }}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-primary" />
-                  Pregled trgovine Zapadnog Balkana
+                  <Globe className="h-5 w-5 text-primary" /> Pregled trgovine Zapadnog Balkana
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -287,7 +245,6 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            {/* Enhanced Features Section */}
             <div className="mt-8">
               <EnhancedFeatures />
             </div>
