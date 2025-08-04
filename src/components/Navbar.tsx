@@ -27,9 +27,9 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center">
               <img 
-                src="/lovable-uploads/f1d022d5-0fd3-4e59-bb9b-5e6cfe58fd7e.png" 
+                src="/lovable-uploads/logo.jpg"
                 alt="DaorsForge AI Systems"
-                className="w-10 h-10 object-contain"
+                className="w-10 h-10 object-contain mix-blend-plus-lighter"
               />
             </div>
             <div className="hidden sm:block">
