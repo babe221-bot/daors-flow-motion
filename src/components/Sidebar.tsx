@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
@@ -5,15 +6,39 @@ import {
   Package, 
   BarChart3, 
   MapPin, 
-  Users, 
   Settings,
   DollarSign,
   AlertTriangle,
-  Clock,
-  TrendingUp
+  TrendingUp,
+  ChevronRight,
+  ClipboardList,
+  TrafficCone,
+  FileText,
+  LifeBuoy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+interface SubItem {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  href: string;
+}
+
+interface MenuItem {
+  id: string;
+  label:string;
+  icon: React.ElementType;
+  color: string;
+  href?: string;
+  subItems?: SubItem[];
+}
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,21 +46,109 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen }: SidebarProps) => {
   const location = useLocation();
-  const menuItems = [
-    { path: "/", label: "Kontrolna tabla", icon: Home, color: "text-primary" },
-    { path: "/item-tracking", label: "Praćenje artikala", icon: Package, color: "text-green-400" },
-    { path: "/shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400" },
-    { path: "/analytics", label: "Analitika", icon: BarChart3, color: "text-purple-400" },
-    { path: "/tracking", label: "Praćenje", icon: MapPin, color: "text-orange-400" },
-    { path: "/finance", label: "Finansije", icon: DollarSign, color: "text-yellow-400" },
-    { path: "/alerts", label: "Upozorenja", icon: AlertTriangle, color: "text-red-400" },
-    { path: "/reports", label: "Izvještaji", icon: TrendingUp, color: "text-pink-400" },
+  const [openCollapsibles, setOpenCollapsibles] = useState<string[]>([]);
+
+  const toggleCollapsible = (id: string) => {
+    setOpenCollapsibles(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const menuItems: MenuItem[] = [
+    { id: "dashboard", label: "Kontrolna tabla", icon: Home, color: "text-primary", href: "/" },
+    { id: "item-tracking", label: "Praćenje artikala", icon: Package, color: "text-green-400", href: "/item-tracking" },
+    { id: "shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400", href: "#" },
+    {
+      id: "analytics",
+      label: "Analitika",
+      icon: BarChart3,
+      color: "text-purple-400",
+      subItems: [
+        { id: "analytics-traffic", label: "Saobraćaj", icon: TrafficCone, href: "#" },
+        { id: "analytics-revenue", label: "Prihodi", icon: DollarSign, href: "#" },
+        { id: "analytics-reports", label: "Izvještaji", icon: FileText, href: "#" },
+      ]
+    },
+    { id: "tracking", label: "Praćenje", icon: MapPin, color: "text-orange-400", href: "#" },
+    {
+      id: "finance",
+      label: "Finansije",
+      icon: DollarSign,
+      color: "text-yellow-400",
+      subItems: [
+        { id: "finance-invoices", label: "Fakture", icon: ClipboardList, href: "#" },
+        { id: "finance-expenses", label: "Troškovi", icon: TrendingUp, href: "#" },
+      ]
+    },
+    { id: "alerts", label: "Upozorenja", icon: AlertTriangle, color: "text-red-400", href: "#" },
   ];
 
   const bottomItems = [
-    { id: "team", label: "Tim", icon: Users },
-    { id: "settings", label: "Postavke", icon: Settings },
+    { id: "support", label: "Podrška", icon: LifeBuoy, href: "/support" },
+    { id: "settings", label: "Postavke", icon: Settings, href: "/settings" },
   ];
+
+  const renderMenuItem = (item: MenuItem, index: number) => {
+    const isActive = location.pathname === item.href || 
+                    (item.subItems && item.subItems.some(sub => location.pathname === sub.href));
+    const isCollapsibleOpen = openCollapsibles.includes(item.id);
+
+    const buttonContent = (
+        <>
+            <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
+            {isOpen && <span className={cn("flex-1", isActive && "font-semibold")}>{item.label}</span>}
+            {isOpen && item.subItems && <ChevronRight className={cn("h-4 w-4 transition-transform", isCollapsibleOpen && "rotate-90")} />}
+            {!isOpen && isActive && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-card border border-border rounded-md text-sm whitespace-nowrap animate-slide-in-right">
+                {item.label}
+              </div>
+            )}
+        </>
+    );
+
+    if (item.subItems && isOpen) {
+      return (
+        <Collapsible key={item.id} open={isCollapsibleOpen} onOpenChange={() => toggleCollapsible(item.id)}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn("w-full justify-start gap-3 text-left transition-all duration-200 hover-lift", isActive && "bg-primary/20 text-primary", !isOpen && "justify-center px-2")}
+            >
+              {buttonContent}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pl-6 space-y-1 mt-1">
+            {item.subItems.map(subItem => {
+              const isSubActive = location.pathname === subItem.href;
+              return (
+                <Link to={subItem.href} key={subItem.id}>
+                    <Button
+                    variant="ghost"
+                    className={cn("w-full justify-start gap-3 text-left transition-all duration-200", isSubActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground")}
+                    >
+                        <subItem.icon className="h-4 w-4 flex-shrink-0" />
+                        <span>{subItem.label}</span>
+                    </Button>
+                </Link>
+              );
+            })}
+          </CollapsibleContent>
+        </Collapsible>
+      );
+    }
+
+    return (
+        <Link to={item.href || "#"} key={item.id}>
+            <Button
+                variant="ghost"
+                className={cn("w-full justify-start gap-3 text-left transition-all duration-200 hover-lift", isActive ? "bg-primary/20 text-primary border border-primary/30 shadow-glow" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
+                style={{ animationDelay: `${index * 50}ms` }}
+            >
+                {buttonContent}
+            </Button>
+      </Link>
+    );
+  };
 
   return (
     <aside
@@ -45,68 +158,31 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
       )}
     >
       <div className="flex flex-col h-full p-4">
-        {/* Main Navigation */}
         <nav className="flex-1 space-y-2">
-          {menuItems.map((item, index) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link to={item.path} key={item.path}>
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start gap-3 text-left transition-all duration-200 hover-lift",
-                    isActive
-                      ? "bg-primary/20 text-primary border border-primary/30 shadow-glow"
-                      : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground",
-                    !isOpen && "justify-center px-2"
-                  )}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
-                  {isOpen && (
-                    <span className={cn("transition-opacity duration-200", isActive && "font-semibold")}>
-                      {item.label}
-                    </span>
-                  )}
-                  {!isOpen && isActive && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-card border border-border rounded-md text-sm whitespace-nowrap animate-slide-in-right">
-                      {item.label}
-                    </div>
-                  )}
-                </Button>
-              </Link>
-            );
-          })}
+          {menuItems.map(renderMenuItem)}
         </nav>
 
-        {/* Bottom Navigation */}
         <div className="space-y-2 pt-4 border-t border-border/50">
           {bottomItems.map((item) => {
-            const isActive = false; // Not used for navigation
+            const isActive = location.pathname === item.href;
             return (
-              <Button
-                key={item.id}
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start gap-3 text-left transition-all duration-200",
-                  "hover:bg-secondary/50 text-muted-foreground hover:text-foreground",
-                  !isOpen && "justify-center px-2"
-                )}
-              >
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                {isOpen && <span>{item.label}</span>}
-              </Button>
+                <Link to={item.href} key={item.id}>
+                    <Button
+                        variant="ghost"
+                        className={cn("w-full justify-start gap-3 text-left transition-all duration-200", isActive ? "bg-primary/20 text-primary" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
+                    >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {isOpen && <span>{item.label}</span>}
+                    </Button>
+              </Link>
             );
           })}
         </div>
 
-        {/* Status indicator */}
         <div className={cn("mt-4 pt-4 border-t border-border/50", !isOpen && "text-center")}>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
-            {isOpen && (
-              <span className="text-xs text-muted-foreground">Sistem Online</span>
-            )}
+            {isOpen && <span className="text-xs text-muted-foreground">Sistem Online</span>}
           </div>
         </div>
       </div>
