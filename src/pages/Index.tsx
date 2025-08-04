@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { 
   Truck, 
   DollarSign, 
@@ -11,7 +12,7 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import MetricCard from "@/components/MetricCard";
 import AnimatedChart from "@/components/AnimatedChart";
-import ParticleBackground from "@/components/ParticleBackground";
+import VideoBackground from "@/components/VideoBackground";
 import AlertsPanel from "@/components/AlertsPanel";
 import EnhancedFeatures from "@/components/EnhancedFeatures";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +28,19 @@ import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-logistics.jpg";
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Simulate login after 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAuthenticated(true), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
   // Mock data for charts
   const shipmentData = [
@@ -79,13 +92,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <ParticleBackground />
-      <div className="absolute inset-0 z-0" style={{ backgroundImage: `url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'brightness(0.3) contrast(1.2)' }} />
+      <VideoBackground videoSrc="https://www.w3schools.com/html/mov_bbb.mp4" />
       <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/80 to-background/90 z-10" />
       
       <div className="relative z-20">
-        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-        <Sidebar isOpen={sidebarOpen} />
+        <Navbar 
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
+          sidebarOpen={sidebarOpen} 
+        />
+        
+        <Sidebar 
+          isOpen={sidebarOpen} 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+        />
         
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
@@ -94,6 +114,7 @@ const Index = () => {
               <p className="text-muted-foreground">Optimizacija logistike u realnom vremenu pomoću AI-ja kroz CEFTA trgovinske rute</p>
             </div>
 
+            {/* ... rest of the component remains unchanged ... */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Dialog>
                 <DialogTrigger asChild>
