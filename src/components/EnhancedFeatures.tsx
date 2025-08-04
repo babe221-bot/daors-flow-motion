@@ -4,6 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const EnhancedFeatures = () => {
   const [notifications, setNotifications] = useState([
@@ -13,11 +21,20 @@ const EnhancedFeatures = () => {
   ]);
 
   const [activeConnections, setActiveConnections] = useState(247);
-  const [aiInsights, setAiInsights] = useState([
+
+  const allAiInsights = [
     "Predviđeno kašnjenje na ruti Zagreb-Ljubljana: 30min",
     "Optimalna ruta Beograd-Sarajevo: preko Bijeljine",
-    "Carinski promet povećan za 15% u odnosu na prošlu sedmicu"
-  ]);
+    "Carinski promet povećan za 15% u odnosu na prošlu sedmicu",
+    "Preporučuje se inspekcija vozila sa registracijom BG-123-456",
+    "Visok rizik od gužve na graničnom prelazu Batrovci sutra u 10h",
+    "Smanjena potrošnja goriva za 5% na ruti Podgorica-Tirana",
+    "Novi propisi za transport opasnih materija stupaju na snagu 01.09.2024.",
+    "Najopterećeniji vozač ove sedmice: Petar Petrović (52 sata vožnje)"
+  ];
+
+  const [aiInsights, setAiInsights] = useState(allAiInsights.slice(0, 3));
+
 
   useEffect(() => {
     // Simulate real-time updates
@@ -43,7 +60,7 @@ const EnhancedFeatures = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="flex items-center gap-2 h-16 bg-gradient-primary hover:scale-105 transition-transform">
+            <Button className="flex items-center gap-2 h-16 bg-gradient-primary hover:scale-105 transition-transform" onClick={() => toast.info("Pozivanje 24/7 podrške...")}>
               <Phone className="h-5 w-5" />
               <div className="text-left">
                 <div className="font-semibold">Hitni kontakt</div>
@@ -51,7 +68,7 @@ const EnhancedFeatures = () => {
               </div>
             </Button>
             
-            <Button variant="outline" className="flex items-center gap-2 h-16 hover:scale-105 transition-transform">
+            <Button variant="outline" className="flex items-center gap-2 h-16 hover:scale-105 transition-transform" onClick={() => toast.success("Sastanak sa logističkim timom je uspješno zakazan!")}>
               <Calendar className="h-5 w-5" />
               <div className="text-left">
                 <div className="font-semibold">Zakaži sastanak</div>
@@ -59,7 +76,7 @@ const EnhancedFeatures = () => {
               </div>
             </Button>
             
-            <Button variant="outline" className="flex items-center gap-2 h-16 hover:scale-105 transition-transform">
+            <Button variant="outline" className="flex items-center gap-2 h-16 hover:scale-105 transition-transform" onClick={() => toast.message("Otvaranje timskog chata...")}>
               <Users className="h-5 w-5" />
               <div className="text-left">
                 <div className="font-semibold">Timski chat</div>
@@ -92,9 +109,28 @@ const EnhancedFeatures = () => {
             </div>
           ))}
           
-          <Button variant="outline" className="w-full mt-4 hover:bg-primary/10">
-            Prikaži sve AI preporuke
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="w-full mt-4 hover:bg-primary/10">
+                    Prikaži sve AI preporuke
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="glass">
+              <DialogHeader>
+                <DialogTitle>Sve AI preporuke</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                {allAiInsights.map((insight, index) => (
+                    <div key={index} className="p-3 rounded-lg bg-gradient-card border border-border/50">
+                        <div className="flex items-start gap-3">
+                            <Target className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                            <span className="text-sm">{insight}</span>
+                        </div>
+                    </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
 
