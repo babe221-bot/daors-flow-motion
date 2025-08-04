@@ -15,7 +15,7 @@ All colors MUST be HSL for consistency and theming.
     /* Glass morphism card system */
     --card: 222 24% 12%;
     --card-foreground: 210 40% 98%;
-    --card-glass: 222 24% 15% / 0.8;
+    --card-glass: 222 24% 15% / 0.5;
 
     /* Popover system */
     --popover: 222 24% 10%;
