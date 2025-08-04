@@ -30,7 +30,6 @@ import heroImage from "@/assets/hero-logistics.jpg";
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard");
 
   // Simulate login after 2 seconds
   useEffect(() => {
@@ -103,8 +102,6 @@ const Index = () => {
         
         <Sidebar 
           isOpen={sidebarOpen} 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
         />
         
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>

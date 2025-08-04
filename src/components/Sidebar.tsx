@@ -6,7 +6,6 @@ import {
   Package, 
   BarChart3, 
   MapPin, 
-  Users, 
   Settings,
   DollarSign,
   AlertTriangle,
@@ -57,8 +56,8 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
 
   const menuItems: MenuItem[] = [
     { id: "dashboard", label: "Kontrolna tabla", icon: Home, color: "text-primary", href: "/" },
+    { id: "item-tracking", label: "Praćenje artikala", icon: Package, color: "text-green-400", href: "/item-tracking" },
     { id: "shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400", href: "#" },
-    { id: "inventory", label: "Inventar", icon: Package, color: "text-green-400", href: "#" },
     {
       id: "analytics",
       label: "Analitika",
@@ -90,7 +89,8 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
   ];
 
   const renderMenuItem = (item: MenuItem, index: number) => {
-    const isActive = location.pathname === item.href || (item.subItems && item.subItems.some(sub => location.pathname === sub.href));
+    const isActive = location.pathname === item.href || 
+                    (item.subItems && item.subItems.some(sub => location.pathname === sub.href));
     const isCollapsibleOpen = openCollapsibles.includes(item.id);
 
     const buttonContent = (
@@ -151,8 +151,11 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
   };
 
   return (
-    <aside 
-      className={cn("fixed left-0 top-header bottom-0 z-40 glass border-r border-border/50 backdrop-blur-xl transition-all duration-300 ease-smooth", isOpen ? "w-64" : "w-16")}
+    <aside
+      className={cn(
+        "fixed left-0 top-header bottom-0 z-40 glass border-r border-border/50 backdrop-blur-xl transition-all duration-300 ease-smooth",
+        isOpen ? "w-64" : "w-16"
+      )}
     >
       <div className="flex flex-col h-full p-4">
         <nav className="flex-1 space-y-2">
