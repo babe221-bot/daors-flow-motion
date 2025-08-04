@@ -28,7 +28,6 @@ import heroImage from "@/assets/hero-logistics.jpg";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard");
 
   // Mock data for charts
   const shipmentData = [
@@ -86,7 +85,7 @@ const Index = () => {
       
       <div className="relative z-20">
         <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-        <Sidebar isOpen={sidebarOpen} activeTab={activeTab} onTabChange={setActiveTab} />
+        <Sidebar isOpen={sidebarOpen} />
         
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
   Truck, 
@@ -13,7 +14,8 @@ import {
   ChevronRight,
   ClipboardList,
   TrafficCone,
-  FileText
+  FileText,
+  LifeBuoy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,6 +29,7 @@ interface SubItem {
   id: string;
   label: string;
   icon: React.ElementType;
+  href: string;
 }
 
 interface MenuItem {
@@ -34,16 +37,16 @@ interface MenuItem {
   label:string;
   icon: React.ElementType;
   color: string;
+  href?: string;
   subItems?: SubItem[];
 }
 
 interface SidebarProps {
   isOpen: boolean;
-  activeTab: string;
-  onTabChange: (tab: string) => void;
 }
 
-const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
+const Sidebar = ({ isOpen }: SidebarProps) => {
+  const location = useLocation();
   const [openCollapsibles, setOpenCollapsibles] = useState<string[]>([]);
 
   const toggleCollapsible = (id: string) => {
@@ -53,42 +56,55 @@ const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
   };
 
   const menuItems: MenuItem[] = [
-    { id: "dashboard", label: "Kontrolna tabla", icon: Home, color: "text-primary" },
-    { id: "shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400" },
-    { id: "inventory", label: "Inventar", icon: Package, color: "text-green-400" },
+    { id: "dashboard", label: "Kontrolna tabla", icon: Home, color: "text-primary", href: "/" },
+    { id: "shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400", href: "#" },
+    { id: "inventory", label: "Inventar", icon: Package, color: "text-green-400", href: "#" },
     {
       id: "analytics",
       label: "Analitika",
       icon: BarChart3,
       color: "text-purple-400",
       subItems: [
-        { id: "analytics-traffic", label: "Saobraćaj", icon: TrafficCone },
-        { id: "analytics-revenue", label: "Prihodi", icon: DollarSign },
-        { id: "analytics-reports", label: "Izvještaji", icon: FileText },
+        { id: "analytics-traffic", label: "Saobraćaj", icon: TrafficCone, href: "#" },
+        { id: "analytics-revenue", label: "Prihodi", icon: DollarSign, href: "#" },
+        { id: "analytics-reports", label: "Izvještaji", icon: FileText, href: "#" },
       ]
     },
-    { id: "tracking", label: "Praćenje", icon: MapPin, color: "text-orange-400" },
+    { id: "tracking", label: "Praćenje", icon: MapPin, color: "text-orange-400", href: "#" },
     {
       id: "finance",
       label: "Finansije",
       icon: DollarSign,
       color: "text-yellow-400",
       subItems: [
-        { id: "finance-invoices", label: "Fakture", icon: ClipboardList },
-        { id: "finance-expenses", label: "Troškovi", icon: TrendingUp },
+        { id: "finance-invoices", label: "Fakture", icon: ClipboardList, href: "#" },
+        { id: "finance-expenses", label: "Troškovi", icon: TrendingUp, href: "#" },
       ]
     },
-    { id: "alerts", label: "Upozorenja", icon: AlertTriangle, color: "text-red-400" },
+    { id: "alerts", label: "Upozorenja", icon: AlertTriangle, color: "text-red-400", href: "#" },
   ];
 
   const bottomItems = [
-    { id: "team", label: "Tim", icon: Users },
-    { id: "settings", label: "Postavke", icon: Settings },
+    { id: "support", label: "Podrška", icon: LifeBuoy, href: "/support" },
+    { id: "settings", label: "Postavke", icon: Settings, href: "/settings" },
   ];
 
   const renderMenuItem = (item: MenuItem, index: number) => {
-    const isActive = activeTab === item.id || (item.subItems && item.subItems.some(sub => sub.id === activeTab));
+    const isActive = location.pathname === item.href || (item.subItems && item.subItems.some(sub => location.pathname === sub.href));
     const isCollapsibleOpen = openCollapsibles.includes(item.id);
+
+    const buttonContent = (
+        <>
+            <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
+            {isOpen && <span className={cn("flex-1", isActive && "font-semibold")}>{item.label}</span>}
+            {isOpen && item.subItems && <ChevronRight className={cn("h-4 w-4 transition-transform", isCollapsibleOpen && "rotate-90")} />}
+            {!isOpen && isActive && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-card border border-border rounded-md text-sm whitespace-nowrap animate-slide-in-right">
+                {item.label}
+              </div>
+            )}
+        </>
+    );
 
     if (item.subItems && isOpen) {
       return (
@@ -96,33 +112,24 @@ const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
-              className={cn(
-                "w-full justify-start gap-3 text-left transition-all duration-200 hover-lift",
-                isActive && "bg-primary/20 text-primary",
-                !isOpen && "justify-center px-2"
-              )}
+              className={cn("w-full justify-start gap-3 text-left transition-all duration-200 hover-lift", isActive && "bg-primary/20 text-primary", !isOpen && "justify-center px-2")}
             >
-              <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
-              {isOpen && <span className={cn("flex-1", isActive && "font-semibold")}>{item.label}</span>}
-              {isOpen && <ChevronRight className={cn("h-4 w-4 transition-transform", isCollapsibleOpen && "rotate-90")} />}
+              {buttonContent}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="pl-6 space-y-1 mt-1">
             {item.subItems.map(subItem => {
-              const isSubActive = activeTab === subItem.id;
+              const isSubActive = location.pathname === subItem.href;
               return (
-                <Button
-                  key={subItem.id}
-                  variant="ghost"
-                  onClick={() => onTabChange(subItem.id)}
-                  className={cn(
-                    "w-full justify-start gap-3 text-left transition-all duration-200",
-                    isSubActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <subItem.icon className="h-4 w-4 flex-shrink-0" />
-                  <span>{subItem.label}</span>
-                </Button>
+                <Link to={subItem.href} key={subItem.id}>
+                    <Button
+                    variant="ghost"
+                    className={cn("w-full justify-start gap-3 text-left transition-all duration-200", isSubActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground")}
+                    >
+                        <subItem.icon className="h-4 w-4 flex-shrink-0" />
+                        <span>{subItem.label}</span>
+                    </Button>
+                </Link>
               );
             })}
           </CollapsibleContent>
@@ -131,34 +138,21 @@ const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
     }
 
     return (
-      <Button
-        key={item.id}
-        variant="ghost"
-        onClick={() => onTabChange(item.id)}
-        className={cn(
-          "w-full justify-start gap-3 text-left transition-all duration-200 hover-lift",
-          isActive ? "bg-primary/20 text-primary border border-primary/30 shadow-glow" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground",
-          !isOpen && "justify-center px-2"
-        )}
-        style={{ animationDelay: `${index * 50}ms` }}
-      >
-        <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
-        {isOpen && <span className={cn("transition-opacity duration-200", isActive && "font-semibold")}>{item.label}</span>}
-        {!isOpen && isActive && (
-          <div className="absolute left-full ml-2 px-2 py-1 bg-card border border-border rounded-md text-sm whitespace-nowrap animate-slide-in-right">
-            {item.label}
-          </div>
-        )}
-      </Button>
+        <Link to={item.href || "#"} key={item.id}>
+            <Button
+                variant="ghost"
+                className={cn("w-full justify-start gap-3 text-left transition-all duration-200 hover-lift", isActive ? "bg-primary/20 text-primary border border-primary/30 shadow-glow" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
+                style={{ animationDelay: `${index * 50}ms` }}
+            >
+                {buttonContent}
+            </Button>
+      </Link>
     );
   };
 
   return (
     <aside 
-      className={cn(
-        "fixed left-0 top-header bottom-0 z-40 glass border-r border-border/50 backdrop-blur-xl transition-all duration-300 ease-smooth",
-        isOpen ? "w-64" : "w-16"
-      )}
+      className={cn("fixed left-0 top-header bottom-0 z-40 glass border-r border-border/50 backdrop-blur-xl transition-all duration-300 ease-smooth", isOpen ? "w-64" : "w-16")}
     >
       <div className="flex flex-col h-full p-4">
         <nav className="flex-1 space-y-2">
@@ -167,21 +161,17 @@ const Sidebar = ({ isOpen, activeTab, onTabChange }: SidebarProps) => {
 
         <div className="space-y-2 pt-4 border-t border-border/50">
           {bottomItems.map((item) => {
-            const isActive = activeTab === item.id;
+            const isActive = location.pathname === item.href;
             return (
-              <Button
-                key={item.id}
-                variant="ghost"
-                onClick={() => onTabChange(item.id)}
-                className={cn(
-                  "w-full justify-start gap-3 text-left transition-all duration-200",
-                  isActive ? "bg-primary/20 text-primary" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground",
-                  !isOpen && "justify-center px-2"
-                )}
-              >
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                {isOpen && <span>{item.label}</span>}
-              </Button>
+                <Link to={item.href} key={item.id}>
+                    <Button
+                        variant="ghost"
+                        className={cn("w-full justify-start gap-3 text-left transition-all duration-200", isActive ? "bg-primary/20 text-primary" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
+                    >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {isOpen && <span>{item.label}</span>}
+                    </Button>
+              </Link>
             );
           })}
         </div>
