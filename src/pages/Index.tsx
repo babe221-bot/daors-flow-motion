@@ -25,7 +25,6 @@ import heroImage from "@/assets/hero-logistics.jpg";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard");
 
   const shipmentData = [
     { label: "U tranzitu", value: 156, color: "bg-primary" },
@@ -124,8 +123,6 @@ const Index = () => {
         
         <Sidebar 
           isOpen={sidebarOpen} 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
         />
         
         <main className={cn(
