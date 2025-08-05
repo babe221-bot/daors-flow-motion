@@ -1,4 +1,7 @@
  feature/document-and-gps-tracking
+
+ feature/document-and-gps-tracking
+ main
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { mockUsers } from "@/lib/mock-users";
@@ -8,6 +11,19 @@ import { User as UserIcon } from "lucide-react";
 import VideoBackground from "@/components/VideoBackground";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+ feature/document-and-gps-tracking
+import { ROLES } from "@/lib/types";
+
+const Login = () => {
+  const { t } = useTranslation();
+  const { user, login, isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    if (user?.role === ROLES.CLIENT) {
+      return <Navigate to="/portal/dashboard" replace />;
+    }
+    return <Navigate to="/" replace />;
+
 
 const Login = () => {
   const { t } = useTranslation();
@@ -15,6 +31,7 @@ const Login = () => {
 
   if (isAuthenticated) {
     return <Navigate to="/" />;
+ main
   }
 
   return (

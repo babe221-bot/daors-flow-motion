@@ -69,10 +69,16 @@ const Sidebar = ({ isOpen, onAlertsClick }: SidebarProps) => {
     { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
     { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
 
+ feature/document-and-gps-tracking
+    { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
+
     { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/" },
     { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking" },
     { id: "inventory", label: t("sidebar.inventory"), icon: Warehouse, color: "text-orange-400", href: "/inventory" },
     { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#" },
+ main
  main
     {
       id: "analytics",
@@ -89,7 +95,11 @@ const Sidebar = ({ isOpen, onAlertsClick }: SidebarProps) => {
  feature/document-and-gps-tracking
     { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
 
+ feature/document-and-gps-tracking
+    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
+
     { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map" },
+ main
  main
     {
       id: "finance",

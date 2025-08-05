@@ -13,6 +13,15 @@ import Support from "./pages/Support";
  feature/document-and-gps-tracking
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ROLES } from "./lib/types";
+import CustomerPortalLayout from "./components/CustomerPortalLayout";
+import PortalDashboard from "./pages/portal/Dashboard";
+import PortalShipments from "./pages/portal/Shipments";
+import PortalProfile from "./pages/portal/Profile";
+
+ feature/document-and-gps-tracking
+import ProtectedRoute from "./components/ProtectedRoute";
+import { ROLES } from "./lib/types";
+ main
 
 import Inventory from "./pages/Inventory";
 import CustomerDashboard from "./pages/CustomerDashboard";
@@ -35,9 +44,12 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
+ feature/document-and-gps-tracking
+
  feat/premium-feature-ui
 
  feature/document-and-gps-tracking
+ main
           <Route path="/not-found" element={<NotFound />} />
 
           {/* Protected routes */}
@@ -57,6 +69,17 @@ const App = () => (
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
             <Route path="/settings" element={<Settings />} />
           </Route>
+
+ feature/document-and-gps-tracking
+          {/* Customer Portal Routes */}
+          <Route element={<ProtectedRoute allowedRoles={[ROLES.CLIENT]} />}>
+            <Route path="/portal" element={<CustomerPortalLayout />}>
+              <Route path="dashboard" element={<PortalDashboard />} />
+              <Route path="shipments" element={<PortalShipments />} />
+              <Route path="profile" element={<PortalProfile />} />
+            </Route>
+          </Route>
+
 
 
  feat/inventory-real-time-updates
@@ -80,6 +103,7 @@ const App = () => (
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/support" element={<Support />} />
+ main
  main
  main
  main
