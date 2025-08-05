@@ -11,12 +11,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import ParticleBackground from "@/components/ParticleBackground";
+import { useTranslation } from "react-i18next";
 
 const Settings = () => {
+  const { t, i18n } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSave = () => {
-    toast.success("Postavke su uspješno sačuvane!");
+    toast.success(t("settings.saveChanges.success"));
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
   };
 
   return (
@@ -29,8 +35,8 @@ const Settings = () => {
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <header className="space-y-2 animate-slide-up-fade">
-              <h1 className="text-3xl font-bold gradient-text">Postavke</h1>
-              <p className="text-muted-foreground">Upravljajte postavkama vašeg naloga i aplikacije.</p>
+              <h1 className="text-3xl font-bold gradient-text">{t('settings.title')}</h1>
+              <p className="text-muted-foreground">{t('settings.description')}</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -44,29 +50,29 @@ const Settings = () => {
                 {/* Profile Settings */}
                 <Card className="glass">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><User /> Profil</CardTitle>
-                    <CardDescription>Ažurirajte vaše lične podatke.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><User /> {t('settings.profile')}</CardTitle>
+                    <CardDescription>{t('settings.profile.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">Ime</Label>
+                        <Label htmlFor="firstName">{t('settings.profile.firstName')}</Label>
                         <Input id="firstName" defaultValue="John" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Prezime</Label>
+                        <Label htmlFor="lastName">{t('settings.profile.lastName')}</Label>
                         <Input id="lastName" defaultValue="Doe" />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('settings.profile.email')}</Label>
                       <Input id="email" type="email" defaultValue="john.doe@example.com" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Slika profila</Label>
+                      <Label>{t('settings.profile.picture')}</Label>
                       <div className="flex items-center gap-4">
                         <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" className="w-16 h-16 rounded-full" />
-                        <Button variant="outline">Promijeni sliku</Button>
+                        <Button variant="outline">{t('settings.profile.changePicture')}</Button>
                       </div>
                     </div>
                   </CardContent>
@@ -75,20 +81,20 @@ const Settings = () => {
                 {/* Security Settings */}
                 <Card className="glass">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Shield /> Sigurnost</CardTitle>
-                    <CardDescription>Upravljajte vašom lozinkom i sigurnosnim postavkama.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Shield /> {t('settings.security')}</CardTitle>
+                    <CardDescription>{t('settings.security.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentPassword">Trenutna lozinka</Label>
+                      <Label htmlFor="currentPassword">{t('settings.security.currentPassword')}</Label>
                       <Input id="currentPassword" type="password" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="newPassword">Nova lozinka</Label>
+                      <Label htmlFor="newPassword">{t('settings.security.newPassword')}</Label>
                       <Input id="newPassword" type="password" />
                     </div>
                     <div className="flex items-center justify-between pt-2">
-                      <Label htmlFor="2fa" className="font-medium">Dvofaktorska autentifikacija (2FA)</Label>
+                      <Label htmlFor="2fa" className="font-medium">{t('settings.security.2fa')}</Label>
                       <Switch id="2fa" />
                     </div>
                   </CardContent>
@@ -97,32 +103,32 @@ const Settings = () => {
                 {/* Notification Settings */}
                 <Card className="glass">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Bell /> Obavještenja</CardTitle>
-                    <CardDescription>Odaberite kako želite primati obavještenja.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Bell /> {t('settings.notifications')}</CardTitle>
+                    <CardDescription>{t('settings.notifications.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="email-notifications">Email obavještenja</Label>
+                      <Label htmlFor="email-notifications">{t('settings.notifications.email')}</Label>
                       <Switch id="email-notifications" defaultChecked />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="push-notifications">Push obavještenja</Label>
+                      <Label htmlFor="push-notifications">{t('settings.notifications.push')}</Label>
                       <Switch id="push-notifications" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Tipovi obavještenja</Label>
+                      <Label>{t('settings.notifications.types')}</Label>
                       <div className="flex flex-wrap gap-4">
                         <div className="flex items-center gap-2">
                           <Switch id="notif-shipment" defaultChecked/>
-                          <Label htmlFor="notif-shipment">Status pošiljke</Label>
+                          <Label htmlFor="notif-shipment">{t('settings.notifications.shipmentStatus')}</Label>
                         </div>
                         <div className="flex items-center gap-2">
                           <Switch id="notif-route" defaultChecked/>
-                          <Label htmlFor="notif-route">Promjene rute</Label>
+                          <Label htmlFor="notif-route">{t('settings.notifications.routeChanges')}</Label>
                         </div>
                         <div className="flex items-center gap-2">
                           <Switch id="notif-system"/>
-                          <Label htmlFor="notif-system">Sistemske poruke</Label>
+                          <Label htmlFor="notif-system">{t('settings.notifications.systemMessages')}</Label>
                         </div>
                       </div>
                     </div>
@@ -132,33 +138,34 @@ const Settings = () => {
                 {/* Appearance Settings */}
                 <Card className="glass">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Palette /> Izgled</CardTitle>
-                    <CardDescription>Prilagodite izgled aplikacije.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Palette /> {t('settings.appearance')}</CardTitle>
+                    <CardDescription>{t('settings.appearance.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="theme">Tema</Label>
+                      <Label htmlFor="theme">{t('settings.appearance.theme')}</Label>
                       <Select defaultValue="dark">
                         <SelectTrigger id="theme">
-                          <SelectValue placeholder="Odaberi temu" />
+                          <SelectValue placeholder={t('settings.appearance.theme.placeholder')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="light">Svijetla</SelectItem>
-                          <SelectItem value="dark">Tamna</SelectItem>
-                          <SelectItem value="system">Sistemska</SelectItem>
+                          <SelectItem value="light">{t('settings.appearance.theme.light')}</SelectItem>
+                          <SelectItem value="dark">{t('settings.appearance.theme.dark')}</SelectItem>
+                          <SelectItem value="system">{t('settings.appearance.theme.system')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="language">Jezik</Label>
-                      <Select defaultValue="bs">
+                      <Label htmlFor="language">{t('settings.appearance.language')}</Label>
+                      <Select defaultValue={i18n.language} onValueChange={handleLanguageChange}>
                         <SelectTrigger id="language">
-                          <SelectValue placeholder="Odaberi jezik" />
+                          <SelectValue placeholder={t('settings.appearance.language.placeholder')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="bs">Bosanski</SelectItem>
-                          <SelectItem value="en">Engleski</SelectItem>
-                          <SelectItem value="de">Njemački</SelectItem>
+                          <SelectItem value="bs">{t('settings.appearance.language.bosnian')}</SelectItem>
+                          <SelectItem value="en">{t('settings.appearance.language.english')}</SelectItem>
+                          <SelectItem value="hr">{t('settings.appearance.language.croatian')}</SelectItem>
+                          <SelectItem value="sr">{t('settings.appearance.language.serbian')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -168,7 +175,7 @@ const Settings = () => {
                 <div className="flex justify-end">
                   <Button size="lg" onClick={handleSave} className="bg-gradient-primary hover:scale-105 transition-transform">
                     <Save className="mr-2 h-4 w-4" />
-                    Sačuvaj promjene
+                    {t('settings.saveChanges')}
                   </Button>
                 </div>
               </div>

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "next-themes"; // Assuming next-themes is used for theme switching
+import { useTranslation } from "react-i18next";
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -18,12 +19,13 @@ interface NavbarProps {
 }
 
 const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme() ?? { theme: 'dark', setTheme: () => {} };
 
   const notifications = [
-    { id: "1", type: "warning", title: "Zakašnjela pošiljka", description: "Pošiljka BG-2024-001 kasni 2 sata.", time: "2m" },
-    { id: "2", type: "error", title: "Blokirana ruta", description: "Alternativna ruta za Sarajevo je potrebna.", time: "15m" },
-    { id: "3", type: "info", title: "CEFTA dokumentacija", description: "Nove promjene trgovinskog sporazuma.", time: "1h" },
+    { id: "1", type: "warning", title: t("navbar.notifications.delayedShipment"), description: t("navbar.notifications.delayedShipment.description"), time: "2m" },
+    { id: "2", type: "error", title: t("navbar.notifications.blockedRoute"), description: t("navbar.notifications.blockedRoute.description"), time: "15m" },
+    { id: "3", type: "info", title: t("navbar.notifications.ceftaDocumentation"), description: t("navbar.notifications.ceftaDocumentation.description"), time: "1h" },
   ];
 
   return (
@@ -50,7 +52,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold gradient-text">DaorsForge</h1>
-              <p className="text-xs text-muted-foreground">AI Sistemi za Logistiku</p>
+              <p className="text-xs text-muted-foreground">{t('navbar.logisticsAiSystems')}</p>
             </div>
           </div>
         </div>
@@ -59,7 +61,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
         <div className="hidden md:flex flex-1 justify-center px-8">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Pretraži pošiljke, rute, vozače..." className="pl-10 w-full glass" />
+            <Input placeholder={t('navbar.search.placeholder')} className="pl-10 w-full glass" />
           </div>
         </div>
 
@@ -67,7 +69,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" className="hidden md:flex hover:bg-primary/10">
             <BarChart3 className="h-4 w-4 mr-2" />
-            Analitika
+            {t('navbar.analytics')}
           </Button>
           
           <DropdownMenu>
@@ -82,7 +84,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80 glass">
-              <DropdownMenuLabel>Obavještenja</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('navbar.notifications')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notifications.map(notif => (
                 <DropdownMenuItem key={notif.id} className="flex items-start gap-3">
@@ -114,20 +116,20 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="glass">
-              <DropdownMenuLabel>Moj nalog</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('navbar.myAccount')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profil</span>
+                <span>{t('navbar.profile')}</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Postavke</span>
+                <span>{t('navbar.settings')}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Odjavi se</span>
+                <span>{t('navbar.logout')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

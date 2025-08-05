@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface Alert {
   id: string;
@@ -14,15 +15,17 @@ interface Alert {
   priority: "high" | "medium" | "low";
 }
 
-const initialAlerts: Alert[] = [
-    { id: "1", type: "warning", title: "Zakašnjela pošiljka", description: "Pošiljka BG-2024-001 kasni 2 sata.", timestamp: "prije 2 min", priority: "high" },
-    { id: "2", type: "error", title: "Blokirana ruta", description: "Potrebna alternativna ruta za Sarajevo.", timestamp: "prije 15 min", priority: "high" },
-    { id: "3", type: "info", title: "CEFTA dokumentacija", description: "Ažurirane promjene trgovinskog sporazuma.", timestamp: "prije 1 sat", priority: "medium" },
-    { id: "4", type: "success", title: "Dostava završena", description: "Pošiljka MK-2024-089 isporučena.", timestamp: "prije 2 sata", priority: "low" },
-    { id: "5", type: "warning", title: "Niska temperatura", description: "Temperatura u hladnjači #3 pala ispod praga.", timestamp: "prije 3 sata", priority: "medium" },
-];
-
 const AlertsPanel = () => {
+  const { t } = useTranslation();
+
+  const initialAlerts: Alert[] = [
+    { id: "1", type: "warning", title: t("alert.delayedShipment"), description: t("alert.delayedShipment.description"), timestamp: `${t("alert.time.ago")} 2 min`, priority: "high" },
+    { id: "2", type: "error", title: t("alert.blockedRoute"), description: t("alert.blockedRoute.description"), timestamp: `${t("alert.time.ago")} 15 min`, priority: "high" },
+    { id: "3", type: "info", title: t("alert.ceftaDocumentation"), description: t("alert.ceftaDocumentation.description"), timestamp: `${t("alert.time.ago")} 1 sat`, priority: "medium" },
+    { id: "4", type: "success", title: t("alert.deliveryComplete"), description: t("alert.deliveryComplete.description"), timestamp: `${t("alert.time.ago")} 2 sata`, priority: "low" },
+    { id: "5", type: "warning", title: t("alert.lowTemperature"), description: t("alert.lowTemperature.description"), timestamp: `${t("alert.time.ago")} 3 sata`, priority: "medium" },
+  ];
+
   const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
   const [filter, setFilter] = useState<"all" | "high" | "medium" | "low">("all");
 
@@ -59,7 +62,7 @@ const AlertsPanel = () => {
 
   const getPriorityBadge = (priority: Alert["priority"]) => {
     const variant = { high: 'destructive', medium: 'secondary', low: 'outline' }[priority] as const;
-    return <Badge variant={variant}>{priority}</Badge>
+    return <Badge variant={variant}>{t(`alerts.${priority}`)}</Badge>
   };
 
   return (
@@ -67,14 +70,14 @@ const AlertsPanel = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-warning" />
-          Uživo upozorenja
-          <Badge className="ml-auto">{alerts.length} aktivnih</Badge>
+          {t("alerts.title")}
+          <Badge className="ml-auto">{alerts.length} {t("alerts.active")}</Badge>
         </CardTitle>
         <div className="flex items-center gap-2 pt-2">
-            <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>Sve</Button>
-            <Button size="sm" variant={filter === 'high' ? 'destructive' : 'outline'} onClick={() => setFilter('high')}>Visok</Button>
-            <Button size="sm" variant={filter === 'medium' ? 'secondary' : 'outline'} onClick={() => setFilter('medium')}>Srednji</Button>
-            <Button size="sm" variant={filter === 'low' ? 'outline' : 'outline'} onClick={() => setFilter('low')}>Nizak</Button>
+            <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>{t("alerts.all")}</Button>
+            <Button size="sm" variant={filter === 'high' ? 'destructive' : 'outline'} onClick={() => setFilter('high')}>{t("alerts.high")}</Button>
+            <Button size="sm" variant={filter === 'medium' ? 'secondary' : 'outline'} onClick={() => setFilter('medium')}>{t("alerts.medium")}</Button>
+            <Button size="sm" variant={filter === 'low' ? 'outline' : 'outline'} onClick={() => setFilter('low')}>{t("alerts.low")}</Button>
         </div>
       </CardHeader>
       <CardContent className="flex-1 space-y-3 overflow-y-auto custom-scrollbar">
@@ -103,15 +106,15 @@ const AlertsPanel = () => {
         {filteredAlerts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-8 text-center h-full">
             <CheckCircle className="h-8 w-8 text-success mb-2" />
-            <p className="text-sm text-muted-foreground">Nema aktivnih upozorenja</p>
-            {filter !== 'all' && <p className="text-xs text-muted-foreground">za odabrani filter</p>}
+            <p className="text-sm text-muted-foreground">{t("alerts.noAlerts")}</p>
+            {filter !== 'all' && <p className="text-xs text-muted-foreground">{t("alerts.noAlertsForFilter")}</p>}
           </div>
         )}
       </CardContent>
       <CardFooter>
         <Button variant="outline" size="sm" className="w-full" onClick={clearAll} disabled={alerts.length === 0}>
             <Trash2 className="h-3 w-3 mr-2" />
-            Očisti sve
+            {t("alerts.clearAll")}
         </Button>
       </CardFooter>
     </Card>
