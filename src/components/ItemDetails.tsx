@@ -8,6 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Map, List, FileText } from "lucide-react";
+import MapView from './MapView';
 
 
 interface Item {
@@ -15,6 +16,9 @@ interface Item {
     name: string;
     status: string;
     location: string;
+    history: { status: string; timestamp: string }[];
+    coordinates: { lat: number; lng: number };
+    documents: { name: string; url: string }[];
 }
 
 interface ItemDetailsProps {
@@ -51,8 +55,8 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
               <CardTitle>Map</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-48 bg-gray-200 rounded-md flex items-center justify-center">
-                <span className="text-gray-500">Map placeholder</span>
+              <div className="h-48 rounded-md">
+                <MapView coordinates={item.coordinates} />
               </div>
             </CardContent>
           </Card>
@@ -64,8 +68,11 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="text-sm">Item created - 2024-08-04 10:00 AM</li>
-                <li className="text-sm">Item in transit - 2024-08-04 11:30 AM</li>
+                {item.history.map((entry, index) => (
+                  <li key={index} className="text-sm">
+                    {entry.status} - {entry.timestamp}
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -77,8 +84,16 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="text-sm text-blue-500 hover:underline cursor-pointer">invoice-123.pdf</li>
-                <li className="text-sm text-blue-500 hover:underline cursor-pointer">customs-form-abc.pdf</li>
+                {item.documents.map((doc, index) => (
+                  <li key={index} className="text-sm">
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                      {doc.name}
+                    </a>
+                  </li>
+                ))}
+                {item.documents.length === 0 && (
+                    <li className="text-sm text-gray-500">No documents available.</li>
+                )}
               </ul>
             </CardContent>
           </Card>
