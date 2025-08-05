@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import ItemDetails from "./ItemDetails";
 
 const allItems = [
     { id: "ITM-001", name: "Laptop", status: "In Transit", location: "Warehouse A" },
@@ -40,6 +41,7 @@ const ItemsTable = () => {
   const [locationFilter, setLocationFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const uniqueStatuses = ["All", ...Array.from(new Set(allItems.map((item) => item.status)))];
   const uniqueLocations = ["All", ...Array.from(new Set(allItems.map((item) => item.location)))];
@@ -117,7 +119,7 @@ const ItemsTable = () => {
         </TableHeader>
         <TableBody>
           {paginatedItems.map((item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} onClick={() => setSelectedItem(item)} className="cursor-pointer">
               <TableCell>{item.id}</TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>
@@ -149,6 +151,7 @@ const ItemsTable = () => {
           Next
         </Button>
       </div>
+      <ItemDetails item={selectedItem} onClose={() => setSelectedItem(null)} />
     </div>
   );
 };
