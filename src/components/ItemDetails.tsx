@@ -8,6 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Map, List, FileText } from "lucide-react";
+import MapView from './MapView';
 
 
 interface Item {
@@ -16,6 +17,7 @@ interface Item {
     status: string;
     location: string;
     history: { status: string; timestamp: string }[];
+    coordinates: { lat: number; lng: number };
 }
 
 interface ItemDetailsProps {
@@ -52,8 +54,8 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
               <CardTitle>Map</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-48 bg-gray-200 rounded-md flex items-center justify-center">
-                <span className="text-gray-500">Map placeholder</span>
+              <div className="h-48 rounded-md">
+                <MapView coordinates={item.coordinates} />
               </div>
             </CardContent>
           </Card>

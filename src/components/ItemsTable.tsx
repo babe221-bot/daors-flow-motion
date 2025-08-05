@@ -22,6 +22,7 @@ import ItemDetails from "./ItemDetails";
 const allItems = [
     {
         id: "ITM-001", name: "Laptop", status: "In Transit", location: "Warehouse A",
+        coordinates: { lat: 44.7866, lng: 20.4489 }, // Belgrade
         history: [
             { status: "Pending", timestamp: "2024-08-04 09:00 AM" },
             { status: "In Transit", timestamp: "2024-08-04 10:30 AM" },
@@ -29,6 +30,7 @@ const allItems = [
     },
     {
         id: "ITM-002", name: "Monitor", status: "Delivered", location: "Customer",
+        coordinates: { lat: 43.8563, lng: 18.4131 }, // Sarajevo
         history: [
             { status: "Pending", timestamp: "2024-08-03 02:15 PM" },
             { status: "In Transit", timestamp: "2024-08-03 04:00 PM" },
@@ -37,12 +39,14 @@ const allItems = [
     },
     {
         id: "ITM-003", name: "Keyboard", status: "Pending", location: "Warehouse B",
+        coordinates: { lat: 45.8150, lng: 15.9819 }, // Zagreb
         history: [
             { status: "Pending", timestamp: "2024-08-04 01:00 PM" },
         ],
     },
     {
         id: "ITM-004", name: "Mouse", status: "In Transit", location: "Warehouse A",
+        coordinates: { lat: 44.7866, lng: 20.4489 }, // Belgrade
         history: [
             { status: "Pending", timestamp: "2024-08-04 09:00 AM" },
             { status: "In Transit", timestamp: "2024-08-04 10:30 AM" },
@@ -50,6 +54,7 @@ const allItems = [
     },
     {
         id: "ITM-005", name: "Webcam", status: "Delivered", location: "Customer",
+        coordinates: { lat: 42.6629, lng: 21.1655 }, // Pristina
         history: [
             { status: "Pending", timestamp: "2024-08-02 11:00 AM" },
             { status: "In Transit", timestamp: "2024-08-02 01:30 PM" },
@@ -58,12 +63,14 @@ const allItems = [
     },
     {
         id: "ITM-006", name: "Docking Station", status: "Pending", location: "Warehouse C",
+        coordinates: { lat: 41.9981, lng: 21.4254 }, // Skopje
         history: [
             { status: "Pending", timestamp: "2024-08-04 02:00 PM" },
         ],
     },
     {
         id: "ITM-007", name: "Power Adapter", status: "In Transit", location: "Warehouse B",
+        coordinates: { lat: 45.8150, lng: 15.9819 }, // Zagreb
         history: [
             { status: "Pending", timestamp: "2024-08-04 11:00 AM" },
             { status: "In Transit", timestamp: "2024-08-04 12:30 PM" },
@@ -71,6 +78,7 @@ const allItems = [
     },
     {
         id: "ITM-008", name: "USB Hub", status: "Delivered", location: "Customer",
+        coordinates: { lat: 42.4304, lng: 19.2594 }, // Podgorica
         history: [
             { status: "Pending", timestamp: "2024-08-01 10:00 AM" },
             { status: "In Transit", timestamp: "2024-08-01 11:30 AM" },
@@ -79,12 +87,14 @@ const allItems = [
     },
     {
         id: "ITM-009", name: "External HDD", status: "Pending", location: "Warehouse A",
+        coordinates: { lat: 44.7866, lng: 20.4489 }, // Belgrade
         history: [
             { status: "Pending", timestamp: "2024-08-04 03:00 PM" },
         ],
     },
     {
         id: "ITM-010", name: "Speakers", status: "In Transit", location: "Warehouse C",
+        coordinates: { lat: 41.9981, lng: 21.4254 }, // Skopje
         history: [
             { status: "Pending", timestamp: "2024-08-04 01:00 PM" },
             { status: "In Transit", timestamp: "2024-08-04 02:30 PM" },
@@ -92,6 +102,7 @@ const allItems = [
     },
     {
         id: "ITM-011", name: "Microphone", status: "Delivered", location: "Customer",
+        coordinates: { lat: 41.3275, lng: 19.8187 }, // Tirana
         history: [
             { status: "Pending", timestamp: "2024-08-03 09:00 AM" },
             { status: "In Transit", timestamp: "2024-08-03 10:30 AM" },
@@ -100,6 +111,7 @@ const allItems = [
     },
     {
         id: "ITM-012", name: "Printer", status: "Pending", location: "Warehouse B",
+        coordinates: { lat: 45.8150, lng: 15.9819 }, // Zagreb
         history: [
             { status: "Pending", timestamp: "2024-08-04 04:00 PM" },
         ],
