@@ -15,6 +15,7 @@ interface Item {
     name: string;
     status: string;
     location: string;
+    history: { status: string; timestamp: string }[];
 }
 
 interface ItemDetailsProps {
@@ -64,8 +65,11 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="text-sm">Item created - 2024-08-04 10:00 AM</li>
-                <li className="text-sm">Item in transit - 2024-08-04 11:30 AM</li>
+                {item.history.map((entry, index) => (
+                  <li key={index} className="text-sm">
+                    {entry.status} - {entry.timestamp}
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
