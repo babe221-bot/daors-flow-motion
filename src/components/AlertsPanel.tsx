@@ -1,10 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { AlertTriangle, CheckCircle, Clock, X, Trash2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+} from "@/components/ui/sheet";
 
 interface Alert {
   id: string;
@@ -15,7 +22,12 @@ interface Alert {
   priority: "high" | "medium" | "low";
 }
 
-const AlertsPanel = () => {
+interface AlertsPanelProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}
+
+const AlertsPanel: React.FC<AlertsPanelProps> = ({ isOpen, onOpenChange }) => {
   const { t } = useTranslation();
 
   const initialAlerts: Alert[] = [
@@ -66,58 +78,61 @@ const AlertsPanel = () => {
   };
 
   return (
-    <Card className="glass flex flex-col h-[28rem]">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-warning" />
-          {t("alerts.title")}
-          <Badge className="ml-auto">{alerts.length} {t("alerts.active")}</Badge>
-        </CardTitle>
-        <div className="flex items-center gap-2 pt-2">
-            <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>{t("alerts.all")}</Button>
-            <Button size="sm" variant={filter === 'high' ? 'destructive' : 'outline'} onClick={() => setFilter('high')}>{t("alerts.high")}</Button>
-            <Button size="sm" variant={filter === 'medium' ? 'secondary' : 'outline'} onClick={() => setFilter('medium')}>{t("alerts.medium")}</Button>
-            <Button size="sm" variant={filter === 'low' ? 'outline' : 'outline'} onClick={() => setFilter('low')}>{t("alerts.low")}</Button>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 space-y-3 overflow-y-auto custom-scrollbar">
-        {filteredAlerts.map((alert, index) => (
-          <div key={alert.id} className={cn("p-3 rounded-lg border-l-4 transition-all duration-300 hover-lift animate-slide-in-right group", getAlertColor(alert.type))} style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3 flex-1">
-                {getAlertIcon(alert.type)}
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm">{alert.title}</h4>
-                    {getPriorityBadge(alert.priority)}
+    <Sheet open={isOpen} onOpenChange={onOpenChange}>
+      <SheetContent className="w-[400px] sm:w-[540px] glass flex flex-col">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-warning" />
+            {t("alerts.title")}
+            <Badge className="ml-auto">{alerts.length} {t("alerts.active")}</Badge>
+          </SheetTitle>
+          <SheetDescription>
+            {t("alerts.description")}
+          </SheetDescription>
+          <div className="flex items-center gap-2 pt-2">
+              <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>{t("alerts.all")}</Button>
+              <Button size="sm" variant={filter === 'high' ? 'destructive' : 'outline'} onClick={() => setFilter('high')}>{t("alerts.high")}</Button>
+              <Button size="sm" variant={filter === 'medium' ? 'secondary' : 'outline'} onClick={() => setFilter('medium')}>{t("alerts.medium")}</Button>
+              <Button size="sm" variant={filter === 'low' ? 'outline' : 'outline'} onClick={() => setFilter('low')}>{t("alerts.low")}</Button>
+          </div>
+        </SheetHeader>
+        <div className="flex-1 space-y-3 overflow-y-auto custom-scrollbar p-4">
+          {filteredAlerts.map((alert, index) => (
+            <div key={alert.id} className={cn("p-3 rounded-lg border-l-4 transition-all duration-300 hover-lift animate-slide-in-right group", getAlertColor(alert.type))} style={{ animationDelay: `${index * 100}ms` }}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 flex-1">
+                  {getAlertIcon(alert.type)}
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-sm">{alert.title}</h4>
+                      {getPriorityBadge(alert.priority)}
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{alert.description}</p>
+                    <span className="text-xs text-muted-foreground">{alert.timestamp}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{alert.description}</p>
-
-                  <span className="text-xs text-muted-foreground">{alert.timestamp}</span>
                 </div>
+                <Button variant="ghost" size="sm" onClick={() => removeAlert(alert.id)} className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 hover:bg-destructive/20">
+                  <X className="h-3 w-3" />
+                </Button>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => removeAlert(alert.id)} className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 hover:bg-destructive/20">
-                <X className="h-3 w-3" />
-              </Button>
             </div>
-          </div>
-        ))}
-        
-        {filteredAlerts.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-8 text-center h-full">
-            <CheckCircle className="h-8 w-8 text-success mb-2" />
-            <p className="text-sm text-muted-foreground">{t("alerts.noAlerts")}</p>
-            {filter !== 'all' && <p className="text-xs text-muted-foreground">{t("alerts.noAlertsForFilter")}</p>}
-          </div>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button variant="outline" size="sm" className="w-full" onClick={clearAll} disabled={alerts.length === 0}>
-            <Trash2 className="h-3 w-3 mr-2" />
-            {t("alerts.clearAll")}
-        </Button>
-      </CardFooter>
-    </Card>
+          ))}
+          {filteredAlerts.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-8 text-center h-full">
+              <CheckCircle className="h-8 w-8 text-success mb-2" />
+              <p className="text-sm text-muted-foreground">{t("alerts.noAlerts")}</p>
+              {filter !== 'all' && <p className="text-xs text-muted-foreground">{t("alerts.noAlertsForFilter")}</p>}
+            </div>
+          )}
+        </div>
+        <SheetFooter>
+          <Button variant="outline" size="sm" className="w-full" onClick={clearAll} disabled={alerts.length === 0}>
+              <Trash2 className="h-3 w-3 mr-2" />
+              {t("alerts.clearAll")}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 };
 

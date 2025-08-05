@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import ParticleBackground from "@/components/ParticleBackground";
 import { useTranslation } from "react-i18next";
+import EnhancedFeatures from "@/components/EnhancedFeatures";
 
 const Settings = () => {
   const { t, i18n } = useTranslation();
@@ -171,6 +172,9 @@ const Settings = () => {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Enhanced Features Teaser */}
+                <EnhancedFeatures />
 
                 <div className="flex justify-end">
                   <Button size="lg" onClick={handleSave} className="bg-gradient-primary hover:scale-105 transition-transform">

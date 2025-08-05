@@ -36,6 +36,7 @@ const Index = () => {
   const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isAlertsPanelOpen, setIsAlertsPanelOpen] = useState(false);
   const [metricData, setMetricData] = useState<MetricData | null>(null);
   const [shipmentData, setShipmentData] = useState<ChartData | null>(null);
   const [revenueData, setRevenueData] = useState<ChartData | null>(null);
@@ -110,9 +111,15 @@ const Index = () => {
         />
         
         <Sidebar 
-          isOpen={sidebarOpen} 
+          isOpen={sidebarOpen}
+          onAlertsClick={() => setIsAlertsPanelOpen(true)}
         />
         
+        <AlertsPanel
+          isOpen={isAlertsPanelOpen}
+          onOpenChange={setIsAlertsPanelOpen}
+        />
+
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <div className="space-y-2 animate-slide-up-fade">
@@ -278,9 +285,7 @@ const Index = () => {
                   })}
                 </CardContent>
               </Card>
-              <div className="animate-slide-up-fade" style={{ animationDelay: "900ms" }}>
-                <AlertsPanel />
-              </div>
+              {/* The AlertsPanel is now a slide-out drawer, so it's removed from the main layout here */}
             </div>
 
             <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "1000ms" }}>
