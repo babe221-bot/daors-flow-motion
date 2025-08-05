@@ -27,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { getMetricData, getShipmentData, getRevenueData, getRouteData, getLiveRoutes } from "@/lib/api";
 import { MetricData, ChartData, LiveRoute } from "@/lib/types";
+import Chatbot from "@/components/Chatbot";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -231,6 +232,7 @@ const Index = () => {
             </div>
           </div>
         </main>
+        <Chatbot />
       </div>
     </div>
   );
