@@ -148,7 +148,7 @@ const shipmentData: ChartData[] = [
     { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
   ];
 
-import { Item, ChartData, LiveRoute, MetricData, Anomaly } from "./types";
+import { Item, ChartData, LiveRoute, MetricData, Anomaly, Notification } from "./types";
 
 // ... (keep the existing allItems, shipmentData, etc.)
 
@@ -215,10 +215,36 @@ export const getRevenueData = (): Promise<ChartData[]> => fetchData(revenueData)
 export const getRouteData = (): Promise<ChartData[]> => fetchData(routeData);
 export const getLiveRoutes = (): Promise<LiveRoute[]> => fetchData(liveRoutes);
 export const getMetricData = (): Promise<MetricData> => fetchData(metricData);
- feature/ai-route-optimization
 export const getAnomalies = (): Promise<Anomaly[]> => fetchData(anomalies);
 
- main
+const notifications: Notification[] = [
+    {
+        id: "NOTIF-001",
+        type: "anomaly",
+        message: "High severity anomaly detected for route RT-003.",
+        timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+        read: false,
+        relatedId: "RT-003",
+    },
+    {
+        id: "NOTIF-002",
+        type: "status_change",
+        message: "Item ITM-002 has been delivered.",
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        read: true,
+        relatedId: "ITM-002",
+    },
+    {
+        id: "NOTIF-003",
+        type: "system_message",
+        message: "System maintenance scheduled for tonight at 2 AM.",
+        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+        read: true,
+    },
+];
+
+export const getNotifications = (): Promise<Notification[]> => fetchData(notifications);
+
 
 export const fetchRoute = async (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
   const { lng: fromLng, lat: fromLat } = from;
