@@ -24,12 +24,15 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
+import { ROLES, Role } from "@/lib/types";
 
 interface SubItem {
   id: string;
   label: string;
   icon: React.ElementType;
   href: string;
+  allowedRoles: Role[];
 }
 
 interface MenuItem {
@@ -39,6 +42,7 @@ interface MenuItem {
   color: string;
   href?: string;
   subItems?: SubItem[];
+  allowedRoles: Role[];
 }
 
 interface SidebarProps {
@@ -48,6 +52,7 @@ interface SidebarProps {
 const Sidebar = ({ isOpen }: SidebarProps) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const { hasRole } = useAuth();
   const [openCollapsibles, setOpenCollapsibles] = useState<string[]>([]);
 
   const toggleCollapsible = (id: string) => {
@@ -57,38 +62,43 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
   };
 
   const menuItems: MenuItem[] = [
-    { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/" },
-    { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking" },
-    { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#" },
+    { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
     {
       id: "analytics",
       label: t("sidebar.analytics"),
       icon: BarChart3,
       color: "text-purple-400",
+      allowedRoles: [ROLES.ADMIN, ROLES.MANAGER],
       subItems: [
-        { id: "analytics-traffic", label: t("sidebar.analytics.traffic"), icon: TrafficCone, href: "#" },
-        { id: "analytics-revenue", label: t("sidebar.analytics.revenue"), icon: DollarSign, href: "#" },
-        { id: "analytics-reports", label: t("sidebar.analytics.reports"), icon: FileText, href: "#" },
+        { id: "analytics-traffic", label: t("sidebar.analytics.traffic"), icon: TrafficCone, href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
+        { id: "analytics-revenue", label: t("sidebar.analytics.revenue"), icon: DollarSign, href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
+        { id: "analytics-reports", label: t("sidebar.analytics.reports"), icon: FileText, href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
       ]
     },
-    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "#" },
+    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
     {
       id: "finance",
       label: t("sidebar.finance"),
       icon: DollarSign,
       color: "text-yellow-400",
+      allowedRoles: [ROLES.ADMIN, ROLES.MANAGER],
       subItems: [
-        { id: "finance-invoices", label: t("sidebar.finance.invoices"), icon: ClipboardList, href: "#" },
-        { id: "finance-expenses", label: t("sidebar.finance.expenses"), icon: TrendingUp, href: "#" },
+        { id: "finance-invoices", label: t("sidebar.finance.invoices"), icon: ClipboardList, href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
+        { id: "finance-expenses", label: t("sidebar.finance.expenses"), icon: TrendingUp, href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
       ]
     },
-    { id: "alerts", label: t("sidebar.alerts"), icon: AlertTriangle, color: "text-red-400", href: "#" },
+    { id: "alerts", label: t("sidebar.alerts"), icon: AlertTriangle, color: "text-red-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
   ];
 
-  const bottomItems = [
-    { id: "support", label: t("sidebar.support"), icon: LifeBuoy, href: "/support" },
-    { id: "settings", label: t("sidebar.settings"), icon: Settings, href: "/settings" },
+  const bottomItems: MenuItem[] = [
+    { id: "support", label: t("sidebar.support"), icon: LifeBuoy, href: "/support", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "settings", label: t("sidebar.settings"), icon: Settings, href: "/settings", allowedRoles: [ROLES.ADMIN] },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => hasRole(item.allowedRoles));
+  const filteredBottomItems = bottomItems.filter(item => hasRole(item.allowedRoles));
 
   const renderMenuItem = (item: MenuItem, index: number) => {
     const isActive = location.pathname === item.href || 
@@ -161,14 +171,14 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
     >
       <div className="flex flex-col h-full p-4">
         <nav className="flex-1 space-y-2">
-          {menuItems.map(renderMenuItem)}
+          {filteredMenuItems.map(renderMenuItem)}
         </nav>
 
         <div className="space-y-2 pt-4 border-t border-border/50">
-          {bottomItems.map((item) => {
+          {filteredBottomItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
-                <Link to={item.href} key={item.id}>
+                <Link to={item.href || "#"} key={item.id}>
                     <Button
                         variant="ghost"
                         className={cn("w-full justify-start gap-3 text-left transition-all duration-200", isActive ? "bg-primary/20 text-primary" : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
