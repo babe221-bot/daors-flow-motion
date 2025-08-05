@@ -7,28 +7,25 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Map, List, FileText } from "lucide-react";
+import { Map, List } from "lucide-react";
 import MapView from './MapView';
+import DocumentManager from './DocumentManager';
+import { Item } from "@/lib/types";
 
-
-interface Item {
-    id: string;
-    name: string;
-    status: string;
-    location: string;
-    history: { status: string; timestamp: string }[];
-    coordinates: { lat: number; lng: number };
-    documents: { name: string; url: string }[];
-}
 
 interface ItemDetailsProps {
     item: Item | null;
     onClose: () => void;
+    onItemChange: (updatedItem: Item) => void;
 }
 
 
-const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
+const ItemDetails = ({ item, onClose, onItemChange }: ItemDetailsProps) => {
   if (!item) return null;
+
+  const handleDocumentsChange = (newDocuments: Item['documents']) => {
+    onItemChange({ ...item, documents: newDocuments });
+  };
 
   return (
     <Dialog open={!!item} onOpenChange={onClose}>
@@ -77,26 +74,7 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center space-x-2">
-              <FileText className="w-5 h-5" />
-              <CardTitle>Associated Documents</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {item.documents.map((doc, index) => (
-                  <li key={index} className="text-sm">
-                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                      {doc.name}
-                    </a>
-                  </li>
-                ))}
-                {item.documents.length === 0 && (
-                    <li className="text-sm text-gray-500">No documents available.</li>
-                )}
-              </ul>
-            </CardContent>
-          </Card>
+          <DocumentManager item={item} onDocumentsChange={handleDocumentsChange} />
         </div>
       </DialogContent>
     </Dialog>
