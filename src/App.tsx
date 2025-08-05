@@ -32,8 +32,13 @@ const App = () => (
           <Route path="/not-found" element={<NotFound />} />
 
           {/* Protected routes for internal staff */}
+import RouteOptimization from "./pages/RouteOptimization";
+
+// ... inside the Routes component
+
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]} />}>
             <Route path="/" element={<Index />} />
+            <Route path="/route-optimization" element={<RouteOptimization />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER]} />}>

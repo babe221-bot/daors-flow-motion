@@ -13,6 +13,10 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 
+import { getAnomalies } from "@/lib/api";
+import { Anomaly } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+
 interface Alert {
   id: string;
   type: "warning" | "error" | "info" | "success";
@@ -25,20 +29,32 @@ interface Alert {
 interface AlertsPanelProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  alerts: Anomaly[];
+  onClearAlerts: () => void;
+  onRemoveAlert: (id: string) => void;
 }
 
-const AlertsPanel: React.FC<AlertsPanelProps> = ({ isOpen, onOpenChange }) => {
+const anomalyToAlert = (anomaly: Anomaly): Alert => {
+  const typeMap: Record<Anomaly["severity"], Alert["type"]> = {
+    high: "error",
+    medium: "warning",
+    low: "info",
+  };
+  return {
+    id: anomaly.id,
+    type: typeMap[anomaly.severity],
+    title: anomaly.type.replace(/_/g, " "),
+    description: anomaly.description,
+    timestamp: new Date(anomaly.timestamp).toLocaleString(),
+    priority: anomaly.severity,
+  };
+};
+
+const AlertsPanel: React.FC<AlertsPanelProps> = ({ isOpen, onOpenChange, alerts: anomalies, onClearAlerts, onRemoveAlert }) => {
   const { t } = useTranslation();
+  const [filter, setFilter] = useState<"all" | "high" | "medium" | "low">("all");
 
-  const initialAlerts: Alert[] = [
-    { id: "1", type: "warning", title: t("alert.delayedShipment"), description: t("alert.delayedShipment.description"), timestamp: `${t("alert.time.ago")} 2 min`, priority: "high" },
-    { id: "2", type: "error", title: t("alert.blockedRoute"), description: t("alert.blockedRoute.description"), timestamp: `${t("alert.time.ago")} 15 min`, priority: "high" },
-    { id: "3", type: "info", title: t("alert.ceftaDocumentation"), description: t("alert.ceftaDocumentation.description"), timestamp: `${t("alert.time.ago")} 1 sat`, priority: "medium" },
-    { id: "4", type: "success", title: t("alert.deliveryComplete"), description: t("alert.deliveryComplete.description"), timestamp: `${t("alert.time.ago")} 2 sata`, priority: "low" },
-    { id: "5", type: "warning", title: t("alert.lowTemperature"), description: t("alert.lowTemperature.description"), timestamp: `${t("alert.time.ago")} 3 sata`, priority: "medium" },
-  ];
-
-  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
+  const alerts = useMemo(() => anomalies.map(anomalyToAlert), [anomalies]);
   const [filter, setFilter] = useState<"all" | "high" | "medium" | "low">("all");
 
   const filteredAlerts = useMemo(() => {
