@@ -215,7 +215,10 @@ export const getRevenueData = (): Promise<ChartData[]> => fetchData(revenueData)
 export const getRouteData = (): Promise<ChartData[]> => fetchData(routeData);
 export const getLiveRoutes = (): Promise<LiveRoute[]> => fetchData(liveRoutes);
 export const getMetricData = (): Promise<MetricData> => fetchData(metricData);
+ feature/ai-route-optimization
 export const getAnomalies = (): Promise<Anomaly[]> => fetchData(anomalies);
+
+ main
 
 export const fetchRoute = async (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
   const { lng: fromLng, lat: fromLat } = from;
