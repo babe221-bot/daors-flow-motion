@@ -1,30 +1,16 @@
 import { Package } from "lucide-react";
 import ItemsTable from "@/components/ItemsTable";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 const ItemTracking = () => {
+  const { t } = useTranslation();
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Package className="mr-2" />
-            Item Tracking
-          </CardTitle>
-          <CardDescription>
-            Search, filter, and manage all items in the supply chain.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ItemsTable />
-        </CardContent>
-      </Card>
+      <h1 className="text-3xl font-bold mb-4 flex items-center">
+        <Package className="mr-2" />
+        {t('itemTracking.title')}
+      </h1>
+      <ItemsTable />
     </div>
   );
 };

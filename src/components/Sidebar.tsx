@@ -23,6 +23,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useTranslation } from "react-i18next";
 
 interface SubItem {
   id: string;
@@ -45,6 +46,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen }: SidebarProps) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [openCollapsibles, setOpenCollapsibles] = useState<string[]>([]);
 
@@ -55,37 +57,37 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
   };
 
   const menuItems: MenuItem[] = [
-    { id: "dashboard", label: "Kontrolna tabla", icon: Home, color: "text-primary", href: "/" },
-    { id: "item-tracking", label: "Praćenje artikala", icon: Package, color: "text-green-400", href: "/item-tracking" },
-    { id: "shipments", label: "Pošiljke", icon: Truck, color: "text-blue-400", href: "#" },
+    { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/" },
+    { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking" },
+    { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#" },
     {
       id: "analytics",
-      label: "Analitika",
+      label: t("sidebar.analytics"),
       icon: BarChart3,
       color: "text-purple-400",
       subItems: [
-        { id: "analytics-traffic", label: "Saobraćaj", icon: TrafficCone, href: "#" },
-        { id: "analytics-revenue", label: "Prihodi", icon: DollarSign, href: "#" },
-        { id: "analytics-reports", label: "Izvještaji", icon: FileText, href: "#" },
+        { id: "analytics-traffic", label: t("sidebar.analytics.traffic"), icon: TrafficCone, href: "#" },
+        { id: "analytics-revenue", label: t("sidebar.analytics.revenue"), icon: DollarSign, href: "#" },
+        { id: "analytics-reports", label: t("sidebar.analytics.reports"), icon: FileText, href: "#" },
       ]
     },
-    { id: "tracking", label: "Praćenje", icon: MapPin, color: "text-orange-400", href: "#" },
+    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "#" },
     {
       id: "finance",
-      label: "Finansije",
+      label: t("sidebar.finance"),
       icon: DollarSign,
       color: "text-yellow-400",
       subItems: [
-        { id: "finance-invoices", label: "Fakture", icon: ClipboardList, href: "#" },
-        { id: "finance-expenses", label: "Troškovi", icon: TrendingUp, href: "#" },
+        { id: "finance-invoices", label: t("sidebar.finance.invoices"), icon: ClipboardList, href: "#" },
+        { id: "finance-expenses", label: t("sidebar.finance.expenses"), icon: TrendingUp, href: "#" },
       ]
     },
-    { id: "alerts", label: "Upozorenja", icon: AlertTriangle, color: "text-red-400", href: "#" },
+    { id: "alerts", label: t("sidebar.alerts"), icon: AlertTriangle, color: "text-red-400", href: "#" },
   ];
 
   const bottomItems = [
-    { id: "support", label: "Podrška", icon: LifeBuoy, href: "/support" },
-    { id: "settings", label: "Postavke", icon: Settings, href: "/settings" },
+    { id: "support", label: t("sidebar.support"), icon: LifeBuoy, href: "/support" },
+    { id: "settings", label: t("sidebar.settings"), icon: Settings, href: "/settings" },
   ];
 
   const renderMenuItem = (item: MenuItem, index: number) => {
@@ -182,7 +184,7 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
         <div className={cn("mt-4 pt-4 border-t border-border/50", !isOpen && "text-center")}>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
-            {isOpen && <span className="text-xs text-muted-foreground">Sistem Online</span>}
+            {isOpen && <span className="text-xs text-muted-foreground">{t("sidebar.systemOnline")}</span>}
           </div>
         </div>
       </div>
