@@ -14,7 +14,8 @@ import {
   ClipboardList,
   TrafficCone,
   FileText,
-  LifeBuoy
+  LifeBuoy,
+  Warehouse
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,7 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
   const menuItems: MenuItem[] = [
     { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/" },
     { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking" },
+    { id: "inventory", label: t("sidebar.inventory"), icon: Warehouse, color: "text-orange-400", href: "/inventory" },
     { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#" },
     {
       id: "analytics",
