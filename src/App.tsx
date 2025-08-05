@@ -11,6 +11,11 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Support from "./pages/Support";
 import Inventory from "./pages/Inventory";
+ feat/inventory-real-time-updates
+import CustomerDashboard from "./pages/CustomerDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+ main
 
 const queryClient = new QueryClient();
 
@@ -22,12 +27,25 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+ feat/inventory-real-time-updates
+          <Route element={<ProtectedRoute requiredRole="admin" />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/item-tracking" element={<ItemTracking />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/support" element={<Support />} />
+          </Route>
+          <Route element={<ProtectedRoute requiredRole="customer" />}>
+            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+          </Route>
+
           <Route path="/" element={<Index />} />
           <Route path="/live-map" element={<LiveMap />} />
           <Route path="/item-tracking" element={<ItemTracking />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/support" element={<Support />} />
+ main
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
