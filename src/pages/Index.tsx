@@ -25,22 +25,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-logistics.jpg";
 import { useTranslation } from "react-i18next";
+import { startGpsSimulation, stopGpsSimulation, getVehicles, getRoutes } from "@/lib/gps-simulator";
+import { Vehicle } from "@/components/MapView";
+import { useAuth } from "@/context/AuthContext";
+import { ROLES } from "@/lib/types";
 
 const Index = () => {
   const { t } = useTranslation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, hasRole } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [liveVehicles, setLiveVehicles] = useState<Vehicle[]>(getVehicles());
+  const staticRoutes = getRoutes();
 
-  // Simulate login after 2 seconds
   useEffect(() => {
-    const timer = setTimeout(() => setIsAuthenticated(true), 2000);
-    return () => clearTimeout(timer);
+    startGpsSimulation(setLiveVehicles);
+    return () => stopGpsSimulation();
   }, []);
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+  if (user && user.role === ROLES.CLIENT) {
+    return <Navigate to="/portal/dashboard" replace />;
   }
 
   // Mock data for charts
@@ -67,18 +71,11 @@ const Index = () => {
     { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
   ];
 
-  const liveRoutes = [
-    { id: "RT-001", from: "Beograd", to: "Sarajevo", status: "aktivna", progress: 67, eta: "2s 15m", driver: "Miloš P." },
-    { id: "RT-002", from: "Zagreb", to: "Ljubljana", status: "završena", progress: 100, eta: "Dostavljeno", driver: "Ana K." },
-    { id: "RT-003", from: "Skoplje", to: "Tirana", status: "kašnjenje", progress: 23, eta: "4s 30m", driver: "Stefan V." },
-    { id: "RT-004", from: "Podgorica", to: "Pristina", status: "aktivna", progress: 89, eta: "45m", driver: "Marko D." }
-  ];
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case t("route.status.active"): return "bg-primary text-primary-foreground";
-      case t("route.status.finished"): return "bg-success text-success-foreground";
-      case t("route.status.delayed"): return "bg-destructive text-destructive-foreground";
+      case "On Time": return "bg-primary text-primary-foreground";
+      case "Finished": return "bg-success text-success-foreground";
+      case "Delayed": return "bg-destructive text-destructive-foreground";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -109,74 +106,87 @@ const Index = () => {
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <div className="space-y-2 animate-slide-up-fade">
-              <h1 className="text-3xl font-bold gradient-text">{t('index.title')}</h1>
-              <p className="text-muted-foreground">{t('index.description')}</p>
+              <h1 className="text-3xl font-bold gradient-text">{t('index.title', `Welcome, ${user?.username}`)}</h1>
+              <p className="text-muted-foreground">{t('index.description', 'Here is your logistics overview.')}</p>
             </div>
 
-            {/* ... rest of the component remains unchanged ... */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title={t('index.activeShipments')} value={478} change={t('index.activeShipments.change')} changeType="positive" icon={Truck} delay={100} />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.activeShipments')}</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(478)} type="line" />
-                </DialogContent>
-              </Dialog>
+            {/* Admin & Manager View */}
+            {hasRole([ROLES.ADMIN, ROLES.MANAGER]) && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title={t('index.activeShipments')} value={478} change={t('index.activeShipments.change')} changeType="positive" icon={Truck} delay={100} />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>{t('index.historicalDataFor')}: {t('index.activeShipments')}</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(478)} type="line" />
+                    </DialogContent>
+                  </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title={t('index.totalRevenue')} value={125840} change={t('index.totalRevenue.change')} changeType="positive" icon={DollarSign} delay={200} currency="€" />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.totalRevenue')}</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(125840)} type="line" />
-                </DialogContent>
-              </Dialog>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title={t('index.totalRevenue')} value={125840} change={t('index.totalRevenue.change')} changeType="positive" icon={DollarSign} delay={200} currency="€" />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>{t('index.historicalDataFor')}: {t('index.totalRevenue')}</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(125840)} type="line" />
+                    </DialogContent>
+                  </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title={t('index.onTimeDelivery')} value="94.8" change={t('index.onTimeDelivery.change')} changeType="positive" icon={Clock} delay={300} currency="%" />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.onTimeDelivery')}</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(94.8)} type="line" />
-                </DialogContent>
-              </Dialog>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title={t('index.onTimeDelivery')} value="94.8" change={t('index.onTimeDelivery.change')} changeType="positive" icon={Clock} delay={300} currency="%" />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>{t('index.historicalDataFor')}: {t('index.onTimeDelivery')}</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(94.8)} type="line" />
+                    </DialogContent>
+                  </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title={t('index.borderCrossings')} value={1247} change={t('index.borderCrossings.change')} changeType="neutral" icon={Shield} delay={400} />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.borderCrossings')}</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(1247)} type="line" />
-                </DialogContent>
-              </Dialog>
-            </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title={t('index.borderCrossings')} value={1247} change={t('index.borderCrossings.change')} changeType="neutral" icon={Shield} delay={400} />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>{t('index.historicalDataFor')}: {t('index.borderCrossings')}</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(1247)} type="line" />
+                    </DialogContent>
+                  </Dialog>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <AnimatedChart title={t('index.shipmentStatusDistribution')} data={shipmentData} type="donut" delay={500} />
-              <AnimatedChart title={t('index.monthlyRevenueTrend')} data={revenueData} type="line" delay={600} />
-              <AnimatedChart title={t('index.popularTradeRoutes')} data={routeData} type="bar" delay={700} />
-            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <AnimatedChart title={t('index.shipmentStatusDistribution')} data={shipmentData} type="donut" delay={500} />
+                  <AnimatedChart title={t('index.monthlyRevenueTrend')} data={revenueData} type="line" delay={600} />
+                  <AnimatedChart title={t('index.popularTradeRoutes')} data={routeData} type="bar" delay={700} />
+                </div>
+              </>
+            )}
+
+            {/* Client View */}
+            {hasRole(ROLES.CLIENT) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <MetricCard title={t('index.activeShipments')} value={user?.associatedItemIds?.length || 0} change={t('index.activeShipments.change')} changeType="positive" icon={Truck} delay={100} />
+                 <MetricCard title={t('index.onTimeDelivery')} value="98.2" change={t('index.onTimeDelivery.change')} changeType="positive" icon={Clock} delay={300} currency="%" />
+                 <MetricCard title={t('index.totalShipments')} value={(user?.associatedItemIds?.length || 0) + 5} change="+2 this month" changeType="neutral" icon={Shield} delay={400} />
+              </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "800ms" }}>
@@ -186,30 +196,48 @@ const Index = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {liveRoutes.map((route, index) => (
-                    <div key={route.id} className="p-3 rounded-lg border border-border/50 bg-gradient-card hover-lift transition-all duration-200" style={{ animationDelay: `${900 + index * 100}ms` }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Badge className={getStatusColor(route.status)}>{route.status}</Badge>
-                          <span className="font-medium text-sm">{route.id}</span>
+                  {liveVehicles.map((vehicle, index) => {
+                    const routeInfo = staticRoutes.find(r => r.id === vehicle.id);
+                    if (!routeInfo) return null;
+
+                    // For clients and drivers, only show their associated routes
+                    if (hasRole([ROLES.CLIENT, ROLES.DRIVER]) && !user?.associatedItemIds?.includes(routeInfo.id.replace('ROUTE', 'ITM'))) {
+                        return null;
+                    }
+
+                    const from = routeInfo.path[0];
+                    const to = routeInfo.path[routeInfo.path.length - 1];
+                    const fromLabel = `[${from[0].toFixed(2)}, ${from[1].toFixed(2)}]`;
+                    const toLabel = `[${to[0].toFixed(2)}, ${to[1].toFixed(2)}]`;
+
+                    const progress = vehicle.status === 'Finished' ? 100 : Math.floor(Math.random() * 80) + 10;
+                    const eta = vehicle.status === 'Finished' ? 'Delivered' : `${Math.floor(Math.random() * 5)}h ${Math.floor(Math.random() * 59)}m`;
+
+                    return (
+                      <div key={vehicle.id} className="p-3 rounded-lg border border-border/50 bg-gradient-card hover-lift transition-all duration-200" style={{ animationDelay: `${900 + index * 100}ms` }}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Badge className={getStatusColor(vehicle.status)}>{vehicle.status}</Badge>
+                            <span className="font-medium text-sm">{vehicle.id}</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">{eta}</span>
                         </div>
-                        <span className="text-sm text-muted-foreground">{route.eta}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm mb-2">
-                        <span>{route.from} → {route.to}</span>
-                        <span className="text-muted-foreground">{t('route.driver')}: {route.driver}</span>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span>{t('route.progress')}</span>
-                          <span>{route.progress}%</span>
+                        <div className="flex items-center justify-between text-sm mb-2">
+                          <span>{fromLabel} → {toLabel}</span>
+                          <span className="text-muted-foreground">{t('route.driver')}: {vehicle.driver}</span>
                         </div>
-                        <div className="h-2 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${route.progress}%` }} />
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span>{t('route.progress')}</span>
+                            <span>{progress}%</span>
+                          </div>
+                          <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
               <div className="animate-slide-up-fade" style={{ animationDelay: "900ms" }}>
@@ -217,36 +245,40 @@ const Index = () => {
               </div>
             </div>
 
-            <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "1000ms" }}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-primary" /> {t('index.westernBalkanTradeOverview')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center space-y-2">
-                    <div className="text-2xl font-bold text-primary">7</div>
-                    <div className="text-sm text-muted-foreground">{t('index.ceftaCountries')}</div>
-                    <div className="text-xs text-muted-foreground">{t('index.ceftaCountries.list')}</div>
-                  </div>
-                  <div className="text-center space-y-2">
-                    <div className="text-2xl font-bold text-success">€2.8B</div>
-                    <div className="text-sm text-muted-foreground">{t('index.annualTradeVolume')}</div>
-                    <div className="text-xs text-muted-foreground">{t('index.annualTradeVolume.description')}</div>
-                  </div>
-                  <div className="text-center space-y-2">
-                    <div className="text-2xl font-bold text-warning">145</div>
-                    <div className="text-sm text-muted-foreground">{t('index.borderCrossings.count')}</div>
-                    <div className="text-xs text-muted-foreground">{t('index.borderCrossings.description')}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {hasRole([ROLES.ADMIN, ROLES.MANAGER]) && (
+              <>
+                <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "1000ms" }}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-primary" /> {t('index.westernBalkanTradeOverview')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="text-center space-y-2">
+                        <div className="text-2xl font-bold text-primary">7</div>
+                        <div className="text-sm text-muted-foreground">{t('index.ceftaCountries')}</div>
+                        <div className="text-xs text-muted-foreground">{t('index.ceftaCountries.list')}</div>
+                      </div>
+                      <div className="text-center space-y-2">
+                        <div className="text-2xl font-bold text-success">€2.8B</div>
+                        <div className="text-sm text-muted-foreground">{t('index.annualTradeVolume')}</div>
+                        <div className="text-xs text-muted-foreground">{t('index.annualTradeVolume.description')}</div>
+                      </div>
+                      <div className="text-center space-y-2">
+                        <div className="text-2xl font-bold text-warning">145</div>
+                        <div className="text-sm text-muted-foreground">{t('index.borderCrossings.count')}</div>
+                        <div className="text-xs text-muted-foreground">{t('index.borderCrossings.description')}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-            <div className="mt-8">
-              <EnhancedFeatures />
-            </div>
+                <div className="mt-8">
+                  <EnhancedFeatures />
+                </div>
+              </>
+            )}
           </div>
         </main>
       </div>
