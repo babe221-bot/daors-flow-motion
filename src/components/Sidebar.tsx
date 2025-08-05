@@ -14,7 +14,8 @@ import {
   ClipboardList,
   TrafficCone,
   FileText,
-  LifeBuoy
+  LifeBuoy,
+  Warehouse
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -47,9 +48,10 @@ interface MenuItem {
 
 interface SidebarProps {
   isOpen: boolean;
+  onAlertsClick: () => void;
 }
 
-const Sidebar = ({ isOpen }: SidebarProps) => {
+const Sidebar = ({ isOpen, onAlertsClick }: SidebarProps) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { hasRole } = useAuth();
@@ -62,9 +64,22 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
   };
 
   const menuItems: MenuItem[] = [
+ feature/document-and-gps-tracking
     { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
     { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
     { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
+
+ feature/document-and-gps-tracking
+    { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
+
+    { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/" },
+    { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking" },
+    { id: "inventory", label: t("sidebar.inventory"), icon: Warehouse, color: "text-orange-400", href: "/inventory" },
+    { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#" },
+ main
+ main
     {
       id: "analytics",
       label: t("sidebar.analytics"),
@@ -77,7 +92,15 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
         { id: "analytics-reports", label: t("sidebar.analytics.reports"), icon: FileText, href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
       ]
     },
+ feature/document-and-gps-tracking
     { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
+
+ feature/document-and-gps-tracking
+    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
+
+    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map" },
+ main
+ main
     {
       id: "finance",
       label: t("sidebar.finance"),
@@ -109,6 +132,9 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
         <>
             <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
             {isOpen && <span className={cn("flex-1", isActive && "font-semibold")}>{item.label}</span>}
+            {item.id === 'alerts' && isOpen && (
+              <Badge variant="destructive" className="animate-pulse">3</Badge>
+            )}
             {isOpen && item.subItems && <ChevronRight className={cn("h-4 w-4 transition-transform", isCollapsibleOpen && "rotate-90")} />}
             {!isOpen && isActive && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-card border border-border rounded-md text-sm whitespace-nowrap animate-slide-in-right">
@@ -117,6 +143,20 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
             )}
         </>
     );
+
+    if (item.id === 'alerts') {
+      return (
+        <Button
+          key={item.id}
+          variant="ghost"
+          onClick={onAlertsClick}
+          className={cn("w-full justify-start gap-3 text-left transition-all duration-200 hover-lift", "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
+          style={{ animationDelay: `${index * 50}ms` }}
+        >
+          {buttonContent}
+        </Button>
+      );
+    }
 
     if (item.subItems && isOpen) {
       return (
