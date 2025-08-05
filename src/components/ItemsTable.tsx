@@ -1,12 +1,4 @@
- feature/document-and-gps-tracking
 import { useState, useMemo } from "react";
-
- feature/document-and-gps-tracking
-import { useState, useMemo } from "react";
-
-import { useState } from "react";
- main
- main
 import {
   Table,
   TableBody,
@@ -18,96 +10,31 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 import ItemDetails from "./ItemDetails";
- feature/document-and-gps-tracking
 import { Item, ROLES } from "@/lib/types";
 import { useAuth } from "@/context/AuthContext";
-
- feature/document-and-gps-tracking
-import { Item, ROLES } from "@/lib/types";
-import { useAuth } from "@/context/AuthContext";
-
-import { Item } from "@/lib/types";
- main
- main
+import { useQuery } from "@tanstack/react-query";
+import { getItems } from "@/lib/api";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ItemsTable = () => {
   const { t } = useTranslation();
   const { user, hasRole } = useAuth();
+  const { data: initialItems = [] } = useQuery({ queryKey: ['items'], queryFn: getItems });
 
-  const initialItems: Item[] = [
-    {
-      id: "ITM-001",
-      name: "Industrial Machinery Parts",
-      status: t("shipment.status.inTransit"),
-      location: "Port of Koper, Slovenia",
-      coordinates: { lat: 45.5462, lng: 13.7295 },
-      history: [
-        { status: "Created", timestamp: "2023-10-01 09:00" },
-        { status: "Picked up", timestamp: "2023-10-01 14:00" },
-        { status: "In Transit", timestamp: "2023-10-02 08:30" },
-      ],
-      documents: [
-        { name: "Bill_of_Lading_ITM-001.pdf", url: "#" },
-        { name: "Customs_Declaration_ITM-001.pdf", url: "#" },
-      ],
-    },
-    {
-      id: "ITM-002",
-      name: "Pharmaceutical Supplies",
-      status: t("shipment.status.delivered"),
-      location: "Clinical Center, Belgrade",
-      coordinates: { lat: 44.7965, lng: 20.4507 },
-      history: [{ status: "Delivered", timestamp: "2023-10-03 11:00" }],
-      documents: [{ name: "Proof_of_Delivery_ITM-002.pdf", url: "#" }],
-    },
-    {
-      id: "ITM-003",
-      name: "Automotive Components",
-      status: t("shipment.status.pending"),
-      location: "Factory, Kragujevac",
-      coordinates: { lat: 44.0167, lng: 20.9167 },
-      history: [{ status: "Order confirmed", timestamp: "2023-10-04 16:20" }],
-      documents: [],
-    },
-    {
-      id: "ITM-004",
-      name: "Tech Electronics",
-      status: t("shipment.status.delayed"),
-      location: "Customs, Batrovci Border",
-      coordinates: { lat: 45.1094, lng: 19.1122 },
-      history: [{ status: "Customs Hold", timestamp: "2023-10-05 09:00" }],
-      documents: [
-        { name: "Commercial_Invoice_ITM-004.pdf", url: "#" },
-      ],
-    },
-  ];
-
- feature/document-and-gps-tracking
-
- feature/document-and-gps-tracking
- main
   const filteredItems = useMemo(() => {
     if (!user || hasRole([ROLES.ADMIN, ROLES.MANAGER])) {
       return initialItems;
     }
     return initialItems.filter(item => user.associatedItemIds?.includes(item.id));
-  }, [user, hasRole, t]);
+  }, [user, hasRole, initialItems]);
 
   const [items, setItems] = useState<Item[]>(filteredItems);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  useEffect(() => {
+  useState(() => {
     setItems(filteredItems);
   }, [filteredItems]);
 
- feature/document-and-gps-tracking
-
-
-  const [items, setItems] = useState<Item[]>(initialItems);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-
- main
- main
   const handleRowClick = (item: Item) => {
     setSelectedItem(item);
   };
@@ -120,7 +47,7 @@ const ItemsTable = () => {
     setItems(currentItems =>
       currentItems.map(item => (item.id === updatedItem.id ? updatedItem : item))
     );
-    setSelectedItem(updatedItem); // Keep the modal open with updated data
+    setSelectedItem(updatedItem);
   };
 
   return (
@@ -132,6 +59,7 @@ const ItemsTable = () => {
             <TableHead>{t("itemsTable.name")}</TableHead>
             <TableHead>{t("itemsTable.status")}</TableHead>
             <TableHead>{t("itemsTable.location")}</TableHead>
+            <TableHead>Predicted ETA</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -143,6 +71,20 @@ const ItemsTable = () => {
                 <Badge>{item.status}</Badge>
               </TableCell>
               <TableCell>{item.location}</TableCell>
+              <TableCell>
+                {item.predictedEta ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>{item.predictedEta.time}</TooltipTrigger>
+                      <TooltipContent>
+                        <p>Confidence: {item.predictedEta.confidence}%</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  "—"
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
