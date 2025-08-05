@@ -18,6 +18,7 @@ interface Item {
     location: string;
     history: { status: string; timestamp: string }[];
     coordinates: { lat: number; lng: number };
+    documents: { name: string; url: string }[];
 }
 
 interface ItemDetailsProps {
@@ -83,8 +84,16 @@ const ItemDetails = ({ item, onClose }: ItemDetailsProps) => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="text-sm text-blue-500 hover:underline cursor-pointer">invoice-123.pdf</li>
-                <li className="text-sm text-blue-500 hover:underline cursor-pointer">customs-form-abc.pdf</li>
+                {item.documents.map((doc, index) => (
+                  <li key={index} className="text-sm">
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                      {doc.name}
+                    </a>
+                  </li>
+                ))}
+                {item.documents.length === 0 && (
+                    <li className="text-sm text-gray-500">No documents available.</li>
+                )}
               </ul>
             </CardContent>
           </Card>
