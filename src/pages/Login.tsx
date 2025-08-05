@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/input-otp"
 import { LogIn, Tv2 } from "lucide-react";
 import VideoBackground from "@/components/VideoBackground";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show2FA, setShow2FA] = useState(false);
@@ -39,8 +41,8 @@ const Login = () => {
           {show2FA ? (
             <>
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl gradient-text">Unesite 2FA kod</CardTitle>
-                <CardDescription>Kod je poslat na vaš uređaj</CardDescription>
+                <CardTitle className="text-2xl gradient-text">{t('2fa.title')}</CardTitle>
+                <CardDescription>{t('2fa.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handle2FASubmit} className="space-y-4">
@@ -59,7 +61,7 @@ const Login = () => {
                     </InputOTP>
                   </div>
                   <Button type="submit" className="w-full">
-                    Potvrdi
+                    {t('2fa.submitButton')}
                   </Button>
                 </form>
               </CardContent>
@@ -67,13 +69,13 @@ const Login = () => {
           ) : (
             <>
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl gradient-text">Prijavite se</CardTitle>
-                <CardDescription>Unesite svoje podatke za pristup</CardDescription>
+                <CardTitle className="text-2xl gradient-text">{t('login.title')}</CardTitle>
+                <CardDescription>{t('login.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('login.email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -84,7 +86,7 @@ const Login = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Lozinka</Label>
+                    <Label htmlFor="password">{t('login.password')}</Label>
                     <Input
                       id="password"
                       type="password"
@@ -97,15 +99,15 @@ const Login = () => {
                     <div className="flex items-center space-x-2">
                       <Checkbox id="remember-me" />
                       <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Zapamti me
+                        {t('login.rememberMe')}
                       </Label>
                     </div>
                     <a href="#" className="text-sm text-primary hover:underline">
-                      Zaboravili ste lozinku?
+                      {t('login.forgotPassword')}
                     </a>
                   </div>
                   <Button type="submit" className="w-full">
-                    <LogIn className="mr-2 h-4 w-4" /> Prijavi se
+                    <LogIn className="mr-2 h-4 w-4" /> {t('login.loginButton')}
                   </Button>
                 </form>
                 <div className="relative my-4">
@@ -115,18 +117,18 @@ const Login = () => {
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-background px-2 text-muted-foreground">
-                      Ili nastavite sa
+                      {t('login.continueWith')}
                     </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Button variant="outline">
                     <Tv2 className="mr-2 h-4 w-4" />
-                    Google
+                    {t('login.google')}
                   </Button>
                   <Button variant="outline">
                     <Tv2 className="mr-2 h-4 w-4" />
-                    Facebook
+                    {t('login.facebook')}
                   </Button>
                 </div>
               </CardContent>

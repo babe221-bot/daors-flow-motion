@@ -26,8 +26,10 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-logistics.jpg";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -43,10 +45,10 @@ const Index = () => {
 
   // Mock data for charts
   const shipmentData = [
-    { label: "U tranzitu", value: 156, color: "bg-primary" },
-    { label: "Dostavljeno", value: 243, color: "bg-success" },
-    { label: "Na čekanju", value: 67, color: "bg-warning" },
-    { label: "Kašnjenje", value: 12, color: "bg-destructive" }
+    { label: t("shipment.status.inTransit"), value: 156, color: "bg-primary" },
+    { label: t("shipment.status.delivered"), value: 243, color: "bg-success" },
+    { label: t("shipment.status.pending"), value: 67, color: "bg-warning" },
+    { label: t("shipment.status.delayed"), value: 12, color: "bg-destructive" }
   ];
 
   const revenueData = [
@@ -74,9 +76,9 @@ const Index = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "aktivna": return "bg-primary text-primary-foreground";
-      case "završena": return "bg-success text-success-foreground";
-      case "kašnjenje": return "bg-destructive text-destructive-foreground";
+      case t("route.status.active"): return "bg-primary text-primary-foreground";
+      case t("route.status.finished"): return "bg-success text-success-foreground";
+      case t("route.status.delayed"): return "bg-destructive text-destructive-foreground";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -107,8 +109,8 @@ const Index = () => {
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <div className="space-y-2 animate-slide-up-fade">
-              <h1 className="text-3xl font-bold gradient-text">Logistička inteligencija Zapadnog Balkana</h1>
-              <p className="text-muted-foreground">Optimizacija logistike u realnom vremenu pomoću AI-ja kroz CEFTA trgovinske rute</p>
+              <h1 className="text-3xl font-bold gradient-text">{t('index.title')}</h1>
+              <p className="text-muted-foreground">{t('index.description')}</p>
             </div>
 
             {/* ... rest of the component remains unchanged ... */}
@@ -116,71 +118,71 @@ const Index = () => {
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title="Aktivne pošiljke" value={478} change="+12% od prošle sedmice" changeType="positive" icon={Truck} delay={100} />
+                    <MetricCard title={t('index.activeShipments')} value={478} change={t('index.activeShipments.change')} changeType="positive" icon={Truck} delay={100} />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
                   <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Aktivne pošiljke</DialogTitle>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.activeShipments')}</DialogTitle>
                   </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(478)} type="line" />
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(478)} type="line" />
                 </DialogContent>
               </Dialog>
 
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title="Ukupni prihod" value={125840} change="+8.2% od prošlog mjeseca" changeType="positive" icon={DollarSign} delay={200} currency="€" />
+                    <MetricCard title={t('index.totalRevenue')} value={125840} change={t('index.totalRevenue.change')} changeType="positive" icon={DollarSign} delay={200} currency="€" />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
                   <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Ukupni prihod</DialogTitle>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.totalRevenue')}</DialogTitle>
                   </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(125840)} type="line" />
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(125840)} type="line" />
                 </DialogContent>
               </Dialog>
 
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title="Dostava na vrijeme" value="94.8" change="+2.1% poboljšanje" changeType="positive" icon={Clock} delay={300} currency="%" />
+                    <MetricCard title={t('index.onTimeDelivery')} value="94.8" change={t('index.onTimeDelivery.change')} changeType="positive" icon={Clock} delay={300} currency="%" />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
                   <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Dostava na vrijeme</DialogTitle>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.onTimeDelivery')}</DialogTitle>
                   </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(94.8)} type="line" />
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(94.8)} type="line" />
                 </DialogContent>
               </Dialog>
 
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title="Granični prelazi" value={1247} change="23 aktivna kontrolna punkta" changeType="neutral" icon={Shield} delay={400} />
+                    <MetricCard title={t('index.borderCrossings')} value={1247} change={t('index.borderCrossings.change')} changeType="neutral" icon={Shield} delay={400} />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
                   <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Granični prelazi</DialogTitle>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.borderCrossings')}</DialogTitle>
                   </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(1247)} type="line" />
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(1247)} type="line" />
                 </DialogContent>
               </Dialog>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <AnimatedChart title="Distribucija statusa pošiljki" data={shipmentData} type="donut" delay={500} />
-              <AnimatedChart title="Mjesečni trend prihoda (€000)" data={revenueData} type="line" delay={600} />
-              <AnimatedChart title="Popularne trgovinske rute" data={routeData} type="bar" delay={700} />
+              <AnimatedChart title={t('index.shipmentStatusDistribution')} data={shipmentData} type="donut" delay={500} />
+              <AnimatedChart title={t('index.monthlyRevenueTrend')} data={revenueData} type="line" delay={600} />
+              <AnimatedChart title={t('index.popularTradeRoutes')} data={routeData} type="bar" delay={700} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "800ms" }}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" /> Praćenje ruta uživo
+                    <MapPin className="h-5 w-5 text-primary" /> {t('index.liveRouteTracking')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -195,11 +197,11 @@ const Index = () => {
                       </div>
                       <div className="flex items-center justify-between text-sm mb-2">
                         <span>{route.from} → {route.to}</span>
-                        <span className="text-muted-foreground">Vozač: {route.driver}</span>
+                        <span className="text-muted-foreground">{t('route.driver')}: {route.driver}</span>
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                          <span>Napredak</span>
+                          <span>{t('route.progress')}</span>
                           <span>{route.progress}%</span>
                         </div>
                         <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -218,25 +220,25 @@ const Index = () => {
             <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "1000ms" }}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-primary" /> Pregled trgovine Zapadnog Balkana
+                  <Globe className="h-5 w-5 text-primary" /> {t('index.westernBalkanTradeOverview')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center space-y-2">
                     <div className="text-2xl font-bold text-primary">7</div>
-                    <div className="text-sm text-muted-foreground">CEFTA države</div>
-                    <div className="text-xs text-muted-foreground">Srbija, Bosna, Crna Gora, S. Makedonija, Albanija, Moldavija, Kosovo</div>
+                    <div className="text-sm text-muted-foreground">{t('index.ceftaCountries')}</div>
+                    <div className="text-xs text-muted-foreground">{t('index.ceftaCountries.list')}</div>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="text-2xl font-bold text-success">€2.8B</div>
-                    <div className="text-sm text-muted-foreground">Godišnji obim trgovine</div>
-                    <div className="text-xs text-muted-foreground">Obrađeno kroz DaorsForge mrežu</div>
+                    <div className="text-sm text-muted-foreground">{t('index.annualTradeVolume')}</div>
+                    <div className="text-xs text-muted-foreground">{t('index.annualTradeVolume.description')}</div>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="text-2xl font-bold text-warning">145</div>
-                    <div className="text-sm text-muted-foreground">Granični prelazi</div>
-                    <div className="text-xs text-muted-foreground">AI-optimizovana carinska obrada</div>
+                    <div className="text-sm text-muted-foreground">{t('index.borderCrossings.count')}</div>
+                    <div className="text-xs text-muted-foreground">{t('index.borderCrossings.description')}</div>
                   </div>
                 </div>
               </CardContent>

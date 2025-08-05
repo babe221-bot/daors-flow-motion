@@ -12,25 +12,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 const EnhancedFeatures = () => {
+  const { t } = useTranslation();
+
   const [notifications, setNotifications] = useState([
-    { id: 1, type: "urgent", message: "Novo upozorenje za granični prelaz Šid-Bosanska Rača", time: "2 min" },
-    { id: 2, type: "info", message: "CEFTA dokumentacija ažurirana", time: "15 min" },
-    { id: 3, type: "success", message: "AI optimizacija rute završena uspješno", time: "30 min" }
+    { id: 1, type: "urgent", message: t("enhancedFeatures.notifications.urgent.borderCrossing"), time: "2 min" },
+    { id: 2, type: "info", message: t("enhancedFeatures.notifications.info.ceftaUpdate"), time: "15 min" },
+    { id: 3, type: "success", message: t("enhancedFeatures.notifications.success.aiOptimization"), time: "30 min" }
   ]);
 
   const [activeConnections, setActiveConnections] = useState(247);
 
   const allAiInsights = [
-    "Predviđeno kašnjenje na ruti Zagreb-Ljubljana: 30min",
-    "Optimalna ruta Beograd-Sarajevo: preko Bijeljine",
-    "Carinski promet povećan za 15% u odnosu na prošlu sedmicu",
-    "Preporučuje se inspekcija vozila sa registracijom BG-123-456",
-    "Visok rizik od gužve na graničnom prelazu Batrovci sutra u 10h",
-    "Smanjena potrošnja goriva za 5% na ruti Podgorica-Tirana",
-    "Novi propisi za transport opasnih materija stupaju na snagu 01.09.2024.",
-    "Najopterećeniji vozač ove sedmice: Petar Petrović (52 sata vožnje)"
+    t("aiInsight.delayPrediction"),
+    t("aiInsight.optimalRoute"),
+    t("aiInsight.customsTraffic"),
+    t("aiInsight.vehicleInspection"),
+    t("aiInsight.congestionRisk"),
+    t("aiInsight.fuelConsumption"),
+    t("aiInsight.newRegulations"),
+    t("aiInsight.mostBurdenedDriver")
   ];
 
   const [aiInsights, setAiInsights] = useState(allAiInsights.slice(0, 3));
@@ -52,9 +55,9 @@ const EnhancedFeatures = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-primary" />
-            Komunikacijski centar uživo
+            {t("enhancedFeatures.communicationHub.title")}
             <Badge className="ml-auto animate-pulse bg-success text-success-foreground">
-              {activeConnections} aktivnih
+              {activeConnections} {t("enhancedFeatures.communicationHub.activeConnections")}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -63,24 +66,24 @@ const EnhancedFeatures = () => {
             <Button className="flex items-center gap-2 h-16 bg-gradient-primary hover:scale-105 transition-transform" onClick={() => toast.info("Pozivanje 24/7 podrške...")}>
               <Phone className="h-5 w-5" />
               <div className="text-left">
-                <div className="font-semibold">Hitni kontakt</div>
-                <div className="text-xs opacity-80">24/7 podrška</div>
+                <div className="font-semibold">{t("enhancedFeatures.communicationHub.emergencyContact")}</div>
+                <div className="text-xs opacity-80">{t("enhancedFeatures.communicationHub.emergencyContact.description")}</div>
               </div>
             </Button>
             
             <Button variant="outline" className="flex items-center gap-2 h-16 hover:scale-105 transition-transform" onClick={() => toast.success("Sastanak sa logističkim timom je uspješno zakazan!")}>
               <Calendar className="h-5 w-5" />
               <div className="text-left">
-                <div className="font-semibold">Zakaži sastanak</div>
-                <div className="text-xs text-muted-foreground">Logistički tim</div>
+                <div className="font-semibold">{t("enhancedFeatures.communicationHub.scheduleMeeting")}</div>
+                <div className="text-xs text-muted-foreground">{t("enhancedFeatures.communicationHub.scheduleMeeting.description")}</div>
               </div>
             </Button>
             
             <Button variant="outline" className="flex items-center gap-2 h-16 hover:scale-105 transition-transform" onClick={() => toast.message("Otvaranje timskog chata...")}>
               <Users className="h-5 w-5" />
               <div className="text-left">
-                <div className="font-semibold">Timski chat</div>
-                <div className="text-xs text-muted-foreground">12 članova online</div>
+                <div className="font-semibold">{t("enhancedFeatures.communicationHub.teamChat")}</div>
+                <div className="text-xs text-muted-foreground">{t("enhancedFeatures.communicationHub.teamChat.description")}</div>
               </div>
             </Button>
           </div>
@@ -92,7 +95,7 @@ const EnhancedFeatures = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-warning animate-pulse" />
-            AI Uvidi i preporuke
+            {t("enhancedFeatures.aiInsights.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -112,12 +115,12 @@ const EnhancedFeatures = () => {
           <Dialog>
             <DialogTrigger asChild>
                 <Button variant="outline" className="w-full mt-4 hover:bg-primary/10">
-                    Prikaži sve AI preporuke
+                    {t("enhancedFeatures.aiInsights.showAll")}
                 </Button>
             </DialogTrigger>
             <DialogContent className="glass">
               <DialogHeader>
-                <DialogTitle>Sve AI preporuke</DialogTitle>
+                <DialogTitle>{t("enhancedFeatures.aiInsights.allRecommendations")}</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
                 {allAiInsights.map((insight, index) => (
@@ -139,29 +142,29 @@ const EnhancedFeatures = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="h-5 w-5 text-success" />
-            Performanse sistema
+            {t("enhancedFeatures.performance.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="text-center space-y-2 p-4 rounded-lg bg-gradient-card">
               <div className="text-2xl font-bold text-primary">99.8%</div>
-              <div className="text-sm text-muted-foreground">Uptime</div>
+              <div className="text-sm text-muted-foreground">{t("enhancedFeatures.performance.uptime")}</div>
             </div>
             
             <div className="text-center space-y-2 p-4 rounded-lg bg-gradient-card">
               <div className="text-2xl font-bold text-success">&lt; 2s</div>
-              <div className="text-sm text-muted-foreground">Vrijeme odgovora</div>
+              <div className="text-sm text-muted-foreground">{t("enhancedFeatures.performance.responseTime")}</div>
             </div>
             
             <div className="text-center space-y-2 p-4 rounded-lg bg-gradient-card">
               <div className="text-2xl font-bold text-warning">15,847</div>
-              <div className="text-sm text-muted-foreground">Obrađene pošiljke</div>
+              <div className="text-sm text-muted-foreground">{t("enhancedFeatures.performance.processedShipments")}</div>
             </div>
             
             <div className="text-center space-y-2 p-4 rounded-lg bg-gradient-card">
               <div className="text-2xl font-bold text-primary">97.2%</div>
-              <div className="text-sm text-muted-foreground">Zadovoljstvo korisnika</div>
+              <div className="text-sm text-muted-foreground">{t("enhancedFeatures.performance.customerSatisfaction")}</div>
             </div>
           </div>
         </CardContent>
@@ -172,7 +175,7 @@ const EnhancedFeatures = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-primary" />
-            Najnovija obavještenja
+            {t("enhancedFeatures.notifications.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
@@ -189,7 +192,7 @@ const EnhancedFeatures = () => {
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="text-sm flex-1">{notification.message}</span>
-                <span className="text-xs text-muted-foreground whitespace-nowrap">prije {notification.time}</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{t("alert.time.ago")} {notification.time}</span>
               </div>
             </div>
           ))}
