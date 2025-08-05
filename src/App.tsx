@@ -15,13 +15,15 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ROLES } from "./lib/types";
 
 import Inventory from "./pages/Inventory";
- feat/inventory-real-time-updates
 import CustomerDashboard from "./pages/CustomerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+ feat/premium-feature-ui
+
  main
  main
 
+ main
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -33,6 +35,8 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
+ feat/premium-feature-ui
+
  feature/document-and-gps-tracking
           <Route path="/not-found" element={<NotFound />} />
 
@@ -56,16 +60,19 @@ const App = () => (
 
 
  feat/inventory-real-time-updates
+ main
           <Route element={<ProtectedRoute requiredRole="admin" />}>
             <Route path="/" element={<Index />} />
             <Route path="/item-tracking" element={<ItemTracking />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/live-map" element={<LiveMap />} />
           </Route>
           <Route element={<ProtectedRoute requiredRole="customer" />}>
             <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           </Route>
+ feat/premium-feature-ui
 
           <Route path="/" element={<Index />} />
           <Route path="/live-map" element={<LiveMap />} />
@@ -73,6 +80,7 @@ const App = () => (
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/support" element={<Support />} />
+ main
  main
  main
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

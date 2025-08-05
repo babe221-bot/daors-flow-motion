@@ -48,9 +48,10 @@ interface MenuItem {
 
 interface SidebarProps {
   isOpen: boolean;
+  onAlertsClick: () => void;
 }
 
-const Sidebar = ({ isOpen }: SidebarProps) => {
+const Sidebar = ({ isOpen, onAlertsClick }: SidebarProps) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { hasRole } = useAuth();
@@ -121,6 +122,9 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
         <>
             <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-primary" : item.color)} />
             {isOpen && <span className={cn("flex-1", isActive && "font-semibold")}>{item.label}</span>}
+            {item.id === 'alerts' && isOpen && (
+              <Badge variant="destructive" className="animate-pulse">3</Badge>
+            )}
             {isOpen && item.subItems && <ChevronRight className={cn("h-4 w-4 transition-transform", isCollapsibleOpen && "rotate-90")} />}
             {!isOpen && isActive && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-card border border-border rounded-md text-sm whitespace-nowrap animate-slide-in-right">
@@ -129,6 +133,20 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
             )}
         </>
     );
+
+    if (item.id === 'alerts') {
+      return (
+        <Button
+          key={item.id}
+          variant="ghost"
+          onClick={onAlertsClick}
+          className={cn("w-full justify-start gap-3 text-left transition-all duration-200 hover-lift", "hover:bg-secondary/50 text-muted-foreground hover:text-foreground", !isOpen && "justify-center px-2")}
+          style={{ animationDelay: `${index * 50}ms` }}
+        >
+          {buttonContent}
+        </Button>
+      );
+    }
 
     if (item.subItems && isOpen) {
       return (
