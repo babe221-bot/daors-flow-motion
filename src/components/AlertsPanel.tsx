@@ -52,7 +52,6 @@ const anomalyToAlert = (anomaly: Anomaly): Alert => {
 
 const AlertsPanel: React.FC<AlertsPanelProps> = ({ isOpen, onOpenChange, alerts: anomalies, onClearAlerts, onRemoveAlert }) => {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<"all" | "high" | "medium" | "low">("all");
 
   const alerts = useMemo(() => anomalies.map(anomalyToAlert), [anomalies]);
   const [filter, setFilter] = useState<"all" | "high" | "medium" | "low">("all");

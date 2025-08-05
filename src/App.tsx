@@ -17,6 +17,7 @@ import CustomerPortalLayout from "./components/CustomerPortalLayout";
 import PortalDashboard from "./pages/portal/Dashboard";
 import PortalShipments from "./pages/portal/Shipments";
 import PortalProfile from "./pages/portal/Profile";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ import RouteOptimization from "./pages/RouteOptimization";
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]} />}>
             <Route path="/" element={<Index />} />
             <Route path="/route-optimization" element={<RouteOptimization />} />
+            <Route path="/reports" element={<Reports />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER]} />}>
