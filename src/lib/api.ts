@@ -148,7 +148,11 @@ const shipmentData: ChartData[] = [
     { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
   ];
 
+ feature/ai-route-optimization
+import { Item, ChartData, LiveRoute, MetricData, Anomaly, Notification, ChatMessage } from "./types";
+
 import { Item, ChartData, LiveRoute, MetricData, Anomaly, Notification } from "./types";
+ main
 
 // ... (keep the existing allItems, shipmentData, etc.)
 
@@ -245,6 +249,31 @@ const notifications: Notification[] = [
 
 export const getNotifications = (): Promise<Notification[]> => fetchData(notifications);
 
+ feature/ai-route-optimization
+let chatMessages: ChatMessage[] = [
+    { id: "msg-1", shipmentId: "ITM-001", userId: "user-manager", username: "Manager", message: "Driver, what is your current status?", timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString() },
+    { id: "msg-2", shipmentId: "ITM-001", userId: "user-driver", username: "Miloš P.", message: "Approaching the border crossing now. Expect a slight delay.", timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString() },
+    { id: "msg-3", shipmentId: "ITM-001", userId: "user-client", username: "Client", message: "Thanks for the update. Can you confirm the temperature of the cargo?", timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString() },
+    { id: "msg-4", shipmentId: "ITM-004", userId: "user-admin", username: "Admin", message: "This shipment is on hold at customs. I am investigating.", timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString() },
+];
+
+export const getChatMessages = (shipmentId: string): Promise<ChatMessage[]> => {
+    const messages = chatMessages.filter(m => m.shipmentId === shipmentId);
+    return fetchData(messages, 200);
+}
+
+export const postChatMessage = (message: Omit<ChatMessage, 'id' | 'timestamp'>): Promise<ChatMessage> => {
+    const newMessage: ChatMessage = {
+        ...message,
+        id: `msg-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+    };
+    chatMessages = [...chatMessages, newMessage];
+    return fetchData(newMessage, 100);
+}
+
+
+ main
 
 export const fetchRoute = async (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
   const { lng: fromLng, lat: fromLat } = from;
