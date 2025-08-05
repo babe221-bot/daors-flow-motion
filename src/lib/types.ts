@@ -36,3 +36,20 @@ export interface MetricData {
     onTimeDelivery: Metric;
     borderCrossings: Metric;
 }
+
+export const ROLES = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  DRIVER: 'DRIVER',
+  CLIENT: 'CLIENT',
+} as const;
+
+export type Role = typeof ROLES[keyof typeof ROLES];
+
+export interface User {
+  id: string;
+  username: string;
+  role: Role;
+  avatarUrl?: string;
+  associatedItemIds?: string[];
+}
