@@ -25,10 +25,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { getMetricData, getShipmentData, getRevenueData, getRouteData, getLiveRoutes } from "@/lib/api";
-import { MetricData, ChartData, LiveRoute } from "@/lib/types";
+import { getMetricData, getShipmentData, getRevenueData, getRouteData } from "@/lib/api";
+import { MetricData, ChartData } from "@/lib/types";
 import Chatbot from "@/components/Chatbot";
 import { useTranslation } from "react-i18next";
+import { startGpsSimulation, stopGpsSimulation, getVehicles, getRoutes } from "@/lib/gps-simulator";
+import { Vehicle } from "@/components/MapView";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -38,7 +40,8 @@ const Index = () => {
   const [shipmentData, setShipmentData] = useState<ChartData | null>(null);
   const [revenueData, setRevenueData] = useState<ChartData | null>(null);
   const [routeData, setRouteData] = useState<ChartData | null>(null);
-  const [liveRoutes, setLiveRoutes] = useState<LiveRoute[]>([]);
+  const [liveVehicles, setLiveVehicles] = useState<Vehicle[]>(getVehicles());
+  const staticRoutes = getRoutes();
 
   // Simulate login and fetch data
   useEffect(() => {
@@ -46,19 +49,17 @@ const Index = () => {
     
     const fetchData = async () => {
       try {
-        const [metrics, shipments, revenue, routes, live] = await Promise.all([
+        const [metrics, shipments, revenue, routes] = await Promise.all([
           getMetricData(),
           getShipmentData(),
           getRevenueData(),
-          getRouteData(),
-          getLiveRoutes()
+          getRouteData()
         ]);
         
         setMetricData(metrics);
         setShipmentData(shipments);
         setRevenueData(revenue);
         setRouteData(routes);
-        setLiveRoutes(live);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -71,15 +72,20 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    startGpsSimulation(setLiveVehicles);
+    return () => stopGpsSimulation();
+  }, []);
+
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case t("route.status.active"): return "bg-primary text-primary-foreground";
-      case t("route.status.finished"): return "bg-success text-success-foreground";
-      case t("route.status.delayed"): return "bg-destructive text-destructive-foreground";
+      case "On Time": return "bg-primary text-primary-foreground";
+      case "Finished": return "bg-success text-success-foreground";
+      case "Delayed": return "bg-destructive text-destructive-foreground";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -231,30 +237,45 @@ const Index = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {liveRoutes.map((route, index) => (
-                    <div key={route.id} className="p-3 rounded-lg border border-border/50 bg-gradient-card hover-lift transition-all duration-200" style={{ animationDelay: `${900 + index * 100}ms` }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Badge className={getStatusColor(route.status)}>{route.status}</Badge>
-                          <span className="font-medium text-sm">{route.id}</span>
+                  {liveVehicles.map((vehicle, index) => {
+                    const routeInfo = staticRoutes.find(r => r.id === vehicle.id);
+                    if (!routeInfo) return null;
+
+                    const from = routeInfo.path[0];
+                    const to = routeInfo.path[routeInfo.path.length - 1];
+                    // A real app would have city names, here we just show coordinates
+                    const fromLabel = `[${from[0].toFixed(2)}, ${from[1].toFixed(2)}]`;
+                    const toLabel = `[${to[0].toFixed(2)}, ${to[1].toFixed(2)}]`;
+
+                    // Mock progress and ETA for demonstration
+                    const progress = vehicle.status === 'Finished' ? 100 : Math.floor(Math.random() * 80) + 10;
+                    const eta = vehicle.status === 'Finished' ? 'Delivered' : `${Math.floor(Math.random() * 5)}h ${Math.floor(Math.random() * 59)}m`;
+
+                    return (
+                      <div key={vehicle.id} className="p-3 rounded-lg border border-border/50 bg-gradient-card hover-lift transition-all duration-200" style={{ animationDelay: `${900 + index * 100}ms` }}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Badge className={getStatusColor(vehicle.status)}>{vehicle.status}</Badge>
+                            <span className="font-medium text-sm">{vehicle.id}</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">{eta}</span>
                         </div>
-                        <span className="text-sm text-muted-foreground">{route.eta}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm mb-2">
-                        <span>{route.from} → {route.to}</span>
-                        <span className="text-muted-foreground">{t('route.driver')}: {route.driver}</span>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span>{t('route.progress')}</span>
-                          <span>{route.progress}%</span>
+                        <div className="flex items-center justify-between text-sm mb-2">
+                          <span>{fromLabel} → {toLabel}</span>
+                          <span className="text-muted-foreground">{t('route.driver')}: {vehicle.driver}</span>
                         </div>
-                        <div className="h-2 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${route.progress}%` }} />
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span>{t('route.progress')}</span>
+                            <span>{progress}%</span>
+                          </div>
+                          <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
               <div className="animate-slide-up-fade" style={{ animationDelay: "900ms" }}>
