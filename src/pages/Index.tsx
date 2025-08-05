@@ -25,52 +25,32 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-logistics.jpg";
+import { getMetricData, getShipmentData, getRevenueData, getRouteData, getLiveRoutes } from "@/lib/api";
+import { MetricData, ChartData, LiveRoute } from "@/lib/types";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [metricData, setMetricData] = useState<MetricData | null>(null);
+  const [shipmentData, setShipmentData] = useState<ChartData[]>([]);
+  const [revenueData, setRevenueData] = useState<ChartData[]>([]);
+  const [routeData, setRouteData] = useState<ChartData[]>([]);
+  const [liveRoutes, setLiveRoutes] = useState<LiveRoute[]>([]);
 
   // Simulate login after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => setIsAuthenticated(true), 2000);
+    getMetricData().then((data) => setMetricData(data));
+    getShipmentData().then((data) => setShipmentData(data));
+    getRevenueData().then((data) => setRevenueData(data));
+    getRouteData().then((data) => setRouteData(data));
+    getLiveRoutes().then((data) => setLiveRoutes(data));
     return () => clearTimeout(timer);
   }, []);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
-
-  // Mock data for charts
-  const shipmentData = [
-    { label: "U tranzitu", value: 156, color: "bg-primary" },
-    { label: "Dostavljeno", value: 243, color: "bg-success" },
-    { label: "Na čekanju", value: 67, color: "bg-warning" },
-    { label: "Kašnjenje", value: 12, color: "bg-destructive" }
-  ];
-
-  const revenueData = [
-    { label: "Jan", value: 65, color: "bg-primary" },
-    { label: "Feb", value: 78, color: "bg-primary" },
-    { label: "Mar", value: 92, color: "bg-primary" },
-    { label: "Apr", value: 85, color: "bg-primary" },
-    { label: "May", value: 99, color: "bg-primary" },
-    { label: "Jun", value: 105, color: "bg-primary" }
-  ];
-
-  const routeData = [
-    { label: "Srbija-Bosna", value: 35, color: "bg-blue-500" },
-    { label: "Hrvatska-Slovenija", value: 28, color: "bg-green-500" },
-    { label: "S.Makedonija-Albanija", value: 22, color: "bg-purple-500" },
-    { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
-  ];
-
-  const liveRoutes = [
-    { id: "RT-001", from: "Beograd", to: "Sarajevo", status: "aktivna", progress: 67, eta: "2s 15m", driver: "Miloš P." },
-    { id: "RT-002", from: "Zagreb", to: "Ljubljana", status: "završena", progress: 100, eta: "Dostavljeno", driver: "Ana K." },
-    { id: "RT-003", from: "Skoplje", to: "Tirana", status: "kašnjenje", progress: 23, eta: "4s 30m", driver: "Stefan V." },
-    { id: "RT-004", from: "Podgorica", to: "Pristina", status: "aktivna", progress: 89, eta: "45m", driver: "Marko D." }
-  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -113,61 +93,65 @@ const Index = () => {
 
             {/* ... rest of the component remains unchanged ... */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title="Aktivne pošiljke" value={478} change="+12% od prošle sedmice" changeType="positive" icon={Truck} delay={100} />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Aktivne pošiljke</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(478)} type="line" />
-                </DialogContent>
-              </Dialog>
+              {metricData && (
+                <>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title="Aktivne pošiljke" value={metricData.activeShipments.value} change={metricData.activeShipments.change} changeType={metricData.activeShipments.changeType} icon={Truck} delay={100} />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>Istorijski podaci za: Aktivne pošiljke</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(metricData.activeShipments.value)} type="line" />
+                    </DialogContent>
+                  </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title="Ukupni prihod" value={125840} change="+8.2% od prošlog mjeseca" changeType="positive" icon={DollarSign} delay={200} currency="€" />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Ukupni prihod</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(125840)} type="line" />
-                </DialogContent>
-              </Dialog>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title="Ukupni prihod" value={metricData.totalRevenue.value} change={metricData.totalRevenue.change} changeType={metricData.totalRevenue.changeType} icon={DollarSign} delay={200} currency="€" />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>Istorijski podaci za: Ukupni prihod</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(metricData.totalRevenue.value)} type="line" />
+                    </DialogContent>
+                  </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title="Dostava na vrijeme" value="94.8" change="+2.1% poboljšanje" changeType="positive" icon={Clock} delay={300} currency="%" />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Dostava na vrijeme</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(94.8)} type="line" />
-                </DialogContent>
-              </Dialog>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title="Dostava na vrijeme" value={metricData.onTimeDelivery.value} change={metricData.onTimeDelivery.change} changeType={metricData.onTimeDelivery.changeType} icon={Clock} delay={300} currency="%" />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>Istorijski podaci za: Dostava na vrijeme</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(metricData.onTimeDelivery.value)} type="line" />
+                    </DialogContent>
+                  </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <MetricCard title="Granični prelazi" value={1247} change="23 aktivna kontrolna punkta" changeType="neutral" icon={Shield} delay={400} />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="glass">
-                  <DialogHeader>
-                    <DialogTitle>Istorijski podaci za: Granični prelazi</DialogTitle>
-                  </DialogHeader>
-                  <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(1247)} type="line" />
-                </DialogContent>
-              </Dialog>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div>
+                        <MetricCard title="Granični prelazi" value={metricData.borderCrossings.value} change={metricData.borderCrossings.change} changeType={metricData.borderCrossings.changeType} icon={Shield} delay={400} />
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="glass">
+                      <DialogHeader>
+                        <DialogTitle>Istorijski podaci za: Granični prelazi</DialogTitle>
+                      </DialogHeader>
+                      <AnimatedChart title="Posljednjih 30 dana" data={generateHistoricalData(metricData.borderCrossings.value)} type="line" />
+                    </DialogContent>
+                  </Dialog>
+                </>
+              )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
