@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Support from "./pages/Support";
- feature/document-and-gps-tracking
+import Inventory from "./pages/Inventory";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ROLES } from "./lib/types";
 import CustomerPortalLayout from "./components/CustomerPortalLayout";
@@ -18,21 +18,6 @@ import PortalDashboard from "./pages/portal/Dashboard";
 import PortalShipments from "./pages/portal/Shipments";
 import PortalProfile from "./pages/portal/Profile";
 
- feature/document-and-gps-tracking
-import ProtectedRoute from "./components/ProtectedRoute";
-import { ROLES } from "./lib/types";
- main
-
-import Inventory from "./pages/Inventory";
-import CustomerDashboard from "./pages/CustomerDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
-
- feat/premium-feature-ui
-
- main
- main
-
- main
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,15 +29,9 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
- feature/document-and-gps-tracking
-
- feat/premium-feature-ui
-
- feature/document-and-gps-tracking
- main
           <Route path="/not-found" element={<NotFound />} />
 
-          {/* Protected routes */}
+          {/* Protected routes for internal staff */}
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]} />}>
             <Route path="/" element={<Index />} />
           </Route>
@@ -61,53 +40,28 @@ const App = () => (
             <Route path="/live-map" element={<LiveMap />} />
           </Route>
 
+          <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+
+          {/* Protected routes accessible by all authenticated users */}
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER, ROLES.CLIENT]} />}>
             <Route path="/item-tracking" element={<ItemTracking />} />
             <Route path="/support" element={<Support />} />
           </Route>
 
-          <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-
- feature/document-and-gps-tracking
           {/* Customer Portal Routes */}
           <Route element={<ProtectedRoute allowedRoles={[ROLES.CLIENT]} />}>
             <Route path="/portal" element={<CustomerPortalLayout />}>
+              <Route index element={<PortalDashboard />} />
               <Route path="dashboard" element={<PortalDashboard />} />
               <Route path="shipments" element={<PortalShipments />} />
               <Route path="profile" element={<PortalProfile />} />
             </Route>
           </Route>
 
-
-
- feat/inventory-real-time-updates
- main
-          <Route element={<ProtectedRoute requiredRole="admin" />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/item-tracking" element={<ItemTracking />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/live-map" element={<LiveMap />} />
-          </Route>
-          <Route element={<ProtectedRoute requiredRole="customer" />}>
-            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-          </Route>
- feat/premium-feature-ui
-
-          <Route path="/" element={<Index />} />
-          <Route path="/live-map" element={<LiveMap />} />
-          <Route path="/item-tracking" element={<ItemTracking />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/support" element={<Support />} />
- main
- main
- main
- main
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
