@@ -148,7 +148,11 @@ const shipmentData: ChartData[] = [
     { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
   ];
 
+ feature/ai-route-optimization
 import { Item, ChartData, LiveRoute, MetricData, Anomaly, Notification, ChatMessage } from "./types";
+
+import { Item, ChartData, LiveRoute, MetricData, Anomaly, Notification } from "./types";
+ main
 
 // ... (keep the existing allItems, shipmentData, etc.)
 
@@ -245,6 +249,7 @@ const notifications: Notification[] = [
 
 export const getNotifications = (): Promise<Notification[]> => fetchData(notifications);
 
+ feature/ai-route-optimization
 let chatMessages: ChatMessage[] = [
     { id: "msg-1", shipmentId: "ITM-001", userId: "user-manager", username: "Manager", message: "Driver, what is your current status?", timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString() },
     { id: "msg-2", shipmentId: "ITM-001", userId: "user-driver", username: "Miloš P.", message: "Approaching the border crossing now. Expect a slight delay.", timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString() },
@@ -267,6 +272,8 @@ export const postChatMessage = (message: Omit<ChatMessage, 'id' | 'timestamp'>):
     return fetchData(newMessage, 100);
 }
 
+
+ main
 
 export const fetchRoute = async (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
   const { lng: fromLng, lat: fromLat } = from;

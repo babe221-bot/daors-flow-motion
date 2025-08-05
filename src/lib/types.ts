@@ -30,6 +30,7 @@ export interface Notification {
     relatedId?: string; // e.g., item ID or route ID
 }
 
+ feature/ai-route-optimization
 export interface ChatMessage {
     id: string;
     shipmentId: string;
@@ -39,6 +40,8 @@ export interface ChatMessage {
     timestamp: string; // ISO string
 }
 
+
+ main
 export type AnomalyType = "UNSCHEDULED_STOP" | "ROUTE_DEVIATION" | "SPEED_ANOMALY" | "TEMPERATURE_BREACH";
 
 export interface Anomaly {
