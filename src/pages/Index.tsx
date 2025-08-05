@@ -25,23 +25,52 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-logistics.jpg";
+import { getMetricData, getShipmentData, getRevenueData, getRouteData } from "@/lib/api";
+import { MetricData, ChartData } from "@/lib/types";
+import Chatbot from "@/components/Chatbot";
 import { useTranslation } from "react-i18next";
-import { startGpsSimulation, stopGpsSimulation, getVehicles, getRoutes, Route } from "@/lib/gps-simulator";
+import { startGpsSimulation, stopGpsSimulation, getVehicles, getRoutes } from "@/lib/gps-simulator";
 import { Vehicle } from "@/components/MapView";
 
 const Index = () => {
   const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [metricData, setMetricData] = useState<MetricData | null>(null);
+  const [shipmentData, setShipmentData] = useState<ChartData | null>(null);
+  const [revenueData, setRevenueData] = useState<ChartData | null>(null);
+  const [routeData, setRouteData] = useState<ChartData | null>(null);
   const [liveVehicles, setLiveVehicles] = useState<Vehicle[]>(getVehicles());
   const staticRoutes = getRoutes();
 
-  // Simulate login after 2 seconds
+  // Simulate login and fetch data
   useEffect(() => {
     const timer = setTimeout(() => setIsAuthenticated(true), 2000);
+    
+    const fetchData = async () => {
+      try {
+        const [metrics, shipments, revenue, routes] = await Promise.all([
+          getMetricData(),
+          getShipmentData(),
+          getRevenueData(),
+          getRouteData()
+        ]);
+        
+        setMetricData(metrics);
+        setShipmentData(shipments);
+        setRevenueData(revenue);
+        setRouteData(routes);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchData();
+    }
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     startGpsSimulation(setLiveVehicles);
@@ -51,30 +80,6 @@ const Index = () => {
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
-
-  // Mock data for charts
-  const shipmentData = [
-    { label: t("shipment.status.inTransit"), value: 156, color: "bg-primary" },
-    { label: t("shipment.status.delivered"), value: 243, color: "bg-success" },
-    { label: t("shipment.status.pending"), value: 67, color: "bg-warning" },
-    { label: t("shipment.status.delayed"), value: 12, color: "bg-destructive" }
-  ];
-
-  const revenueData = [
-    { label: "Jan", value: 65, color: "bg-primary" },
-    { label: "Feb", value: 78, color: "bg-primary" },
-    { label: "Mar", value: 92, color: "bg-primary" },
-    { label: "Apr", value: 85, color: "bg-primary" },
-    { label: "May", value: 99, color: "bg-primary" },
-    { label: "Jun", value: 105, color: "bg-primary" }
-  ];
-
-  const routeData = [
-    { label: "Srbija-Bosna", value: 35, color: "bg-blue-500" },
-    { label: "Hrvatska-Slovenija", value: 28, color: "bg-green-500" },
-    { label: "S.Makedonija-Albanija", value: 22, color: "bg-purple-500" },
-    { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
-  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -115,12 +120,18 @@ const Index = () => {
               <p className="text-muted-foreground">{t('index.description')}</p>
             </div>
 
-            {/* ... rest of the component remains unchanged ... */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title={t('index.activeShipments')} value={478} change={t('index.activeShipments.change')} changeType="positive" icon={Truck} delay={100} />
+                    <MetricCard 
+                      title={t('index.activeShipments')} 
+                      value={metricData?.activeShipments || 0} 
+                      change={t('index.activeShipments.change')} 
+                      changeType="positive" 
+                      icon={Truck} 
+                      delay={100} 
+                    />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
@@ -134,7 +145,15 @@ const Index = () => {
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title={t('index.totalRevenue')} value={125840} change={t('index.totalRevenue.change')} changeType="positive" icon={DollarSign} delay={200} currency="€" />
+                    <MetricCard 
+                      title={t('index.totalRevenue')} 
+                      value={metricData?.totalRevenue || 0} 
+                      change={t('index.totalRevenue.change')} 
+                      changeType="positive" 
+                      icon={DollarSign} 
+                      delay={200} 
+                      currency="€" 
+                    />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
@@ -148,7 +167,15 @@ const Index = () => {
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title={t('index.onTimeDelivery')} value="94.8" change={t('index.onTimeDelivery.change')} changeType="positive" icon={Clock} delay={300} currency="%" />
+                    <MetricCard 
+                      title={t('index.onTimeDelivery')} 
+                      value={metricData?.onTimeDelivery || 0} 
+                      change={t('index.onTimeDelivery.change')} 
+                      changeType="positive" 
+                      icon={Clock} 
+                      delay={300} 
+                      currency="%" 
+                    />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
@@ -162,7 +189,14 @@ const Index = () => {
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <MetricCard title={t('index.borderCrossings')} value={1247} change={t('index.borderCrossings.change')} changeType="neutral" icon={Shield} delay={400} />
+                    <MetricCard 
+                      title={t('index.borderCrossings')} 
+                      value={metricData?.borderCrossings || 0} 
+                      change={t('index.borderCrossings.change')} 
+                      changeType="neutral" 
+                      icon={Shield} 
+                      delay={400} 
+                    />
                   </div>
                 </DialogTrigger>
                 <DialogContent className="glass">
@@ -175,9 +209,24 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <AnimatedChart title={t('index.shipmentStatusDistribution')} data={shipmentData} type="donut" delay={500} />
-              <AnimatedChart title={t('index.monthlyRevenueTrend')} data={revenueData} type="line" delay={600} />
-              <AnimatedChart title={t('index.popularTradeRoutes')} data={routeData} type="bar" delay={700} />
+              <AnimatedChart 
+                title={t('index.shipmentStatusDistribution')} 
+                data={shipmentData || []} 
+                type="donut" 
+                delay={500} 
+              />
+              <AnimatedChart 
+                title={t('index.monthlyRevenueTrend')} 
+                data={revenueData || []} 
+                type="line" 
+                delay={600} 
+              />
+              <AnimatedChart 
+                title={t('index.popularTradeRoutes')} 
+                data={routeData || []} 
+                type="bar" 
+                delay={700} 
+              />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -266,6 +315,7 @@ const Index = () => {
             </div>
           </div>
         </main>
+        <Chatbot />
       </div>
     </div>
   );
