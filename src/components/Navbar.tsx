@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Menu, X, BarChart3, Settings, Bell, Search, User, LogOut, Sun, Moon } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Menu, X, BarChart3, Settings, Search, User, LogOut, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useTheme } from "next-themes"; // Assuming next-themes is used for theme switching
+import { useTheme } from "next-themes";
 import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getNotifications } from "@/lib/api";
+import NotificationCenter from "./NotificationCenter";
+import { Notification } from "@/lib/types";
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -21,12 +25,20 @@ interface NavbarProps {
 const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme() ?? { theme: 'dark', setTheme: () => {} };
+  const queryClient = useQueryClient();
 
-  const notifications = [
-    { id: "1", type: "warning", title: t("navbar.notifications.delayedShipment"), description: t("navbar.notifications.delayedShipment.description"), time: "2m" },
-    { id: "2", type: "error", title: t("navbar.notifications.blockedRoute"), description: t("navbar.notifications.blockedRoute.description"), time: "15m" },
-    { id: "3", type: "info", title: t("navbar.notifications.ceftaDocumentation"), description: t("navbar.notifications.ceftaDocumentation.description"), time: "1h" },
-  ];
+  const { data: notifications = [] } = useQuery<Notification[]>({
+    queryKey: ['notifications'],
+    queryFn: getNotifications,
+  });
+
+  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
+
+  const handleMarkAllAsRead = () => {
+    queryClient.setQueryData(['notifications'], (oldData: Notification[] = []) =>
+      oldData.map(n => ({ ...n, read: true }))
+    );
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50 backdrop-blur-xl">
@@ -72,36 +84,11 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
             {t('navbar.analytics')}
           </Button>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="relative hover:bg-primary/10">
-                <Bell className="h-4 w-4" />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-xs text-destructive-foreground rounded-full flex items-center justify-center animate-pulse">
-                    {notifications.length}
-                  </span>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 glass">
-              <DropdownMenuLabel>{t('navbar.notifications')}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {notifications.map(notif => (
-                <DropdownMenuItem key={notif.id} className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
-                    {notif.type === 'warning' && <Bell className="h-4 w-4 text-warning" />}
-                    {notif.type === 'error' && <X className="h-4 w-4 text-destructive" />}
-                    {notif.type === 'info' && <Bell className="h-4 w-4 text-primary" />}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{notif.title}</p>
-                    <p className="text-xs text-muted-foreground">{notif.description}</p>
-                  </div>
-                  <span className="text-xs text-muted-foreground">{notif.time}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <NotificationCenter
+            notifications={notifications}
+            unreadCount={unreadCount}
+            onMarkAllAsRead={handleMarkAllAsRead}
+          />
 
           <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="hover:bg-primary/10">
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

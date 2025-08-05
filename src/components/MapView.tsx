@@ -19,12 +19,21 @@ const vehicleIcon = new L.Icon({
     popupAnchor: [0, -35]
 });
 
+const anomalyVehicleIcon = new L.Icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/10464/10464243.png', // A red truck icon
+    iconSize: [35, 35],
+    iconAnchor: [17, 35],
+    popupAnchor: [0, -35]
+});
+
 
 export interface Vehicle {
   id: string;
   position: [number, number];
   driver: string;
   status: string;
+  hasAnomaly?: boolean;
+  popupInfo?: Record<string, string>;
 }
 
 interface MapViewProps {
@@ -72,10 +81,13 @@ const MapView = ({ coordinates, vehicles, routes, center, zoom = 13 }: MapViewPr
 
       {/* Draw vehicle markers */}
       {vehicles?.map(vehicle => (
-        <Marker key={vehicle.id} position={vehicle.position} icon={vehicleIcon}>
+        <Marker key={vehicle.id} position={vehicle.position} icon={vehicle.hasAnomaly ? anomalyVehicleIcon : vehicleIcon}>
           <Popup>
             <b>Driver:</b> {vehicle.driver}<br/>
-            <b>Status:</b> {vehicle.status}
+            <b>Status:</b> {vehicle.status}<br/>
+            {vehicle.popupInfo && Object.entries(vehicle.popupInfo).map(([key, value]) => (
+              <div key={key}><b>{key}:</b> {value}</div>
+            ))}
           </Popup>
         </Marker>
       ))}
