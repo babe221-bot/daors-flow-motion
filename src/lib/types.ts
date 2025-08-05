@@ -19,6 +19,17 @@ export interface ChartData {
     color: string;
 }
 
+export type NotificationType = "anomaly" | "status_change" | "system_message";
+
+export interface Notification {
+    id: string;
+    type: NotificationType;
+    message: string;
+    timestamp: string; // ISO string
+    read: boolean;
+    relatedId?: string; // e.g., item ID or route ID
+}
+
 export type AnomalyType = "UNSCHEDULED_STOP" | "ROUTE_DEVIATION" | "SPEED_ANOMALY" | "TEMPERATURE_BREACH";
 
 export interface Anomaly {

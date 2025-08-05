@@ -64,19 +64,28 @@ const Index = () => {
       let newAnomaliesFound = false;
       const updatedRoutes = liveRoutes.map(route => {
         const newAnomaly = detectAnomalies(route);
-        if (newAnomaly) {
-          // Prevent adding duplicate anomalies
-          if (!route.anomalies.some(a => a.type === newAnomaly.type)) {
+        if (newAnomaly && !route.anomalies.some(a => a.type === newAnomaly.type)) {
             newAnomaliesFound = true;
+
+            // Add a new notification
+            const newNotification: Notification = {
+                id: `notif-${new Date().getTime()}`,
+                type: "anomaly",
+                message: `Anomaly Detected: ${newAnomaly.description} *Email & SMS alerts sent.*`,
+                timestamp: new Date().toISOString(),
+                read: false,
+                relatedId: newAnomaly.vehicleId,
+            };
+
+            queryClient.setQueryData(['notifications'], (oldData: Notification[] = []) => [newNotification, ...oldData]);
+
             return { ...route, anomalies: [...route.anomalies, newAnomaly] };
-          }
         }
         return route;
       });
 
       if (newAnomaliesFound) {
         setLiveRoutes(updatedRoutes);
-        // This is a mock of updating the backend and refetching
         queryClient.setQueryData(['anomalies'], (oldData: Anomaly[] = []) => {
             const allNewAnomalies = updatedRoutes.flatMap(r => r.anomalies);
             return allNewAnomalies;
