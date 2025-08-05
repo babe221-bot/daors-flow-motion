@@ -189,3 +189,19 @@ export const getRevenueData = (): Promise<ChartData[]> => fetchData(revenueData)
 export const getRouteData = (): Promise<ChartData[]> => fetchData(routeData);
 export const getLiveRoutes = (): Promise<LiveRoute[]> => fetchData(liveRoutes);
 export const getMetricData = (): Promise<MetricData> => fetchData(metricData);
+
+export const fetchRoute = async (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
+  const { lng: fromLng, lat: fromLat } = from;
+  const { lng: toLng, lat: toLat } = to;
+
+  const response = await fetch(
+    `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch route');
+  }
+
+  const data = await response.json();
+  return data.routes[0];
+};
