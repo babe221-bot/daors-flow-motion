@@ -11,7 +11,8 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Legend
+  Legend,
+  PieLabelRenderProps
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -123,8 +124,6 @@ const AnimatedChart = ({
       </LineChart>
     </ResponsiveContainer>
   );
-
-import { PieLabelRenderProps } from "recharts";
 
   const renderDonutChart = () => {
     const RADIAN = Math.PI / 180;
