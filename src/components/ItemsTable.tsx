@@ -1,4 +1,8 @@
+ feature/document-and-gps-tracking
 import { useState, useMemo } from "react";
+
+import { useState } from "react";
+ main
 import {
   Table,
   TableBody,
@@ -10,8 +14,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 import ItemDetails from "./ItemDetails";
+ feature/document-and-gps-tracking
 import { Item, ROLES } from "@/lib/types";
 import { useAuth } from "@/context/AuthContext";
+
+import { Item } from "@/lib/types";
+ main
 
 const ItemsTable = () => {
   const { t } = useTranslation();
@@ -65,6 +73,7 @@ const ItemsTable = () => {
     },
   ];
 
+ feature/document-and-gps-tracking
   const filteredItems = useMemo(() => {
     if (!user || hasRole([ROLES.ADMIN, ROLES.MANAGER])) {
       return initialItems;
@@ -79,6 +88,11 @@ const ItemsTable = () => {
     setItems(filteredItems);
   }, [filteredItems]);
 
+
+  const [items, setItems] = useState<Item[]>(initialItems);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+
+ main
   const handleRowClick = (item: Item) => {
     setSelectedItem(item);
   };

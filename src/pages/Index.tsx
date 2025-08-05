@@ -24,24 +24,74 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+ feature/document-and-gps-tracking
 import { useTranslation } from "react-i18next";
 import { startGpsSimulation, stopGpsSimulation, getVehicles, getRoutes } from "@/lib/gps-simulator";
 import { Vehicle } from "@/components/MapView";
 import { useAuth } from "@/context/AuthContext";
 import { ROLES } from "@/lib/types";
 
+import { getMetricData, getShipmentData, getRevenueData, getRouteData } from "@/lib/api";
+import { MetricData, ChartData } from "@/lib/types";
+import Chatbot from "@/components/Chatbot";
+import { useTranslation } from "react-i18next";
+import { startGpsSimulation, stopGpsSimulation, getVehicles, getRoutes } from "@/lib/gps-simulator";
+import { Vehicle } from "@/components/MapView";
+ main
+
 const Index = () => {
   const { t } = useTranslation();
   const { user, hasRole } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+ feature/document-and-gps-tracking
   const [liveVehicles, setLiveVehicles] = useState<Vehicle[]>(getVehicles());
   const staticRoutes = getRoutes();
 
   useEffect(() => {
+
+  const [metricData, setMetricData] = useState<MetricData | null>(null);
+  const [shipmentData, setShipmentData] = useState<ChartData | null>(null);
+  const [revenueData, setRevenueData] = useState<ChartData | null>(null);
+  const [routeData, setRouteData] = useState<ChartData | null>(null);
+  const [liveVehicles, setLiveVehicles] = useState<Vehicle[]>(getVehicles());
+  const staticRoutes = getRoutes();
+
+  // Simulate login and fetch data
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAuthenticated(true), 2000);
+    
+    const fetchData = async () => {
+      try {
+        const [metrics, shipments, revenue, routes] = await Promise.all([
+          getMetricData(),
+          getShipmentData(),
+          getRevenueData(),
+          getRouteData()
+        ]);
+        
+        setMetricData(metrics);
+        setShipmentData(shipments);
+        setRevenueData(revenue);
+        setRouteData(routes);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchData();
+    }
+
+    return () => clearTimeout(timer);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+ main
     startGpsSimulation(setLiveVehicles);
     return () => stopGpsSimulation();
   }, []);
 
+ feature/document-and-gps-tracking
   // Mock data for charts
   const shipmentData = [
     { label: t("shipment.status.inTransit"), value: 156, color: "bg-primary" },
@@ -65,6 +115,11 @@ const Index = () => {
     { label: "S.Makedonija-Albanija", value: 22, color: "bg-purple-500" },
     { label: "Crna Gora-Kosovo", value: 15, color: "bg-orange-500" }
   ];
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+ main
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -105,6 +160,7 @@ const Index = () => {
               <p className="text-muted-foreground">{t('index.description', 'Here is your logistics overview.')}</p>
             </div>
 
+ feature/document-and-gps-tracking
             {/* Admin & Manager View */}
             {hasRole([ROLES.ADMIN, ROLES.MANAGER]) && (
               <>
@@ -183,6 +239,116 @@ const Index = () => {
               </div>
             )}
 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard 
+                      title={t('index.activeShipments')} 
+                      value={metricData?.activeShipments || 0} 
+                      change={t('index.activeShipments.change')} 
+                      changeType="positive" 
+                      icon={Truck} 
+                      delay={100} 
+                    />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.activeShipments')}</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(478)} type="line" />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard 
+                      title={t('index.totalRevenue')} 
+                      value={metricData?.totalRevenue || 0} 
+                      change={t('index.totalRevenue.change')} 
+                      changeType="positive" 
+                      icon={DollarSign} 
+                      delay={200} 
+                      currency="€" 
+                    />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.totalRevenue')}</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(125840)} type="line" />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard 
+                      title={t('index.onTimeDelivery')} 
+                      value={metricData?.onTimeDelivery || 0} 
+                      change={t('index.onTimeDelivery.change')} 
+                      changeType="positive" 
+                      icon={Clock} 
+                      delay={300} 
+                      currency="%" 
+                    />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.onTimeDelivery')}</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(94.8)} type="line" />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <MetricCard 
+                      title={t('index.borderCrossings')} 
+                      value={metricData?.borderCrossings || 0} 
+                      change={t('index.borderCrossings.change')} 
+                      changeType="neutral" 
+                      icon={Shield} 
+                      delay={400} 
+                    />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="glass">
+                  <DialogHeader>
+                    <DialogTitle>{t('index.historicalDataFor')}: {t('index.borderCrossings')}</DialogTitle>
+                  </DialogHeader>
+                  <AnimatedChart title={t('index.last30days')} data={generateHistoricalData(1247)} type="line" />
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <AnimatedChart 
+                title={t('index.shipmentStatusDistribution')} 
+                data={shipmentData || []} 
+                type="donut" 
+                delay={500} 
+              />
+              <AnimatedChart 
+                title={t('index.monthlyRevenueTrend')} 
+                data={revenueData || []} 
+                type="line" 
+                delay={600} 
+              />
+              <AnimatedChart 
+                title={t('index.popularTradeRoutes')} 
+                data={routeData || []} 
+                type="bar" 
+                delay={700} 
+              />
+            </div>
+ main
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="glass hover-lift transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: "800ms" }}>
                 <CardHeader>
@@ -195,6 +361,7 @@ const Index = () => {
                     const routeInfo = staticRoutes.find(r => r.id === vehicle.id);
                     if (!routeInfo) return null;
 
+ feature/document-and-gps-tracking
                     // For clients and drivers, only show their associated routes
                     if (hasRole([ROLES.CLIENT, ROLES.DRIVER]) && !user?.associatedItemIds?.includes(routeInfo.id.replace('ROUTE', 'ITM'))) {
                         return null;
@@ -205,6 +372,15 @@ const Index = () => {
                     const fromLabel = `[${from[0].toFixed(2)}, ${from[1].toFixed(2)}]`;
                     const toLabel = `[${to[0].toFixed(2)}, ${to[1].toFixed(2)}]`;
 
+
+                    const from = routeInfo.path[0];
+                    const to = routeInfo.path[routeInfo.path.length - 1];
+                    // A real app would have city names, here we just show coordinates
+                    const fromLabel = `[${from[0].toFixed(2)}, ${from[1].toFixed(2)}]`;
+                    const toLabel = `[${to[0].toFixed(2)}, ${to[1].toFixed(2)}]`;
+
+                    // Mock progress and ETA for demonstration
+ main
                     const progress = vehicle.status === 'Finished' ? 100 : Math.floor(Math.random() * 80) + 10;
                     const eta = vehicle.status === 'Finished' ? 'Delivered' : `${Math.floor(Math.random() * 5)}h ${Math.floor(Math.random() * 59)}m`;
 
@@ -276,6 +452,7 @@ const Index = () => {
             )}
           </div>
         </main>
+        <Chatbot />
       </div>
     </div>
   );
