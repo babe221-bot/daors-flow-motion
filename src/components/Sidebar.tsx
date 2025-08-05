@@ -73,7 +73,7 @@ const Sidebar = ({ isOpen }: SidebarProps) => {
         { id: "analytics-reports", label: t("sidebar.analytics.reports"), icon: FileText, href: "#" },
       ]
     },
-    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "#" },
+    { id: "tracking", label: t("sidebar.tracking"), icon: MapPin, color: "text-orange-400", href: "/live-map" },
     {
       id: "finance",
       label: t("sidebar.finance"),
