@@ -3,9 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
   Truck, 
-  Package, 
-  BarChart3, 
-  MapPin, 
+  Package,
+  BarChart3,
+  MapPin,
   Settings,
   DollarSign,
   AlertTriangle,
@@ -15,7 +15,8 @@ import {
   TrafficCone,
   FileText,
   LifeBuoy,
-  Warehouse
+  Warehouse,
+  Route
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -67,6 +68,7 @@ const Sidebar = ({ isOpen, onAlertsClick }: SidebarProps) => {
  feature/document-and-gps-tracking
     { id: "dashboard", label: t("sidebar.dashboard"), icon: Home, color: "text-primary", href: "/", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
     { id: "item-tracking", label: t("sidebar.itemTracking"), icon: Package, color: "text-green-400", href: "/item-tracking", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "route-optimization", label: "Route Optimization", icon: Route, color: "text-teal-400", href: "/route-optimization", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
     { id: "shipments", label: t("sidebar.shipments"), icon: Truck, color: "text-blue-400", href: "#", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.DRIVER] },
 
  feature/document-and-gps-tracking
