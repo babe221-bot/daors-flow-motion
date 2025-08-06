@@ -11,12 +11,13 @@ import VideoBackground from "@/components/VideoBackground";
 
 const SignUp = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, signUp, user } = useAuth();
+  const { isAuthenticated, signup, user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ const SignUp = () => {
     setError('');
     setMessage('');
     try {
-      const { error } = await signUp(email, password, { username, role: ROLES.CLIENT, avatar_url: `https://i.pravatar.cc/150?u=${email}` });
+      const { error } = await signup(email, password, username, ROLES.CLIENT);
       if (error) {
         setError(error.message);
       } else {
@@ -36,6 +37,14 @@ const SignUp = () => {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     if (user?.role === ROLES.CLIENT) {

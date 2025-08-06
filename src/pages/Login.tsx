@@ -11,7 +11,7 @@ import VideoBackground from "@/components/VideoBackground";
 
 const Login = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, login, user } = useAuth();
+  const { isAuthenticated, login, user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,6 +32,14 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     if (user?.role === ROLES.CLIENT) {

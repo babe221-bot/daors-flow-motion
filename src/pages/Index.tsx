@@ -26,7 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
-import { ROLES, Anomaly, LiveRoute } from "@/lib/types";
+import { ROLES, Anomaly, LiveRoute, Notification } from "@/lib/types";
 import { getMetricData, getShipmentData, getRevenueData, getRouteData, getAnomalies, getLiveRoutes } from "@/lib/api";
 import { MetricData, ChartData } from "@/lib/types";
 import Chatbot from "@/components/Chatbot";

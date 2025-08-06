@@ -16,7 +16,7 @@ export const getLiveRoutes = async (): Promise<LiveRoute[]> => {
     if (error) throw error;
     const routes = data || [];
     for (const route of routes) {
-        const { data: anomalies } = await getAnomalies(route.id);
+        const anomalies = await getAnomalies(route.id);
         route.anomalies = anomalies;
     }
     return routes;
