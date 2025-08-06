@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
-import { ROLES, Role } from "@/lib/types"; // Import Role type
+import { ROLES } from "@/lib/types"; // Import Role type
 import VideoBackground from "@/components/VideoBackground";
 
 const Login = () => {
@@ -25,9 +22,9 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      const { error } = await login(email, password);
-      if (error) {
-        setError(error.message);
+      const { error: loginError } = await login(email, password);
+      if (loginError) {
+        setError(loginError.message);
       }
     } catch (err) {
       setError('An unexpected error occurred.');
@@ -40,9 +37,9 @@ const Login = () => {
     setLoading(true); // Use the same loading state for guest login
     setError('');
     try {
-      const { error } = await loginAsGuest();
-      if (error) {
-        setError(error.message);
+      const { error: guestError } = await loginAsGuest();
+      if (guestError) {
+        setError(guestError.message);
       }
       // Navigation is handled by the useEffect hook in AuthProvider based on isAuthenticated
     } catch (err) {
