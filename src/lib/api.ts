@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient';
 import { Item, ChartData, LiveRoute, MetricData, Anomaly, Notification, ChatMessage } from "./types";
+import { ApiErrorHandler } from './error-handler';
 
 // #############################################################################
 // # Direct Data Fetching from Supabase
