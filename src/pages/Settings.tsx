@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import ParticleBackground from "@/components/ParticleBackground";
 import { useTranslation } from "react-i18next";
 import EnhancedFeatures from "@/components/EnhancedFeatures";
