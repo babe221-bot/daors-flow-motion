@@ -18,6 +18,8 @@ import PortalDashboard from "./pages/portal/Dashboard";
 import PortalShipments from "./pages/portal/Shipments";
 import PortalProfile from "./pages/portal/Profile";
 import Reports from "./pages/Reports";
+import SignUp from "./pages/SignUp";
+import RouteOptimization from "./pages/RouteOptimization";
 
 const queryClient = new QueryClient();
 
@@ -30,13 +32,10 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/not-found" element={<NotFound />} />
 
           {/* Protected routes for internal staff */}
-import RouteOptimization from "./pages/RouteOptimization";
-
-// ... inside the Routes component
-
           <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]} />}>
             <Route path="/" element={<Index />} />
             <Route path="/route-optimization" element={<RouteOptimization />} />
