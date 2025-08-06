@@ -9,6 +9,7 @@
   "login.continueWith": "Or continue with",
   "login.google": "Google",
   "login.facebook": "Facebook",
+  "login.guest": "Login as Guest",
   "2fa.title": "Enter 2FA Code",
   "2fa.description": "A code has been sent to your device",
   "2fa.submitButton": "Submit",

@@ -1,23 +1,26 @@
 import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useState } from 'react';
+import { Navigate, Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
-import { ROLES } from "@/lib/types";
+import { ROLES, Role } from "@/lib/types"; // Import Role type
 import VideoBackground from "@/components/VideoBackground";
 
 const Login = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, login, user, loading: authLoading } = useAuth();
+  const { isAuthenticated, login, user, loading: authLoading, loginAsGuest } = useAuth(); // Destructure loginAsGuest
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => { // Added type for event
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -33,6 +36,22 @@ const Login = () => {
     }
   };
 
+  const handleGuestLogin = async () => { // Handler for guest login
+    setLoading(true); // Use the same loading state for guest login
+    setError('');
+    try {
+      const { error } = await loginAsGuest();
+      if (error) {
+        setError(error.message);
+      }
+      // Navigation is handled by the useEffect hook in AuthProvider based on isAuthenticated
+    } catch (err) {
+      setError('An unexpected error occurred during guest login.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -42,7 +61,8 @@ const Login = () => {
   }
 
   if (isAuthenticated) {
-    if (user?.role === ROLES.CLIENT) {
+    // Redirect based on role
+    if (user?.role === ROLES.CLIENT || user?.role === ROLES.GUEST) { // Check for GUEST role as well
       return <Navigate to="/portal/dashboard" replace />;
     }
     return <Navigate to="/" replace />;
@@ -90,6 +110,12 @@ const Login = () => {
               <Link to="/signup" className="underline">
                 {t('login.signup', 'Sign up')}
               </Link>
+            </div>
+            {/* Guest Login Button */}
+            <div className="mt-4 text-center">
+              <Button variant="outline" className="w-full" onClick={handleGuestLogin} disabled={loading}>
+                {t('login.guest', 'Login as Guest')}
+              </Button>
             </div>
           </CardContent>
         </Card>

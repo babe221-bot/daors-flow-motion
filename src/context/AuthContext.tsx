@@ -9,6 +9,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   signup: (email: string, password: string, username: string, role?: Role) => Promise<{ error?: Error | null }>;
   hasRole: (allowedRoles: Role[]) => boolean;
+  loginAsGuest: () => Promise<{ error?: Error | null }>;
   loading: boolean;
 }
 
@@ -155,6 +156,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return allowedRoles.includes(user.role);
   };
 
+  const loginAsGuest = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+
+      if (error) {
+        console.error('Anonymous sign-in error:', error);
+        return { error };
+      }
+
+      if (data.user) {
+        setUser({
+          id: data.user.id,
+          username: 'Guest', // Default username for guest
+          role: ROLES.GUEST, // Assuming ROLES.GUEST is defined in types
+          avatarUrl: null,
+          associatedItemIds: []
+        });
+        return { error: null };
+      }
+      return { error: new Error('Anonymous sign-in did not return a user.') };
+    } catch (error) {
+      console.error('Error during anonymous sign-in:', error);
+      return { error: error as Error };
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -162,6 +189,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     signup,
     hasRole,
+    loginAsGuest, // Added this line
     loading,
   };
 
