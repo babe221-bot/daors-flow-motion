@@ -5,13 +5,17 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import './i18n';
 import { Suspense } from 'react';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import LoadingScreen from './components/LoadingScreen';
 
 createRoot(document.getElementById("root")!).render(
-  <Suspense fallback="loading">
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </ThemeProvider>
-  </Suspense>
+  <ErrorBoundary>
+    <Suspense fallback={<LoadingScreen />}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
+    </Suspense>
+  </ErrorBoundary>
 );
