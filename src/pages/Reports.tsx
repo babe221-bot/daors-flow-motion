@@ -10,8 +10,14 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 // Extend jsPDF with autoTable
+interface AutoTableOptions {
+  head: string[][];
+  body: (string | number)[][];
+  startY?: number;
+}
+
 interface jsPDFWithAutoTable extends jsPDF {
-  autoTable: (options: any) => jsPDF;
+  autoTable: (options: AutoTableOptions) => jsPDF;
 }
 
 const Reports: React.FC = () => {

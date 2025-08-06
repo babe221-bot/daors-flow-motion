@@ -6,6 +6,12 @@ export interface Route {
   driver: string;
 }
 
+interface VehicleWithSimulationState extends Vehicle {
+  _route: [number, number][];
+  _pathIndex: number;
+  _step: number;
+}
+
 // Define some mock routes across the Balkans
 const routes: Route[] = [
   {
@@ -40,7 +46,7 @@ const routes: Route[] = [
 ];
 
 // Initialize vehicles based on routes
-let vehicles: Vehicle[] = routes.map(route => ({
+let vehicles: VehicleWithSimulationState[] = routes.map(route => ({
   id: route.id,
   position: route.path[0],
   driver: route.driver,
@@ -56,7 +62,7 @@ const SIMULATION_SPEED = 0.05; // Controls how fast vehicles move along the path
 // Function to update vehicle positions
 const updateVehiclePositions = () => {
   vehicles = vehicles.map(v => {
-    const { _route, _pathIndex, _step } = v as any;
+    const { _route, _pathIndex, _step } = v;
 
     if (_pathIndex >= _route.length - 1) {
       // Vehicle has reached the end of its route

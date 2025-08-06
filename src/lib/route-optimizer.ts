@@ -9,9 +9,17 @@ export interface RouteInfo {
   carbonEmissions: number; // in kg
 }
 
+interface OSRMRoute {
+  distance: number;
+  duration: number;
+  geometry: {
+    coordinates: number[][];
+  };
+}
+
 // This is a placeholder for a more complex AI model.
 // For now, it generates a few route options with different trade-offs.
-export const generateRouteOptions = (osrmRoute: any): RouteInfo[] => {
+export const generateRouteOptions = (osrmRoute: OSRMRoute): RouteInfo[] => {
   const { distance, duration, geometry } = osrmRoute;
   const coordinates = geometry.coordinates.map((c: number[]) => [c[1], c[0]] as LatLngExpression);
 
