@@ -2,11 +2,11 @@
 
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { type ThemeProviderProps } from "next-themes/dist/types"
+import type { ComponentProps } from "react"
 import { animateThemeChange } from "@/lib/animation-utils"
 
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  const { theme } = props
+export function ThemeProvider({ children, ...props }: ComponentProps<typeof NextThemesProvider>) {
+const { theme } = props as { theme?: string }
   
   React.useEffect(() => {
     if (theme) {
