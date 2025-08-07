@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { useMutation } from "@tanstack/react-query";
 import { fetchRoute } from "@/lib/api";
 import { generateRouteOptions, RouteInfo } from "@/lib/route-optimizer";
@@ -58,7 +59,6 @@ const RouteOptimization = () => {
   const mapRoutes = selectedRoute ? [{ id: selectedRoute.name, path: selectedRoute.geometry as [number, number][] }] : [];
   const mapCenter = origin ? [origin.coordinates.lat, origin.coordinates.lng] as [number, number] : undefined;
 
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       <div className="lg:col-span-1 flex flex-col gap-6">
@@ -89,6 +89,71 @@ const RouteOptimization = () => {
           </CardContent>
         </Card>
 
+        {routes.length > 0 && selectedRoute && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{selectedRoute.name} Route Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Distance</p>
+                  <p className="font-medium">{(selectedRoute.distance / 1000).toFixed(1)} km</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Duration</p>
+                  <p className="font-medium">{formatDuration(selectedRoute.duration)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Cost</p>
+                  <p className="font-medium">${selectedRoute.cost.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">CO₂ Emissions</p>
+                  <p className="font-medium">{selectedRoute.carbonEmissions.toFixed(1)} kg</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tolls</p>
+                  <p className="font-medium">${selectedRoute.tolls.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Border Crossings</p>
+                  <p className="font-medium">{selectedRoute.borderCrossings}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Rest Stops</p>
+                  <p className="font-medium">{selectedRoute.restStops}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Fuel Stations</p>
+                  <p className="font-medium">{selectedRoute.fuelStations}</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground">Road Types</p>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {selectedRoute.roadTypes.map((type, index) => (
+                    <Badge key={index} variant="secondary">{type}</Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground">Difficulty</p>
+                <Badge variant={selectedRoute.difficulty === 'easy' ? 'default' : selectedRoute.difficulty === 'moderate' ? 'secondary' : 'destructive'}>
+                  {selectedRoute.difficulty.charAt(0).toUpperCase() + selectedRoute.difficulty.slice(1)}
+                </Badge>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground">Description</p>
+                <p className="text-sm">{selectedRoute.description}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {routes.length > 0 && (
           <Card>
             <CardHeader>
@@ -107,7 +172,11 @@ const RouteOptimization = () => {
                 </TableHeader>
                 <TableBody>
                   {routes.map((route) => (
-                    <TableRow key={route.name} onClick={() => setSelectedRoute(route)} className={selectedRoute?.name === route.name ? "bg-secondary" : ""}>
+                    <TableRow 
+                      key={route.name} 
+                      onClick={() => setSelectedRoute(route)} 
+                      className={`cursor-pointer ${selectedRoute?.name === route.name ? "bg-secondary" : ""}`}
+                    >
                       <TableCell className="font-medium">{route.name}</TableCell>
                       <TableCell>{formatDuration(route.duration)}</TableCell>
                       <TableCell>{(route.distance / 1000).toFixed(1)} km</TableCell>
