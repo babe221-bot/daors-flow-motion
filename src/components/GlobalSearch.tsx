@@ -16,7 +16,7 @@ interface SearchResult {
   description: string;
   type: 'package' | 'location' | 'user' | 'document' | 'page';
   href: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   metadata?: string;
 }
 
@@ -128,7 +128,7 @@ const GlobalSearch = ({ className, placeholder, onSelect }: GlobalSearchProps) =
     setResults(searchResults);
     setIsOpen(searchResults.length > 0);
     setSelectedIndex(-1);
-  }, [query, items]);
+  }, [query, items, mockLocations, mockPages]);
 
   const handleSelect = (result: SearchResult) => {
     if (onSelect) {

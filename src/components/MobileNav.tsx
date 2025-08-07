@@ -118,12 +118,12 @@ const MobileNav = () => {
     }
   ] : [];
 
-  const filterItemsByRole = (items: any[]) => {
+  const filterItemsByRole = (items: { href: string; title: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; roles?: string[] }[]) => {
     if (!user) return items.filter(item => !item.roles);
     return items.filter(item => !item.roles || item.roles.includes(user.role));
   };
 
-  const NavItem = ({ item, onClick }: { item: any; onClick?: () => void }) => (
+const NavItem = ({ item, onClick }: { item: { href: string; title: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }; onClick?: () => void }) => (
     <Link
       to={item.href}
       onClick={onClick}
