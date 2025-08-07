@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types"; // Import Role type
 import VideoBackground from "@/components/VideoBackground";
+import NaviBar from '@/components/NaviBar';
 
 const Login = () => {
   const { t } = useTranslation();
@@ -17,6 +18,22 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Auto-login as guest on component mount
+  useEffect(() => {
+    const autoLogin = async () => {
+      setLoading(true);
+      try {
+        await loginAsGuest();
+      } catch (err) {
+        setError('Guest login failed');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    autoLogin();
+  }, [loginAsGuest]);
 
   const handleLogin = async (e: React.FormEvent) => { // Added type for event
     e.preventDefault();
@@ -67,10 +84,11 @@ const Login = () => {
   }
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen">
+    <div className="relative flex flex-col items-center justify-center min-h-screen">
+      <NaviBar />
       <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
-      <div className="relative z-10">
-        <Card className="w-full max-w-md glass hover-lift transition-all duration-300">
+      <div className="relative z-10 w-full max-w-md">
+        <Card className="w-full glass hover-lift transition-all duration-300">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-6">
               <Logo size="lg" showText={true} linkTo={null} />
