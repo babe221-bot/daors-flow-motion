@@ -22,12 +22,26 @@ This document outlines a phased approach to implementing all the features descri
 2. **Core UI Components**
    - Responsive Layout (Mobile-first design)
    - Dark/Light Theme switching
-   - Basic navigation components (Navbar, Sidebar, MobileNav)
+   - advance navigation components (Navbar, Sidebar, MobileNav)
    - Loading states and error boundaries
-   - Footer component
+   - modern  Footer component
+   - Error Handling and Logging
+   - Search bar with autocomplete suggestions
+   - Notifications system with customizable alerts
+   - Global Search with autocomplete suggestions
+   - Pagination and infinite scroll
+   - Form validation and submission handling
+   - Toast notifications for quick messages
+   -file upload and download functionality
+   - file upload and download functionality
+   - responsive table with pagination and sorting
+   - form builder with drag-and-drop interface
+   - dynamic form generation based on JSON schema
+- - MAKE SHURE THAT WE DONT CHANGE COLORS AND OR BACKGROUND AND VIDEO LOOP 
+- AND FOR IMPLEMENTATION OF UI AND FRONT END USE ANIME.JS https://animejs.com/documentation/getting-started/, AND https://reactbits.dev/
 
 3. **Internationalization**
-   - Multi-language support (English, Bosnian, Serbian, Croatian)
+   - Multi-language support (English, Bosnian, Serbian, Croatian,swis german, swiw frach)
    - Dynamic language switching
    - Localized content management
 

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import ParticleBackground from "@/components/ParticleBackground";
 import EnhancedFeatures from "@/components/EnhancedFeatures";
+import i18n from "@/i18n";
 
 const Settings = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -20,7 +21,7 @@ const Settings = () => {
   };
 
   const handleLanguageChange = (lang: string) => {
-    // i18n.changeLanguage(lang);
+    i18n.changeLanguage(lang);
   };
 
   return (
@@ -163,6 +164,8 @@ const Settings = () => {
                           <SelectItem value="en">English</SelectItem>
                           <SelectItem value="hr">Croatian</SelectItem>
                           <SelectItem value="sr">Serbian</SelectItem>
+                          <SelectItem value="de-CH">Swiss German</SelectItem>
+                          <SelectItem value="fr-CH">Swiss French</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
