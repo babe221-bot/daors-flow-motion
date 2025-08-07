@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS route_waypoints;
 DROP TABLE IF EXISTS item_documents;
 DROP TABLE IF EXISTS item_history;
 DROP TABLE IF EXISTS user_items;
+DROP TABLE IF EXISTS chat_messages;
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS routes;
 DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS users;
@@ -91,6 +93,27 @@ CREATE TABLE anomalies (
     description TEXT,
     reported_at TIMESTAMPTZ DEFAULT now(),
     resolved_at TIMESTAMPTZ
+);
+
+-- Create notifications table
+CREATE TABLE notifications (
+    id BIGSERIAL PRIMARY KEY,
+    type TEXT NOT NULL,
+    message TEXT NOT NULL,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    related_id UUID, -- e.g., item ID or route ID
+    "read" BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Create chat_messages table
+CREATE TABLE chat_messages (
+    id BIGSERIAL PRIMARY KEY,
+    shipment_id UUID REFERENCES items(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    username TEXT NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- Add indexes for performance
