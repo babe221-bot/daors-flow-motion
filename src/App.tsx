@@ -19,25 +19,27 @@ import PortalShipments from './pages/portal/Shipments';
 import CustomerPortalLayout from './components/CustomerPortalLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import NaviBar from './components/NaviBar';
+import LandingPage from './pages/LandingPage';
 
 const App = () => {
   return (
     <Router>
-      <NaviBar />
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<><NaviBar /><Index /></>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/item-tracking" element={<ItemTracking />} />
-        <Route path="/live-map" element={<LiveMap />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/route-optimization" element={<RouteOptimization />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/support" element={<Support />} />
-        <Route path="/team" element={<Team />} />
-        <Route path="/enhanced-dashboard" element={<EnhancedDashboard />} />
+        <Route path="/customer-dashboard" element={<><NaviBar /><CustomerDashboard /></>} />
+        <Route path="/inventory" element={<><NaviBar /><Inventory /></>} />
+        <Route path="/item-tracking" element={<><NaviBar /><ItemTracking /></>} />
+        <Route path="/live-map" element={<><NaviBar /><LiveMap /></>} />
+        <Route path="/reports" element={<><NaviBar /><Reports /></>} />
+        <Route path="/route-optimization" element={<><NaviBar /><RouteOptimization /></>} />
+        <Route path="/settings" element={<><NaviBar /><Settings /></>} />
+        <Route path="/support" element={<><NaviBar /><Support /></>} />
+        <Route path="/team" element={<><NaviBar /><Team /></>} />
+        <Route path="/enhanced-dashboard" element={<><NaviBar /><EnhancedDashboard /></>} />
+        <Route path="/contact" element={<><NaviBar /><Support /></>} />
         
         <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
           <Route path="/portal" element={<CustomerPortalLayout />}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types"; // Import Role type
 import VideoBackground from "@/components/VideoBackground";
-import NaviBar from '@/components/NaviBar';
 
 const Login = () => {
   const { t } = useTranslation();
@@ -85,7 +84,6 @@ const Login = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <NaviBar />
       <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
       <div className="relative z-10 w-full max-w-md">
         <Card className="w-full glass hover-lift transition-all duration-300">

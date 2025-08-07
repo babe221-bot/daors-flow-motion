@@ -1,0 +1,240 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  Truck, 
+  Globe, 
+  Shield, 
+  Zap,
+  CheckCircle,
+  ArrowRight
+} from 'lucide-react';
+import VideoBackground from '@/components/VideoBackground';
+import ParticleBackground from '@/components/ParticleBackground';
+
+const LandingPage = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const features = [
+    {
+      icon: Truck,
+      title: "Real-time Tracking",
+      description: "Monitor your shipments in real-time with our advanced GPS tracking system."
+    },
+    {
+      icon: Globe,
+      title: "Global Coverage",
+      description: "Seamless logistics across borders with our extensive international network."
+    },
+    {
+      icon: Shield,
+      title: "Secure Handling",
+      description: "Military-grade security protocols to ensure your cargo arrives safely."
+    },
+    {
+      icon: Zap,
+      title: "Fast Delivery",
+      description: "Optimized routes and efficient processes for the fastest delivery times."
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-background to-primary/5">
+      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
+      <ParticleBackground />
+      
+      <div className="relative z-10">
+        {/* Hero Section */}
+        <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl mx-auto"
+          >
+            <motion.h1 
+              className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              Revolutionizing Logistics with AI
+            </motion.h1>
+            
+            <motion.p 
+              className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              Intelligent supply chain solutions that predict, optimize, and automate your logistics operations.
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <Button asChild size="lg" className="group text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary">
+                <Link to="/signup">
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              
+              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2">
+                <Link to="/login">
+                  Login
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+          
+          {/* Animated Stats */}
+          <motion.div 
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl w-full"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isVisible ? "visible" : {}}
+          >
+            {[
+              { value: "99.9%", label: "On-Time Delivery" },
+              { value: "24/7", label: "Tracking" },
+              { value: "150+", label: "Countries" },
+              { value: "1M+", label: "Shipments" }
+            ].map((stat, index) => (
+              <motion.div 
+                key={index}
+                variants={itemVariants}
+                className="text-center"
+              >
+                <Card className="bg-background/30 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="text-3xl font-bold text-primary">{stat.value}</div>
+                    <div className="text-muted-foreground mt-2">{stat.label}</div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+        
+        {/* Features Section */}
+        <section className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Our platform offers cutting-edge solutions for modern logistics challenges
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  whileHover={{ y: -10 }}
+                  className="h-full"
+                >
+                  <Card className="h-full bg-background/30 backdrop-blur-sm border-border/50 hover:shadow-xl transition-all duration-300">
+                    <CardContent className="p-6 flex flex-col items-center text-center">
+                      <div className="bg-primary/10 p-3 rounded-full mb-4">
+                        <feature.icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-20 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Logistics?</h2>
+              <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+                Join thousands of businesses that trust our platform for their supply chain needs
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button asChild size="lg" className="group text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary">
+                  <Link to="/signup">
+                    Start Free Trial
+                    <CheckCircle className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                
+                <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2">
+                  <Link to="/contact">
+                    Contact Sales
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* Footer */}
+        <footer className="py-10 px-4 border-t border-border/50">
+          <div className="max-w-6xl mx-auto text-center">
+            <p className="text-muted-foreground">
+              © {new Date().getFullYear()} Logistics Platform. All rights reserved.
+            </p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default LandingPage;
