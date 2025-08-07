@@ -19,6 +19,7 @@ import {
   Route
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import {
@@ -194,6 +195,15 @@ const Sidebar = ({ isOpen, onAlertsClick, alertsCount = 0 }: SidebarProps) => {
       )}
     >
       <div className="flex flex-col h-full p-4">
+        {/* Logo Section */}
+        <div className={cn("mb-6 pb-4 border-b border-border/50", !isOpen && "text-center")}>
+          <Logo 
+            size={isOpen ? "md" : "sm"} 
+            showText={isOpen} 
+            linkTo="/"
+          />
+        </div>
+
         <nav className="flex-1 space-y-2">
           {filteredMenuItems.map(renderMenuItem)}
         </nav>

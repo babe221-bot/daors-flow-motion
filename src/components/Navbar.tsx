@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Menu, X, BarChart3, Settings, Search, User, LogOut, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,19 +63,18 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
           {/* Mobile navigation */}
           <MobileNav />
           
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center">
-              <img 
-                src="/lovable-uploads/logo.jpg"
-                alt="DaorsForge AI Systems"
-                className="w-10 h-10 object-contain mix-blend-plus-lighter"
-              />
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-xl font-bold gradient-text">DaorsForge</h1>
-              <p className="text-xs text-muted-foreground">{t('navbar.logisticsAiSystems')}</p>
-            </div>
-          </div>
+          <Logo 
+            size="md" 
+            showText={true} 
+            linkTo="/"
+            className="hidden sm:flex"
+          />
+          <Logo 
+            size="md" 
+            showText={false} 
+            linkTo="/"
+            className="sm:hidden"
+          />
         </div>
 
         {/* Middle section - Search */}

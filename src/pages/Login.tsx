@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import Logo from "@/components/Logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -71,7 +72,10 @@ const Login = () => {
       <div className="relative z-10">
         <Card className="w-full max-w-md glass hover-lift transition-all duration-300">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl gradient-text">{t('login.title', 'Login to your Account')}</CardTitle>
+            <div className="flex justify-center mb-6">
+              <Logo size="lg" showText={true} linkTo={null} />
+            </div>
+            <CardTitle className="text-xl">{t('login.title', 'Login to your Account')}</CardTitle>
             <CardDescription>{t('login.description', 'Enter your credentials to access the dashboard.')}</CardDescription>
           </CardHeader>
           <CardContent>
