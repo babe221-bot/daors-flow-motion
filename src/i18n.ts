@@ -17,6 +17,12 @@ i18n
     backend: {
       loadPath: "/locales/{{lng}}/translation.json",
     },
+    detection: {
+      // Prevents i18next from automatically detecting the language
+      // This allows us to manually control the language
+      order: ['localStorage', 'cookie'],
+      caches: ['localStorage', 'cookie']
+    },
   }, (err, t) => {
     if (err) return console.log('something went wrong loading', err);
     console.log('i18n initialized successfully');

@@ -187,6 +187,16 @@ const LandingPage = () => {
               Revolutionizing Logistics with AI
             </motion.h1>
             
+            {/* Test translation */}
+            <motion.p 
+              className="text-lg md:text-xl text-foreground/90 mb-6 max-w-3xl mx-auto font-light"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              Test translation: {i18n.t('index.title', { lng: 'en' })}
+            </motion.p>
+            
             <motion.p 
               className="text-xl md:text-3xl text-foreground/90 mb-12 max-w-3xl mx-auto font-light"
               initial={{ opacity: 0, y: 30 }}
