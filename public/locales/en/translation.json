@@ -142,6 +142,8 @@
   "sidebar.alerts": "Alerts",
   "sidebar.support": "Support",
   "sidebar.settings": "Settings",
+  "sidebar.profile": "Profile",
+  "sidebar.team": "Team",
   "sidebar.systemOnline": "System Online",
   "alerts.title": "Live Alerts",
   "alerts.active": "active",

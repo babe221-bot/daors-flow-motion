@@ -16,7 +16,9 @@ import {
   FileText,
   LifeBuoy,
   Warehouse,
-  Route
+  Route,
+  User,
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
@@ -101,6 +103,8 @@ const Sidebar = ({ isOpen, onAlertsClick, alertsCount = 0 }: SidebarProps) => {
   ];
 
   const bottomItems: MenuItem[] = [
+    { id: "profile", label: t("sidebar.profile"), icon: User, color: "text-gray-400", href: "/portal/profile", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "team", label: t("sidebar.team"), icon: Users, color: "text-gray-400", href: "/team", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER] },
     { id: "support", label: t("sidebar.support"), icon: LifeBuoy, color: "text-gray-400", href: "/support", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
     { id: "settings", label: t("sidebar.settings"), icon: Settings, color: "text-gray-400", href: "/settings", allowedRoles: [ROLES.ADMIN] },
   ];

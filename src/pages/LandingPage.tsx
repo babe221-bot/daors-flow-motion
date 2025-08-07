@@ -66,7 +66,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen">
       <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
       <ParticleBackground />
       

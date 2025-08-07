@@ -36,24 +36,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const getSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          // Fetch user profile from your users table
-          const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (profile) {
-            setUser({
-              id: profile.id,
-              username: profile.username || session.user.email?.split('@')[0] || 'User',
-              role: profile.role || ROLES.CLIENT,
-              avatarUrl: profile.avatar_url,
-              associatedItemIds: profile.associated_item_ids
-            });
-          }
+      if (session?.user) {
+        // Fetch user profile from your users table
+        const { data: profile, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user profile:', error);
         }
+        
+        if (profile) {
+          setUser({
+            id: profile.id,
+            username: profile.full_name || profile.email?.split('@')[0] || 'User',
+            role: profile.role || ROLES.CLIENT,
+            avatarUrl: null, // Not in schema
+            associatedItemIds: [] // Not in schema, would need a join query to populate
+          });
+        } else {
+          // Create a minimal user object if profile doesn't exist
+          setUser({
+            id: session.user.id,
+            username: session.user.email?.split('@')[0] || 'User',
+            role: ROLES.CLIENT,
+            avatarUrl: null,
+            associatedItemIds: []
+          });
+        }
+      }
       } catch (error) {
         console.error('Error getting session:', error);
       } finally {
@@ -67,19 +80,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         // Fetch user profile
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', session.user.id)
           .single();
         
+        if (error) {
+          console.error('Error fetching user profile:', error);
+        }
+        
         if (profile) {
           setUser({
             id: profile.id,
-            username: profile.username || session.user.email?.split('@')[0] || 'User',
+            username: profile.full_name || profile.email?.split('@')[0] || 'User',
             role: profile.role || ROLES.CLIENT,
-            avatarUrl: profile.avatar_url,
-            associatedItemIds: profile.associated_item_ids
+            avatarUrl: null, // Not in schema
+            associatedItemIds: [] // Not in schema, would need a join query to populate
+          });
+        } else {
+          // Create a minimal user object if profile doesn't exist
+          setUser({
+            id: session.user.id,
+            username: session.user.email?.split('@')[0] || 'User',
+            role: ROLES.CLIENT,
+            avatarUrl: null,
+            associatedItemIds: []
           });
         }
       } else if (event === 'SIGNED_OUT') {
@@ -126,7 +152,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           .from('users')
           .insert({
             id: data.user.id,
-            username,
+            full_name: username,
             role,
             email
           });
@@ -192,7 +218,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await supabase.from('users').insert({
           id: data.user.id,
           email: guestEmail,
-          username: 'Guest',
+          full_name: 'Guest',
           role: ROLES.GUEST,
         });
 
