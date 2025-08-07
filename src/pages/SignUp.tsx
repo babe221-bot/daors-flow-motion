@@ -56,7 +56,7 @@ const handleSignUp = async (e: React.FormEvent) => {
 
   return (
     <div className="relative flex items-center justify-center min-h-screen">
-      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
+      <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
       <div className="relative z-10">
         <Card className="w-full max-w-md glass hover-lift transition-all duration-300">
           <CardHeader className="text-center">
