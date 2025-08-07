@@ -7,6 +7,7 @@ import GlobalSearch from '@/components/GlobalSearch';
 import DocumentManager from '@/components/DocumentManager';
 import FormBuilder from '@/components/FormBuilder';
 import DynamicForm from '@/components/DynamicForm';
+import EnhancedTable from '@/components/EnhancedTable';
 import { Item } from '@/lib/types';
 
 const DemoPage = () => {
@@ -100,12 +101,13 @@ const DemoPage = () => {
       </div>
 
       <Tabs defaultValue="search" className="space-y-6">
-        <TabsList className="grid grid-cols-5">
+        <TabsList className="grid grid-cols-6">
           <TabsTrigger value="search">Search</TabsTrigger>
           <TabsTrigger value="forms">Forms</TabsTrigger>
           <TabsTrigger value="files">File Management</TabsTrigger>
           <TabsTrigger value="builder">Form Builder</TabsTrigger>
           <TabsTrigger value="dynamic">Dynamic Form</TabsTrigger>
+          <TabsTrigger value="table">Enhanced Table</TabsTrigger>
         </TabsList>
 
         <TabsContent value="search" className="space-y-6">
@@ -173,6 +175,40 @@ const DemoPage = () => {
                 onSubmit={handleFormSubmit}
                 submitLabel="Submit Form"
                 cancelLabel="Cancel"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="table" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Enhanced Table</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EnhancedTable
+                data={[
+                  { id: '1', name: 'Package A', status: 'In Transit', location: 'Belgrade', value: 150 },
+                  { id: '2', name: 'Package B', status: 'Delivered', location: 'Sarajevo', value: 200 },
+                  { id: '3', name: 'Package C', status: 'Pending', location: 'Zagreb', value: 75 },
+                  { id: '4', name: 'Package D', status: 'In Transit', location: 'Ljubljana', value: 300 },
+                  { id: '5', name: 'Package E', status: 'Delivered', location: 'Podgorica', value: 120 },
+                  { id: '6', name: 'Package F', status: 'Pending', location: 'Skopje', value: 90 },
+                  { id: '7', name: 'Package G', status: 'In Transit', location: 'Pristina', value: 180 },
+                  { id: '8', name: 'Package H', status: 'Delivered', location: 'Tirana', value: 250 },
+                  { id: '9', name: 'Package I', status: 'Pending', location: 'Bucharest', value: 110 },
+                  { id: '10', name: 'Package J', status: 'In Transit', location: 'Sofia', value: 160 },
+                  { id: '11', name: 'Package K', status: 'Delivered', location: 'Athens', value: 220 },
+                  { id: '12', name: 'Package L', status: 'Pending', location: 'Ankara', value: 140 },
+                ]}
+                columns={[
+                  { key: 'id', title: 'ID', sortable: true },
+                  { key: 'name', title: 'Name', sortable: true },
+                  { key: 'status', title: 'Status', sortable: true },
+                  { key: 'location', title: 'Location', sortable: true },
+                  { key: 'value', title: 'Value ($)', sortable: true },
+                ]}
+                itemsPerPage={5}
               />
             </CardContent>
           </Card>

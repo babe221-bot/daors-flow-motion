@@ -20,6 +20,7 @@ import CustomerPortalLayout from './components/CustomerPortalLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import ResponsiveLayout from './components/ResponsiveLayout';
+import DemoPage from './pages/DemoPage';
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/team" element={<ResponsiveLayout><Team /></ResponsiveLayout>} />
         <Route path="/enhanced-dashboard" element={<ResponsiveLayout><EnhancedDashboard /></ResponsiveLayout>} />
         <Route path="/contact" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
+        <Route path="/demo" element={<ResponsiveLayout><DemoPage /></ResponsiveLayout>} />
         
         <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
           <Route path="/portal" element={<CustomerPortalLayout />}>
