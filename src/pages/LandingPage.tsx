@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import VideoBackground from '@/components/VideoBackground';
+import MediaBackground from '@/components/MediaBackground';
 import ParticleBackground from '@/components/ParticleBackground';
 import i18n from '@/i18n';
 
