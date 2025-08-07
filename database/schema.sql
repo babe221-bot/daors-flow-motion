@@ -1,10 +1,17 @@
--- Drop existing tables if they exist
-DROP TABLE IF EXISTS item_history, item_documents, route_waypoints, user_items, items, routes, users, anomalies CASCADE;
+-- Drop existing tables in reverse order of dependency
+DROP TABLE IF EXISTS anomalies;
+DROP TABLE IF EXISTS route_waypoints;
+DROP TABLE IF EXISTS item_documents;
+DROP TABLE IF EXISTS item_history;
+DROP TABLE IF EXISTS user_items;
+DROP TABLE IF EXISTS routes;
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS users;
 
 -- Create users table
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email TEXT NOT-NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     full_name TEXT,
     role TEXT NOT NULL DEFAULT 'user',
