@@ -4,15 +4,14 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { LogIn, UserPlus } from 'lucide-react';
+import { LogIn, UserPlus, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
 import { Link } from 'react-router-dom';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const NaviBar = () => {
   const { t } = useTranslation();
@@ -35,20 +34,6 @@ const NaviBar = () => {
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/about" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    {t('navbar.about')}
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/contact" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    {t('navbar.contact')}
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-2">
@@ -67,9 +52,25 @@ const NaviBar = () => {
           </div>
         </div>
         <div className="md:hidden">
-          <Button variant="ghost" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? 'Close' : 'Menu'}
-          </Button>
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <div className="flex flex-col gap-4 p-4">
+                <Link to="/login" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  {t('navbar.login')}
+                </Link>
+                <Link to="/signup" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  {t('navbar.signup')}
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

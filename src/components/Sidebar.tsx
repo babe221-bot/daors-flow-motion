@@ -43,7 +43,7 @@ interface MenuItem {
   id: string;
   label:string;
   icon: React.ElementType;
-  color: string;
+  color?: string;
   href?: string;
   subItems?: SubItem[];
   allowedRoles: Role[];
@@ -101,8 +101,8 @@ const Sidebar = ({ isOpen, onAlertsClick, alertsCount = 0 }: SidebarProps) => {
   ];
 
   const bottomItems: MenuItem[] = [
-    { id: "support", label: t("sidebar.support"), icon: LifeBuoy, href: "/support", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
-    { id: "settings", label: t("sidebar.settings"), icon: Settings, href: "/settings", allowedRoles: [ROLES.ADMIN] },
+    { id: "support", label: t("sidebar.support"), icon: LifeBuoy, color: "text-gray-400", href: "/support", allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CLIENT, ROLES.DRIVER] },
+    { id: "settings", label: t("sidebar.settings"), icon: Settings, color: "text-gray-400", href: "/settings", allowedRoles: [ROLES.ADMIN] },
   ];
 
   const filteredMenuItems = menuItems.filter(item => hasRole(item.allowedRoles));
