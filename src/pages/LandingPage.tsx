@@ -89,81 +89,25 @@ const LandingPage = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-background/90 backdrop-blur-lg border-border/50 shadow-lg rounded-lg">
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to bs');
-                i18n.changeLanguage('bs').then(() => {
-                  console.log('Language changed to bs');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to bs:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('bs')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 Bosanski
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to en');
-                i18n.changeLanguage('en').then(() => {
-                  console.log('Language changed to en');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to en:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 English
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to hr');
-                i18n.changeLanguage('hr').then(() => {
-                  console.log('Language changed to hr');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to hr:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('hr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 Hrvatski
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to sr');
-                i18n.changeLanguage('sr').then(() => {
-                  console.log('Language changed to sr');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to sr:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('sr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 Српски
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to de-CH');
-                i18n.changeLanguage('de-CH').then(() => {
-                  console.log('Language changed to de-CH');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to de-CH:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('de-CH')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 Schweizer Deutsch
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to fr-CH');
-                i18n.changeLanguage('fr-CH').then(() => {
-                  console.log('Language changed to fr-CH');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to fr-CH:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('fr-CH')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 Français Suisse
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                console.log('Changing language to tr');
-                i18n.changeLanguage('tr').then(() => {
-                  console.log('Language changed to tr');
-                  console.log('Current language:', i18n.language);
-                }).catch((err) => {
-                  console.error('Error changing language to tr:', err);
-                });
-              }} className="cursor-pointer hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('tr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
                 Türkçe
               </DropdownMenuItem>
             </DropdownMenuContent>
