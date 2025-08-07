@@ -14,7 +14,6 @@
     "jsx": "react-jsx",
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": ["vite-plugin-svgr/types"],
     "baseUrl": "src",
     "paths": {
       "@/*": ["./*"]
