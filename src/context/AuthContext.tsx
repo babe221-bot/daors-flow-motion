@@ -158,26 +158,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginAsGuest = async () => {
     try {
-      const { data, error } = await supabase.auth.signInAnonymously();
+      // Generate a unique guest email to avoid conflicts
+      const guestEmail = `guest_${Date.now()}@example.com`;
+      const guestPassword = 'guestpassword'; // A dummy password
 
-      if (error) {
-        console.error('Anonymous sign-in error:', error);
-        return { error };
+      // Attempt to sign up the guest user
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: guestEmail,
+        password: guestPassword,
+      });
+
+      if (signUpError) {
+        // If the user already exists, try to sign them in
+        if (signUpError.message.includes('already registered')) {
+          return login(guestEmail, guestPassword);
+        }
+        console.error('Guest sign-up error:', signUpError);
+        return { error: signUpError };
       }
 
       if (data.user) {
-        setUser({
+        // Manually set the user in the state as the auth listener might not be fast enough
+        const guestUser: User = {
           id: data.user.id,
-          username: 'Guest', // Default username for guest
-          role: ROLES.GUEST, // Assuming ROLES.GUEST is defined in types
+          username: 'Guest',
+          role: ROLES.GUEST,
           avatarUrl: null,
-          associatedItemIds: []
+          associatedItemIds: [],
+        };
+        setUser(guestUser);
+
+        // Also insert into the public 'users' table
+        await supabase.from('users').insert({
+          id: data.user.id,
+          email: guestEmail,
+          username: 'Guest',
+          role: ROLES.GUEST,
         });
+
         return { error: null };
       }
-      return { error: new Error('Anonymous sign-in did not return a user.') };
+
+      return { error: new Error('Guest sign-up did not return a user.') };
     } catch (error) {
-      console.error('Error during anonymous sign-in:', error);
+      console.error('Error during guest login:', error);
       return { error: error as Error };
     }
   };
