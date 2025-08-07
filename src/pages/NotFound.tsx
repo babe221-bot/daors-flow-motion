@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
-import VideoBackground from "@/components/VideoBackground";
+import MediaBackground from "@/components/MediaBackground";
 
 const NotFound = () => {
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
+      <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
       <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/80 to-background/90 z-10" />
       
       <div className="relative z-20 min-h-screen flex items-center justify-center p-6">

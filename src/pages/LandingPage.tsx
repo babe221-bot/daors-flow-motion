@@ -75,7 +75,7 @@ const LandingPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
+      <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
       <ParticleBackground />
       
       <div className="relative z-10">

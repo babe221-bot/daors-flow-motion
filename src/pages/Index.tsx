@@ -10,7 +10,7 @@ import {
 import Sidebar from "@/components/Sidebar";
 import MetricCard from "@/components/MetricCard";
 import AnimatedChart from "@/components/AnimatedChart";
-import VideoBackground from "@/components/VideoBackground";
+import MediaBackground from "@/components/MediaBackground";
 import AlertsPanel from "@/components/AlertsPanel";
 import EnhancedFeatures from "@/components/EnhancedFeatures";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -113,7 +113,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
+      <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
       <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/80 to-background/90 z-10" />
       
       <div className="relative z-20">
