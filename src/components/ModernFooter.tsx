@@ -1,0 +1,240 @@
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Facebook, 
+  Twitter, 
+  Linkedin, 
+  Instagram,
+  Heart,
+  ExternalLink,
+  Send,
+  Truck,
+  Globe,
+  Shield
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+
+const ModernFooter = () => {
+  const { t } = useTranslation();
+  const currentYear = new Date().getFullYear();
+
+  const footerSections = [
+    {
+      title: 'Company',
+      links: [
+        { name: 'About Us', href: '/about' },
+        { name: 'Careers', href: '/careers' },
+        { name: 'Press', href: '/press' },
+        { name: 'Blog', href: '/blog' }
+      ]
+    },
+    {
+      title: 'Services',
+      links: [
+        { name: 'Package Tracking', href: '/item-tracking' },
+        { name: 'Route Optimization', href: '/route-optimization' },
+        { name: 'Live Map', href: '/live-map' },
+        { name: 'Reports', href: '/reports' }
+      ]
+    },
+    {
+      title: 'Support',
+      links: [
+        { name: 'Help Center', href: '/support' },
+        { name: 'Contact Us', href: '/contact' },
+        { name: 'API Documentation', href: '/docs' },
+        { name: 'Status Page', href: '/status' }
+      ]
+    },
+    {
+      title: 'Legal',
+      links: [
+        { name: 'Privacy Policy', href: '/privacy' },
+        { name: 'Terms of Service', href: '/terms' },
+        { name: 'Cookie Policy', href: '/cookies' },
+        { name: 'GDPR', href: '/gdpr' }
+      ]
+    }
+  ];
+
+  const features = [
+    { icon: Truck, title: 'Real-time Tracking', description: 'Monitor shipments live' },
+    { icon: Globe, title: 'Global Coverage', description: 'Worldwide logistics network' },
+    { icon: Shield, title: 'Secure Handling', description: 'End-to-end security' }
+  ];
+
+  const socialLinks = [
+    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com' },
+    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
+    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com' }
+  ];
+
+  return (
+    <footer className="bg-gradient-to-br from-background to-muted/30 border-t border-border/50 mt-auto relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-5">
+        <div className="absolute top-10 left-10 w-64 h-64 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute top-10 right-10 w-64 h-64 bg-secondary rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-10 left-1/2 w-64 h-64 bg-accent rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        {/* Features Highlight */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <div 
+                key={index}
+                className="flex items-start gap-4 p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <IconComponent className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">{feature.title}</h4>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          {/* Company Info */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary/10">
+                <img 
+                  src="/lovable-uploads/logo.jpg"
+                  alt="DaorsForge AI Systems"
+                  className="w-8 h-8 object-contain mix-blend-plus-lighter"
+                />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  DaorsForge
+                </h3>
+                <p className="text-xs text-muted-foreground">AI Logistics Systems</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+              Revolutionizing logistics with AI-powered solutions for real-time tracking, 
+              route optimization, and intelligent supply chain management.
+            </p>
+            
+            {/* Contact Info */}
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-3 group">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <span>contact@daorsforge.com</span>
+              </div>
+              <div className="flex items-center gap-3 group">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <span>+387 33 123 456</span>
+              </div>
+              <div className="flex items-center gap-3 group">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <span>Sarajevo, Bosnia and Herzegovina</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Sections */}
+          {footerSections.map((section, index) => (
+            <div key={index}>
+              <h4 className="font-semibold mb-4 text-lg relative inline-block">
+                {section.title}
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary/50 rounded-full"></span>
+              </h4>
+              <ul className="space-y-3">
+                {section.links.map((link) => (
+                  <li key={link.name}>
+                    <Link 
+                      to={link.href}
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group"
+                    >
+                      <span className="w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-3"></span>
+                      <span>{link.name}</span>
+                      {link.href.startsWith('http') && <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Newsletter Signup */}
+        <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-primary/5 to-secondary/5 border border-border/50 backdrop-blur-sm">
+          <div className="max-w-2xl mx-auto text-center">
+            <h4 className="font-bold text-2xl mb-2">Stay Updated</h4>
+            <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+              Get the latest updates on new features, industry insights, and logistics trends.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <div className="relative flex-1">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Enter your email" 
+                  className="pl-10 h-12 bg-background/80 border-border/50"
+                  type="email"
+                />
+              </div>
+              <Button size="lg" className="group">
+                Subscribe
+                <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <Separator className="my-12 bg-border/30" />
+
+        {/* Bottom Footer */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>© {currentYear} DaorsForge AI Systems. Made with</span>
+            <Heart className="h-4 w-4 text-red-500 fill-current animate-pulse" />
+            <span>in Bosnia and Herzegovina</span>
+          </div>
+
+          {/* Social Links */}
+          <div className="flex items-center gap-4">
+            {socialLinks.map((social) => {
+              const IconComponent = social.icon;
+              return (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-muted/50 text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+                  aria-label={social.name}
+                >
+                  <IconComponent className="h-5 w-5" />
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default ModernFooter;
