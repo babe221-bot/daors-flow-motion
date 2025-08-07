@@ -55,14 +55,20 @@ const Toast = React.forwardRef<
     }
   }, [])
   
+  React.useImperativeHandle(ref, () => ({
+    // Create a custom ref object that matches the expected type
+    get current() {
+      return toastRef.current
+    },
+    // No-op for any methods since we only need the DOM reference
+    focus: () => {},
+    click: () => {},
+    scrollIntoView: () => {}
+  } as unknown as HTMLDivElement))
+  
   return (
     <ToastPrimitives.Root
-ref={(node) => {
-  toastRef.current = node
-  if (typeof ref === 'function') {
-    ref(node)
-  }
-}}
+      ref={toastRef}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     />
