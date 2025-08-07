@@ -12,9 +12,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
     full_name TEXT,
-    role TEXT NOT NULL DEFAULT 'user',
+    role TEXT NOT NULL DEFAULT 'CLIENT',
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -27,6 +26,7 @@ CREATE TABLE items (
     current_location GEOGRAPHY(Point, 4326),
     origin GEOGRAPHY(Point, 4326),
     destination GEOGRAPHY(Point, 4326),
+    route_id UUID REFERENCES routes(id),
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
 );

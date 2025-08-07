@@ -36,37 +36,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const getSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // Fetch user profile from your users table
-        const { data: profile, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (error) {
-          console.error('Error fetching user profile:', error);
+        if (session?.user) {
+          // Fetch user profile from your users table
+          const { data: profile, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          
+          if (error) {
+            console.error('Error fetching user profile:', error);
+          }
+          
+          if (profile) {
+            setUser({
+              id: profile.id,
+              username: profile.full_name || profile.email?.split('@')[0] || 'User',
+              role: (profile.role as Role) || ROLES.CLIENT,
+              avatarUrl: null, // Not in schema
+              associatedItemIds: [] // Not in schema, would need a join query to populate
+            });
+          } else {
+            // Create a minimal user object if profile doesn't exist
+            setUser({
+              id: session.user.id,
+              username: session.user.email?.split('@')[0] || 'User',
+              role: ROLES.CLIENT,
+              avatarUrl: null,
+              associatedItemIds: []
+            });
+          }
         }
-        
-        if (profile) {
-          setUser({
-            id: profile.id,
-            username: profile.full_name || profile.email?.split('@')[0] || 'User',
-            role: profile.role || ROLES.CLIENT,
-            avatarUrl: null, // Not in schema
-            associatedItemIds: [] // Not in schema, would need a join query to populate
-          });
-        } else {
-          // Create a minimal user object if profile doesn't exist
-          setUser({
-            id: session.user.id,
-            username: session.user.email?.split('@')[0] || 'User',
-            role: ROLES.CLIENT,
-            avatarUrl: null,
-            associatedItemIds: []
-          });
-        }
-      }
       } catch (error) {
         console.error('Error getting session:', error);
       } finally {
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser({
             id: profile.id,
             username: profile.full_name || profile.email?.split('@')[0] || 'User',
-            role: profile.role || ROLES.CLIENT,
+            role: (profile.role as Role) || ROLES.CLIENT,
             avatarUrl: null, // Not in schema
             associatedItemIds: [] // Not in schema, would need a join query to populate
           });
@@ -184,48 +184,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginAsGuest = async () => {
     try {
-      // Generate a unique guest email to avoid conflicts
-      const guestEmail = `guest_${Date.now()}@example.com`;
-      const guestPassword = 'guestpassword'; // A dummy password
-
-      // Attempt to sign up the guest user
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: guestEmail,
-        password: guestPassword,
-      });
-
-      if (signUpError) {
-        // If the user already exists, try to sign them in
-        if (signUpError.message.includes('already registered')) {
-          return login(guestEmail, guestPassword);
-        }
-        console.error('Guest sign-up error:', signUpError);
-        return { error: signUpError };
+      // Use a fixed guest account for demo purposes
+      const { data, error } = await supabase.auth.signInAnonymously();
+      
+      if (error) {
+        return { error };
       }
-
+      
       if (data.user) {
-        // Manually set the user in the state as the auth listener might not be fast enough
-        const guestUser: User = {
-          id: data.user.id,
-          username: 'Guest',
-          role: ROLES.GUEST,
-          avatarUrl: null,
-          associatedItemIds: [],
-        };
-        setUser(guestUser);
-
-        // Also insert into the public 'users' table
-        await supabase.from('users').insert({
-          id: data.user.id,
-          email: guestEmail,
-          full_name: 'Guest',
-          role: ROLES.GUEST,
-        });
-
-        return { error: null };
+        // Check if user profile exists
+        const { data: profile, error: profileError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+        
+        if (profileError || !profile) {
+          // Create guest user profile
+          const { error: insertError } = await supabase
+            .from('users')
+            .insert({
+              id: data.user.id,
+              email: data.user.email,
+              full_name: 'Guest User',
+              role: ROLES.GUEST,
+            });
+          
+          if (insertError) {
+            console.error('Error creating guest profile:', insertError);
+          }
+        }
       }
-
-      return { error: new Error('Guest sign-up did not return a user.') };
+      
+      return { error: null };
     } catch (error) {
       console.error('Error during guest login:', error);
       return { error: error as Error };
@@ -239,7 +230,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     signup,
     hasRole,
-    loginAsGuest, // Added this line
+    loginAsGuest,
     loading,
   };
 

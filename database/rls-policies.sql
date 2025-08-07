@@ -26,9 +26,8 @@ CREATE OR REPLACE FUNCTION can_access_item(item_id UUID)
 RETURNS BOOLEAN AS $$
 DECLARE
     user_role TEXT;
-    user_items TEXT[];
 BEGIN
-    SELECT role, associated_item_ids INTO user_role, user_items
+    SELECT role INTO user_role
     FROM public.users 
     WHERE id = auth.uid();
     
@@ -38,8 +37,11 @@ BEGIN
     END IF;
     
     -- Clients can only access their associated items
-    IF user_role = 'CLIENT' AND user_items IS NOT NULL THEN
-        RETURN item_id::TEXT = ANY(user_items);
+    IF user_role = 'CLIENT' THEN
+        RETURN EXISTS (
+            SELECT 1 FROM public.user_items ui
+            WHERE ui.user_id = auth.uid() AND ui.item_id = item_id
+        );
     END IF;
     
     -- Drivers can access items on their routes
@@ -47,9 +49,7 @@ BEGIN
         RETURN EXISTS (
             SELECT 1 FROM public.items i
             JOIN public.routes r ON i.route_id = r.id
-            WHERE i.id = item_id AND r.driver = (
-                SELECT username FROM public.users WHERE id = auth.uid()
-            )
+            WHERE i.id = item_id AND r.driver_id = auth.uid()
         );
     END IF;
     
@@ -101,9 +101,7 @@ CREATE POLICY "Drivers can update their route items" ON public.items
         get_user_role() = 'DRIVER' AND
         EXISTS (
             SELECT 1 FROM public.routes r
-            WHERE r.id = route_id AND r.driver = (
-                SELECT username FROM public.users WHERE id = auth.uid()
-            )
+            WHERE r.id = route_id AND r.driver_id = auth.uid()
         )
     );
 
@@ -112,9 +110,7 @@ CREATE POLICY "Drivers can update their route items" ON public.items
 CREATE POLICY "Users can read accessible routes" ON public.routes
     FOR SELECT USING (
         get_user_role() IN ('ADMIN', 'MANAGER') OR
-        (get_user_role() = 'DRIVER' AND driver = (
-            SELECT username FROM public.users WHERE id = auth.uid()
-        )) OR
+        (get_user_role() = 'DRIVER' AND driver_id = auth.uid()) OR
         (get_user_role() = 'CLIENT' AND EXISTS (
             SELECT 1 FROM public.items i
             WHERE i.route_id = id AND can_access_item(i.id)
@@ -133,7 +129,7 @@ CREATE POLICY "Admins and managers can update routes" ON public.routes
 CREATE POLICY "Drivers can update own routes" ON public.routes
     FOR UPDATE USING (
         get_user_role() = 'DRIVER' AND
-        driver = (SELECT username FROM public.users WHERE id = auth.uid())
+        driver_id = auth.uid()
     );
 
 -- ANOMALIES TABLE POLICIES
@@ -144,9 +140,7 @@ CREATE POLICY "Users can read accessible anomalies" ON public.anomalies
         EXISTS (
             SELECT 1 FROM public.routes r
             WHERE r.id = route_id AND (
-                (get_user_role() = 'DRIVER' AND r.driver = (
-                    SELECT username FROM public.users WHERE id = auth.uid()
-                )) OR
+                (get_user_role() = 'DRIVER' AND r.driver_id = auth.uid()) OR
                 (get_user_role() = 'CLIENT' AND EXISTS (
                     SELECT 1 FROM public.items i
                     WHERE i.route_id = r.id AND can_access_item(i.id)

@@ -20,7 +20,7 @@ const SignUp = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async (e) => {
+const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');

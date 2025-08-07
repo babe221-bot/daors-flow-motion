@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -17,22 +17,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Auto-login as guest on component mount
-  useEffect(() => {
-    const autoLogin = async () => {
-      setLoading(true);
-      try {
-        await loginAsGuest();
-      } catch (err) {
-        setError('Guest login failed');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    autoLogin();
-  }, [loginAsGuest]);
 
   const handleLogin = async (e: React.FormEvent) => { // Added type for event
     e.preventDefault();
