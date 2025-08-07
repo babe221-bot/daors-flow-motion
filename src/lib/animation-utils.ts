@@ -1,4 +1,4 @@
-const anime = require('animejs');
+import * as anime from 'animejs';
 
 // Theme transition animation
 export function animateThemeChange() {
@@ -27,7 +27,7 @@ export function animateThemeChange() {
 
 // Toast notification animation
 export function animateToast(element: HTMLElement) {
-  anime({
+anime({
     targets: element,
     translateY: [-20, 0],
     opacity: [0, 1],
@@ -38,7 +38,7 @@ export function animateToast(element: HTMLElement) {
 
 // Page transition animation
 export function animatePageTransition() {
-  anime({
+anime({
     targets: 'main',
     opacity: [0, 1],
     translateY: [20, 0],
@@ -49,7 +49,7 @@ export function animatePageTransition() {
 
 // Button hover animation
 export function animateButtonHover(element: HTMLElement) {
-  anime({
+anime({
     targets: element,
     scale: [1, 1.05],
     duration: 200,
@@ -59,7 +59,7 @@ export function animateButtonHover(element: HTMLElement) {
 
 // Form input focus animation
 export function animateInputFocus(element: HTMLElement) {
-  anime({
+anime({
     targets: element,
     borderColor: ['#93c5fd', '#3b82f6'],
     duration: 300,
