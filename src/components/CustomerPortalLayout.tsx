@@ -13,6 +13,7 @@ import {
 import { LayoutDashboard, Package, User, LifeBuoy, LogOut, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import Logo from '@/components/Logo';
 
 const CustomerPortalLayout = () => {
   const { user, logout } = useAuth();
@@ -31,10 +32,10 @@ const CustomerPortalLayout = () => {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <div className="mr-4 hidden md:flex">
-            <Link to="/portal/dashboard" className="mr-6 flex items-center space-x-2">
-              <Truck className="h-6 w-6" />
-              <span className="hidden font-bold sm:inline-block">Client Portal</span>
-            </Link>
+            <div className="mr-6 flex items-center space-x-3">
+              <Logo size="sm" showText={true} linkTo="/portal/dashboard" />
+              <span className="hidden font-medium text-muted-foreground sm:inline-block">Client Portal</span>
+            </div>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               {navLinks.map(link => (
                 <Link
@@ -81,7 +82,7 @@ const CustomerPortalLayout = () => {
         <Outlet />
       </main>
       <footer className="py-4 text-center text-sm text-muted-foreground border-t">
-        © {new Date().getFullYear()} Logistics Inc. All rights reserved.
+        © {new Date().getFullYear()} DAORSFORGE AI Systems. All rights reserved.
       </footer>
     </div>
   );

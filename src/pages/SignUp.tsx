@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import daorsforgeLogo from "@/assets/daorsforge-logo.jpg";
 import { Button } from '@/components/ui/button';
+import Logo from "@/components/Logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -60,21 +60,8 @@ const SignUp = () => {
       <div className="relative z-10">
         <Card className="w-full max-w-md glass hover-lift transition-all duration-300">
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <img 
-                  src={daorsforgeLogo} 
-                  alt="DAORSFORGE AI Systems" 
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-lg"></div>
-              </div>
-            </div>
-            <div className="mb-4">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
-                DAORSFORGE
-              </h1>
-              <p className="text-sm text-muted-foreground">AI Systems</p>
+            <div className="flex justify-center mb-6">
+              <Logo size="lg" showText={true} linkTo={null} />
             </div>
             <CardTitle className="text-xl">{t('signup.title', 'Create an Account')}</CardTitle>
             <CardDescription>{t('signup.description', 'Sign up to get started.')}</CardDescription>

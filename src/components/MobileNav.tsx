@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import Logo from '@/components/Logo';
 import { ROLES } from '@/lib/types';
 
 const MobileNav = () => {
@@ -188,7 +189,7 @@ const MobileNav = () => {
       <SheetContent side="left" className="w-80">
         <SheetHeader>
           <div className="flex items-center justify-between">
-            <SheetTitle className="text-left">Navigation</SheetTitle>
+            <Logo size="sm" showText={true} linkTo="/" />
             <Button
               variant="ghost"
               size="sm"
