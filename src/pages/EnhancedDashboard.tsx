@@ -34,6 +34,13 @@ const EnhancedDashboard = () => {
   const { user, hasRole } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  const handleAlertsClick = () => {
+    // Handle alerts click - could navigate to alerts page or show alerts modal
+    console.log('Alerts clicked');
+    // You can add navigation logic here, for example:
+    // navigate('/alerts');
+  };
+
   const { data: items = [] } = useQuery({
     queryKey: ['items'],
     queryFn: getItems,
@@ -134,7 +141,7 @@ const EnhancedDashboard = () => {
       <ParticleBackground />
       <div className="relative z-20">
         <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar isOpen={sidebarOpen} onAlertsClick={handleAlertsClick} />
 
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
