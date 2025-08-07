@@ -20,7 +20,7 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({ videoSrc }) => {
     <div className="absolute inset-0 z-0 overflow-hidden">
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
         src={videoSrc}
         autoPlay
         muted
