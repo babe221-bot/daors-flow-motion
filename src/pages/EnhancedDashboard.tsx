@@ -13,7 +13,6 @@ import {
   DollarSign,
   Globe
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import MetricCard from "@/components/widgets/MetricCard";
 import ChartWidget from "@/components/widgets/ChartWidget";
@@ -23,14 +22,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import ParticleBackground from "@/components/ParticleBackground";
 import { useQuery } from "@tanstack/react-query";
 import { getItems, getMetricData } from "@/lib/api";
 
 const EnhancedDashboard = () => {
-  const { t } = useTranslation();
   const { user, hasRole } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -140,7 +137,6 @@ const EnhancedDashboard = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />
       <div className="relative z-20">
-        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
         <Sidebar isOpen={sidebarOpen} onAlertsClick={handleAlertsClick} />
 
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
@@ -150,10 +146,10 @@ const EnhancedDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-3xl font-bold gradient-text">
-                    {t('dashboard.welcome', 'Welcome back')}, {user?.username || 'User'}!
+                    Welcome back, {user?.username || 'User'}!
                   </h1>
                   <p className="text-muted-foreground">
-                    {t('dashboard.subtitle', 'Here\'s what\'s happening with your logistics operations today.')}
+                    Here's what's happening with your logistics operations today.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

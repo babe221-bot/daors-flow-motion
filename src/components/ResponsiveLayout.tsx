@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import ParticleBackground from './ParticleBackground';
 
@@ -37,12 +36,8 @@ const ResponsiveLayout = ({
     <div className="min-h-screen bg-background relative overflow-hidden">
       {showParticles && <ParticleBackground />}
       <div className="relative z-20">
-        <Navbar 
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
-          sidebarOpen={sidebarOpen} 
-        />
         
-        {showSidebar && !isMobile && <Sidebar isOpen={sidebarOpen} />}
+        {showSidebar && !isMobile && <Sidebar isOpen={sidebarOpen} onAlertsClick={() => {}} />}
 
         <main className={cn(
           "transition-all duration-300 pt-header",

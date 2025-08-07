@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { HelpCircle, Mail, BarChart, CheckCircle } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,8 +42,7 @@ const Support = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
         <ParticleBackground />
         <div className="relative z-20">
-            <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-            <Sidebar isOpen={sidebarOpen} />
+            <Sidebar isOpen={sidebarOpen} onAlertsClick={() => {}} />
 
             <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
                 <div className="p-6 space-y-6">

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Package, Search, MapPin, Clock, Truck, CheckCircle, AlertTriangle, Filter, Eye } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import ItemsTable from "@/components/ItemsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,12 +11,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import ParticleBackground from "@/components/ParticleBackground";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { getItems } from "@/lib/api";
 
 const ItemTracking = () => {
-  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
@@ -75,7 +72,7 @@ const ItemTracking = () => {
   };
 
   // Mock tracking history
-  const getTrackingHistory = (item: any) => [
+  const getTrackingHistory = (item: { location: string; status: string; }) => [
     {
       date: "2024-12-26 14:30",
       location: item.location,
@@ -118,18 +115,17 @@ const ItemTracking = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />
       <div className="relative z-20">
-        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar isOpen={sidebarOpen} onAlertsClick={() => {}} />
 
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <header className="space-y-2 animate-slide-up-fade">
               <h1 className="text-3xl font-bold gradient-text flex items-center gap-2">
                 <Package className="h-8 w-8" />
-                {t('itemTracking.title', 'Package Tracking')}
+                Package Tracking
               </h1>
               <p className="text-muted-foreground">
-                {t('itemTracking.description', 'Track your packages in real-time and view detailed shipping information.')}
+                Track your packages in real-time and view detailed shipping information.
               </p>
             </header>
 

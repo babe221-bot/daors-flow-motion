@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Users, Plus, Search, Filter, MoreVertical, Mail, Phone, MapPin, Calendar, Edit, Trash2 } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,8 +13,6 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import ParticleBackground from "@/components/ParticleBackground";
-import { useTranslation } from "react-i18next";
-
 interface TeamMember {
   id: string;
   name: string;
@@ -31,7 +28,6 @@ interface TeamMember {
 }
 
 const Team = () => {
-  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
@@ -163,17 +159,16 @@ const Team = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />
       <div className="relative z-20">
-        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar isOpen={sidebarOpen} onAlertsClick={() => {}} />
 
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <header className="space-y-2 animate-slide-up-fade">
               <h1 className="text-3xl font-bold gradient-text flex items-center gap-2">
                 <Users className="h-8 w-8" />
-                {t('team.title', 'Team Management')}
+                Team Management
               </h1>
-              <p className="text-muted-foreground">{t('team.description', 'Manage your team members, roles, and assignments.')}</p>
+              <p className="text-muted-foreground">Manage your team members, roles, and assignments.</p>
             </header>
 
             {/* Stats Cards */}

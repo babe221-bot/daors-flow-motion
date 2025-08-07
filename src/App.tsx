@@ -18,10 +18,12 @@ import PortalProfile from './pages/portal/Profile';
 import PortalShipments from './pages/portal/Shipments';
 import CustomerPortalLayout from './components/CustomerPortalLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import NaviBar from './components/NaviBar';
 
 const App = () => {
   return (
     <Router>
+      <NaviBar />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
