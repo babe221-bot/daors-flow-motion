@@ -1,4 +1,4 @@
-import * as anime from 'animejs';
+const anime = require('animejs');
 
 // Theme transition animation
 export function animateThemeChange() {
