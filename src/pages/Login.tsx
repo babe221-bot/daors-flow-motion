@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types"; // Import Role type
-import VideoBackground from "@/components/VideoBackground";
+import MediaBackground from "@/components/MediaBackground";
 
 const Login = () => {
   const { t } = useTranslation();
