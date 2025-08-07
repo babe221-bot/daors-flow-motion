@@ -41,33 +41,33 @@ const GlobalSearch = ({ className, placeholder, onSelect }: GlobalSearchProps) =
     queryFn: getItems,
   });
 
-  // Mock data for demonstration
-  const mockPages = [
-    { title: 'Dashboard', href: '/', description: 'Main dashboard overview' },
-    { title: 'Package Tracking', href: '/item-tracking', description: 'Track your packages' },
-    { title: 'Live Map', href: '/live-map', description: 'Real-time tracking map' },
-    { title: 'Route Optimization', href: '/route-optimization', description: 'Optimize delivery routes' },
-    { title: 'Reports', href: '/reports', description: 'Analytics and reports' },
-    { title: 'Settings', href: '/settings', description: 'Application settings' },
-    { title: 'Support', href: '/support', description: 'Help and support center' },
-    { title: 'Team Management', href: '/team', description: 'Manage team members' }
-  ];
-
-  const mockLocations = [
-    'Belgrade, Serbia',
-    'Sarajevo, Bosnia and Herzegovina',
-    'Zagreb, Croatia',
-    'Pristina, Kosovo',
-    'Skopje, North Macedonia',
-    'Podgorica, Montenegro'
-  ];
-
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
       setIsOpen(false);
       return;
     }
+
+    // Mock data for demonstration
+    const mockPages = [
+      { title: 'Dashboard', href: '/', description: 'Main dashboard overview' },
+      { title: 'Package Tracking', href: '/item-tracking', description: 'Track your packages' },
+      { title: 'Live Map', href: '/live-map', description: 'Real-time tracking map' },
+      { title: 'Route Optimization', href: '/route-optimization', description: 'Optimize delivery routes' },
+      { title: 'Reports', href: '/reports', description: 'Analytics and reports' },
+      { title: 'Settings', href: '/settings', description: 'Application settings' },
+      { title: 'Support', href: '/support', description: 'Help and support center' },
+      { title: 'Team Management', href: '/team', description: 'Manage team members' }
+    ];
+
+    const mockLocations = [
+      'Belgrade, Serbia',
+      'Sarajevo, Bosnia and Herzegovina',
+      'Zagreb, Croatia',
+      'Pristina, Kosovo',
+      'Skopje, North Macedonia',
+      'Podgorica, Montenegro'
+    ];
 
     const searchResults: SearchResult[] = [];
     const lowerQuery = query.toLowerCase();
@@ -128,7 +128,7 @@ const GlobalSearch = ({ className, placeholder, onSelect }: GlobalSearchProps) =
     setResults(searchResults);
     setIsOpen(searchResults.length > 0);
     setSelectedIndex(-1);
-  }, [query, items, mockLocations, mockPages]);
+  }, [query, items]);
 
   const handleSelect = (result: SearchResult) => {
     if (onSelect) {
