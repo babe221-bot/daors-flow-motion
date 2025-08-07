@@ -57,14 +57,12 @@ const Toast = React.forwardRef<
   
   return (
     <ToastPrimitives.Root
-      ref={(node) => {
-        toastRef.current = node
-        if (typeof ref === 'function') {
-          ref(node)
-        } else if (ref) {
-          Object.assign(ref, { current: node })
-        }
-      }}
+ref={(node) => {
+  toastRef.current = node
+  if (typeof ref === 'function') {
+    ref(node)
+  }
+}}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     />
