@@ -4,13 +4,13 @@ import LanguageDetector from "i18next-browser-languagedetector";
 // import HttpApi from "i18next-http-backend";
 
 // Import translation files directly
-import bsTranslation from '../public/locales/bs/translation.json';
-import enTranslation from '../public/locales/en/translation.json';
-import hrTranslation from '../public/locales/hr/translation.json';
-import srTranslation from '../public/locales/sr/translation.json';
-import deCHTranslation from '../public/locales/de-CH/translation.json';
-import frCHTranslation from '../public/locales/fr-CH/translation.json';
-import trTranslation from '../public/locales/tr/translation.json';
+import bsTranslation from '/locales/bs/translation.json?url';
+import enTranslation from '/locales/en/translation.json?url';
+import hrTranslation from '/locales/hr/translation.json?url';
+import srTranslation from '/locales/sr/translation.json?url';
+import deCHTranslation from '/locales/de-CH/translation.json?url';
+import frCHTranslation from '/locales/fr-CH/translation.json?url';
+import trTranslation from '/locales/tr/translation.json?url';
 
 i18n
   .use(LanguageDetector)
