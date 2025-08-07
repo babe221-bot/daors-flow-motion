@@ -17,6 +17,10 @@ i18n
     backend: {
       loadPath: "/locales/{{lng}}/translation.json",
     },
+  }, (err, t) => {
+    if (err) return console.log('something went wrong loading', err);
+    console.log('i18n initialized successfully');
+    console.log('Current language:', i18n.language);
   });
 
 export default i18n;

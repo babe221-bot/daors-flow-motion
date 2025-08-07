@@ -65,6 +65,17 @@ This document outlines a phased approach to implementing all the features descri
    - Main Dashboard (`/`) - Overview with metrics and charts
    - Enhanced Dashboard (`/enhanced-dashboard`) - Advanced analytics with widgets
    - Customer Portal (`/portal`) - Client dashboard with shipment tracking
+   - Driver Dashboard (`/driver-dashboard`) - Vehicle tracking and dispatch
+   - Manager Dashboard (`/manager-dashboard`) - Fleet management and order overview
+   - Admin Dashboard (`/admin-dashboard`) - System-wide administration
+   - Order Management (`/order-management`) - Centralized order processing
+   - Shipment Tracking (`/shipment-tracking`) - Real-time shipment status updates
+   - Vehicle Tracking (`/vehicle-tracking`) - GPS tracking of vehicles
+   - Invoice Generation (`/invoice-generation`) - Automated invoice creation
+   - Payment Processing (`/payment-processing`) - Secure payment gateway integration
+   - Document Management (`/document-management`) - File storage and sharing
+   - Report Generation (`/report-generation`) - Customizable reports
+   - Chatbot (`/chatbot`) - AI-driven customer service chatbot
 
 2. **UI Components**
    - MetricCard - Reusable metric display with trends
