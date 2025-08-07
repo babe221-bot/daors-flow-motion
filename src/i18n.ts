@@ -1,12 +1,21 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import HttpApi from "i18next-http-backend";
+// import HttpApi from "i18next-http-backend";
+
+// Import translation files directly
+import bsTranslation from '../public/locales/bs/translation.json';
+import enTranslation from '../public/locales/en/translation.json';
+import hrTranslation from '../public/locales/hr/translation.json';
+import srTranslation from '../public/locales/sr/translation.json';
+import deCHTranslation from '../public/locales/de-CH/translation.json';
+import frCHTranslation from '../public/locales/fr-CH/translation.json';
+import trTranslation from '../public/locales/tr/translation.json';
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(HttpApi)
+  // .use(HttpApi)
   .init({
     debug: true,
     fallbackLng: "bs",
@@ -14,8 +23,28 @@ i18n
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
-    backend: {
-      loadPath: "/locales/{{lng}}/translation.json",
+    resources: {
+      bs: {
+        translation: bsTranslation
+      },
+      en: {
+        translation: enTranslation
+      },
+      hr: {
+        translation: hrTranslation
+      },
+      sr: {
+        translation: srTranslation
+      },
+      "de-CH": {
+        translation: deCHTranslation
+      },
+      "fr-CH": {
+        translation: frCHTranslation
+      },
+      tr: {
+        translation: trTranslation
+      }
     },
     detection: {
       // Prevents i18next from automatically detecting the language
