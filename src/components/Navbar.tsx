@@ -15,6 +15,9 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNotifications } from "@/lib/api";
 import NotificationCenter from "./NotificationCenter";
+import MobileNav from "./MobileNav";
+import GlobalSearch from "./GlobalSearch";
+import { useAuth } from "@/context/AuthContext";
 import { Notification } from "@/lib/types";
 
 interface NavbarProps {
@@ -25,6 +28,7 @@ interface NavbarProps {
 const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme() ?? { theme: 'dark', setTheme: () => {} };
+  const { user, logout } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: notifications = [] } = useQuery<Notification[]>({
@@ -45,14 +49,18 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
       <div className="flex items-center justify-between px-6 py-4 h-header">
         {/* Left section */}
         <div className="flex items-center gap-4">
+          {/* Desktop sidebar toggle */}
           <Button
             variant="ghost"
             size="sm"
             onClick={onToggleSidebar}
-            className="hover:bg-primary/10 transition-colors"
+            className="hidden md:flex hover:bg-primary/10 transition-colors"
           >
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
+          
+          {/* Mobile navigation */}
+          <MobileNav />
           
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center">
@@ -71,10 +79,10 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
 
         {/* Middle section - Search */}
         <div className="hidden md:flex flex-1 justify-center px-8">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder={t('navbar.search.placeholder')} className="pl-10 w-full glass" />
-          </div>
+          <GlobalSearch 
+            className="w-full max-w-md"
+            placeholder={t('navbar.search.placeholder', 'Search packages, locations, pages...')}
+          />
         </div>
 
         {/* Right section */}
@@ -99,11 +107,15 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center cursor-pointer">
-                <span className="text-sm font-semibold text-primary-foreground">JD</span>
+                <span className="text-sm font-semibold text-primary-foreground">
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                </span>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="glass">
-              <DropdownMenuLabel>{t('navbar.myAccount')}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {user?.username || t('navbar.myAccount')}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
@@ -114,7 +126,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }: NavbarProps) => {
                 <span>{t('navbar.settings')}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>{t('navbar.logout')}</span>
               </DropdownMenuItem>
