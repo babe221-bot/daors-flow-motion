@@ -20,13 +20,13 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({ videoSrc }) => {
     <div className="absolute inset-0 z-0 overflow-hidden">
       <video
         ref={videoRef}
-        className="w-full h-full object-contain"
+        className="w-full h-full object-cover"
         src={videoSrc}
         autoPlay
         muted
         playsInline
       />
-      <div className="absolute inset-0 bg-background opacity-60" />
+      <div className="absolute inset-0 bg-background/70" />
     </div>
   );
 };

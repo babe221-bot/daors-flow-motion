@@ -66,13 +66,13 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-background to-primary/5">
+    <div className="relative min-h-screen overflow-hidden">
       <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
       <ParticleBackground />
       
       <div className="relative z-10">
         {/* Hero Section */}
-        <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center">
+        <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center backdrop-blur-sm bg-background/20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -80,7 +80,7 @@ const LandingPage = () => {
             className="max-w-4xl mx-auto"
           >
             <motion.h1 
-              className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
+              className="text-4xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-700"
               initial={{ opacity: 0, y: 30 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -89,7 +89,7 @@ const LandingPage = () => {
             </motion.h1>
             
             <motion.p 
-              className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto"
+              className="text-xl md:text-3xl text-foreground/90 mb-12 max-w-3xl mx-auto font-light"
               initial={{ opacity: 0, y: 30 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -101,16 +101,16 @@ const LandingPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
             >
-              <Button asChild size="lg" className="group text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary">
+              <Button asChild size="lg" className="group text-xl px-10 py-7 bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full">
                 <Link to="/signup">
                   Get Started
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2">
+              <Button asChild variant="outline" size="lg" className="text-xl px-10 py-7 border-2 backdrop-blur-sm bg-background/30 hover:bg-background/50 rounded-full">
                 <Link to="/login">
                   Login
                 </Link>
@@ -120,7 +120,7 @@ const LandingPage = () => {
           
           {/* Animated Stats */}
           <motion.div 
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl w-full"
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-32 max-w-5xl w-full"
             variants={containerVariants}
             initial="hidden"
             animate={isVisible ? "visible" : {}}
@@ -136,10 +136,10 @@ const LandingPage = () => {
                 variants={itemVariants}
                 className="text-center"
               >
-                <Card className="bg-background/30 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
+                <Card className="bg-background/40 backdrop-blur-md border-border/50 hover:shadow-xl transition-all duration-300 shadow-lg">
                   <CardContent className="p-6">
-                    <div className="text-3xl font-bold text-primary">{stat.value}</div>
-                    <div className="text-muted-foreground mt-2">{stat.label}</div>
+                    <div className="text-4xl font-bold text-primary mb-2">{stat.value}</div>
+                    <div className="text-foreground/80">{stat.label}</div>
                   </CardContent>
                 </Card>
               </motion.div>
