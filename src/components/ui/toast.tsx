@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { animateToast } from "@/lib/animation-utils"
 
 const ToastProvider = ToastPrimitives.Provider
 
@@ -43,9 +44,27 @@ const Toast = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
+  const toastRef = React.useRef<HTMLDivElement>(null)
+  
+  React.useEffect(() => {
+    if (toastRef.current) {
+      // Use requestAnimationFrame to ensure element is in DOM
+      requestAnimationFrame(() => {
+        animateToast(toastRef.current!)
+      })
+    }
+  }, [])
+  
   return (
     <ToastPrimitives.Root
-      ref={ref}
+      ref={(node) => {
+        toastRef.current = node
+        if (typeof ref === 'function') {
+          ref(node)
+        } else if (ref) {
+          Object.assign(ref, { current: node })
+        }
+      }}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     />
