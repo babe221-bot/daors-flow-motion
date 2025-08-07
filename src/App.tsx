@@ -12,6 +12,7 @@ import Settings from './pages/Settings';
 import SignUp from './pages/SignUp';
 import Support from './pages/Support';
 import Team from './pages/Team';
+import EnhancedDashboard from './pages/EnhancedDashboard';
 import PortalDashboard from './pages/portal/Dashboard';
 import PortalProfile from './pages/portal/Profile';
 import PortalShipments from './pages/portal/Shipments';
@@ -34,6 +35,7 @@ const App = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/support" element={<Support />} />
         <Route path="/team" element={<Team />} />
+        <Route path="/enhanced-dashboard" element={<EnhancedDashboard />} />
         
         <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
           <Route path="/portal" element={<CustomerPortalLayout />}>
