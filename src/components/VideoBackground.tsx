@@ -26,7 +26,7 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({ videoSrc }) => {
         muted
         playsInline
       />
-      <div className="absolute inset-0 bg-black opacity-50" />
+      <div className="absolute inset-0 bg-background opacity-60" />
     </div>
   );
 };
