@@ -9,10 +9,18 @@ import {
   Shield, 
   Zap,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  Languages
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import VideoBackground from '@/components/VideoBackground';
 import ParticleBackground from '@/components/ParticleBackground';
+import i18n from '@/i18n';
 
 const LandingPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -71,6 +79,41 @@ const LandingPage = () => {
       <ParticleBackground />
       
       <div className="relative z-10">
+        {/* Language Selector */}
+        <div className="absolute top-4 right-4 z-50">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-background/90 transition-all duration-300 shadow-md">
+                <Languages className="h-5 w-5" />
+                <span className="sr-only">Select language</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-background/90 backdrop-blur-lg border-border/50 shadow-lg rounded-lg">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('bs')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                Bosanski
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                English
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('hr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                Hrvatski
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('sr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                Српски
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('de-CH')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                Schweizer Deutsch
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('fr-CH')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                Français Suisse
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage('tr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
+                Türkçe
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
         {/* Hero Section */}
         <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center backdrop-blur-sm bg-background/20">
           <motion.div

@@ -166,6 +166,7 @@ const Settings = () => {
                           <SelectItem value="sr">Serbian</SelectItem>
                           <SelectItem value="de-CH">Swiss German</SelectItem>
                           <SelectItem value="fr-CH">Swiss French</SelectItem>
+                          <SelectItem value="tr">Turkish</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
