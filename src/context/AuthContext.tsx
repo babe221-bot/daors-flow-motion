@@ -211,52 +211,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginAsGuest = async () => {
     try {
-      // Use configured guest credentials (recommended)
-      const guestEmail = (import.meta as any).env?.VITE_GUEST_EMAIL as string | undefined;
-      const guestPassword = (import.meta as any).env?.VITE_GUEST_PASSWORD as string | undefined;
-
-      if (!guestEmail || !guestPassword) {
-        return { error: new Error('Guest credentials are not configured. Please set VITE_GUEST_EMAIL and VITE_GUEST_PASSWORD in your environment.') };
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: guestEmail,
-        password: guestPassword,
-      });
+      // Create anonymous guest session
+      const { data, error } = await supabase.auth.signInAnonymously();
 
       if (error) {
         return { error };
       }
 
       if (data?.user) {
-        // Ensure a profile exists and has GUEST role
-        const { data: profile, error: profileError } = await supabase
+        // Create guest profile with GUEST role
+        const { error: profileError } = await supabase
           .from('users')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
+          .insert({
+            id: data.user.id,
+            email: `guest-${data.user.id}@example.com`,
+            full_name: 'Guest User',
+            role: ROLES.GUEST,
+          });
 
-        if (profileError || !profile) {
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert({
-              id: data.user.id,
-              email: data.user.email,
-              full_name: 'Guest User',
-              role: ROLES.GUEST,
-            });
-          if (insertError) {
-            console.error('Error creating guest profile:', insertError);
-          }
-        } else if (profile.role !== ROLES.GUEST) {
-          const { error: updateError } = await supabase
-            .from('users')
-            .update({ role: ROLES.GUEST })
-            .eq('id', data.user.id);
-          if (updateError) {
-            console.error('Error updating profile to GUEST:', updateError);
-          }
+        if (profileError) {
+          console.error('Error creating guest profile:', profileError);
         }
+
+        // Set user context
+        setUser({
+          id: data.user.id,
+          username: 'Guest',
+          role: ROLES.GUEST,
+          avatarUrl: null,
+          associatedItemIds: []
+        });
       }
 
       return { error: null };
