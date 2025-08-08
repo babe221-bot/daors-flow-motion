@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import LanguageChangeNotification from './components/LanguageChangeNotification';
 
@@ -37,37 +38,180 @@ const AppContent = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <LanguageChangeNotification />
-      <Suspense fallback={<LoadingScreen />}>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/dashboard" element={<ResponsiveLayout><Index /></ResponsiveLayout>} />
-          <Route path="/login" element={<AuthPage />} />
-          <Route path="/signup" element={<AuthPage />} />
-          <Route path="/customer-dashboard" element={<ResponsiveLayout><CustomerDashboard /></ResponsiveLayout>} />
-          <Route path="/inventory" element={<ResponsiveLayout><Inventory /></ResponsiveLayout>} />
-          <Route path="/item-tracking" element={<ResponsiveLayout><ItemTracking /></ResponsiveLayout>} />
-          <Route path="/live-map" element={<ResponsiveLayout><LiveMap /></ResponsiveLayout>} />
-          <Route path="/reports" element={<ResponsiveLayout><Reports /></ResponsiveLayout>} />
-          <Route path="/route-optimization" element={<ResponsiveLayout><RouteOptimization /></ResponsiveLayout>} />
-          <Route path="/settings" element={<ResponsiveLayout><Settings /></ResponsiveLayout>} />
-          <Route path="/support" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
-          <Route path="/team" element={<ResponsiveLayout><Team /></ResponsiveLayout>} />
-          <Route path="/enhanced-dashboard" element={<ResponsiveLayout><EnhancedDashboard /></ResponsiveLayout>} />
-          <Route path="/contact" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
-          <Route path="/demo" element={<ResponsiveLayout><DemoPage /></ResponsiveLayout>} />
-          
-          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
-            <Route path="/portal" element={<CustomerPortalLayout />}>
-              <Route index element={<PortalDashboard />} />
-              <Route path="dashboard" element={<PortalDashboard />} />
-              <Route path="profile" element={<PortalProfile />} />
-              <Route path="shipments" element={<PortalShipments />} />
-            </Route>
-          </Route>
+      <AnimatePresence mode="wait" initial={false}>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes location={location}>
+            <Route
+              path="/"
+              element={
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="min-h-screen bg-gradient-to-b from-background via-background to-background"
+                >
+                  <LandingPage />
+                </motion.div>
+              }
+            />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+            {/* Logistics-themed slide/fade for key app sections */}
+            {[
+              { path: '/dashboard', element: <Index /> },
+              { path: '/customer-dashboard', element: <CustomerDashboard /> },
+              { path: '/inventory', element: <Inventory /> },
+              { path: '/item-tracking', element: <ItemTracking /> },
+              { path: '/live-map', element: <LiveMap /> },
+              { path: '/reports', element: <Reports /> },
+              { path: '/route-optimization', element: <RouteOptimization /> },
+              { path: '/settings', element: <Settings /> },
+              { path: '/support', element: <Support /> },
+              { path: '/team', element: <Team /> },
+              { path: '/enhanced-dashboard', element: <EnhancedDashboard /> },
+              { path: '/contact', element: <Support /> },
+              { path: '/demo', element: <DemoPage /> },
+            ].map(({ path, element }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ResponsiveLayout>
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -24 }}
+                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      className="min-h-screen"
+                    >
+                      {element}
+                    </motion.div>
+                  </ResponsiveLayout>
+                }
+              />
+            ))}
+
+            {/* Auth pages: subtle fade to keep focus on form with transport vibe */}
+            <Route
+              path="/login"
+              element={
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="min-h-screen"
+                >
+                  <AuthPage />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="min-h-screen"
+                >
+                  <AuthPage />
+                </motion.div>
+              }
+            />
+
+            {/* Portal with nested routes: fade/slide container while children render */}
+            <Route
+              element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}
+            >
+              <Route
+                path="/portal"
+                element={
+                  <CustomerPortalLayout />
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <PortalDashboard />
+                    </motion.div>
+                  }
+                />
+                <Route
+                  path="dashboard"
+                  element={
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <PortalDashboard />
+                    </motion.div>
+                  }
+                />
+                <Route
+                  path="profile"
+                  element={
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <PortalProfile />
+                    </motion.div>
+                  }
+                />
+                <Route
+                  path="shipments"
+                  element={
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <PortalShipments />
+                    </motion.div>
+                  }
+                />
+              </Route>
+            </Route>
+
+            <Route
+              path="*"
+              element={
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <NotFound />
+                </motion.div>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </AnimatePresence>
+
       {/* ModernFooter on all pages except auth pages */}
       {!shouldHideFooter && (
         <Suspense fallback={<div className="h-20" />}>
