@@ -69,16 +69,16 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen">
       <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
       <ParticleBackground />
       
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 min-h-screen flex flex-col">
         {/* Language Selector */}
         <LanguageSwitcher variant="floating" />
         
-        {/* Main Content */}
-        <div className="flex-1">
+        {/* Main Content - This will grow to fill available space */}
+        <main className="flex-1">
           {/* Hero Section */}
           <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center backdrop-blur-sm bg-background/20">
           <motion.div
@@ -128,7 +128,7 @@ const LandingPage = () => {
           
           {/* Animated Stats */}
           <motion.div 
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-32 max-w-5xl w-full"
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-32 max-w-5xl w-full mx-auto"
             variants={containerVariants}
             initial="hidden"
             animate={isVisible ? "visible" : {}}
@@ -156,7 +156,7 @@ const LandingPage = () => {
         </section>
           
           {/* Features Section */}
-          <section className="py-20 px-4">
+          <section className="py-20 px-4 backdrop-blur-sm bg-background/10">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -201,7 +201,7 @@ const LandingPage = () => {
           </section>
           
           {/* CTA Section */}
-          <section className="py-20 px-4">
+          <section className="py-20 px-4 backdrop-blur-sm bg-background/5">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -231,14 +231,60 @@ const LandingPage = () => {
             </motion.div>
           </div>
           </section>
-        </div>
+        </main>
         
-        {/* Footer - Always at bottom */}
-        <footer className="mt-auto py-10 px-4 border-t border-border/50 bg-background/20 backdrop-blur-sm">
-          <div className="max-w-6xl mx-auto text-center">
-            <p className="text-muted-foreground">
-              © {new Date().getFullYear()} {t('landing.footer.copyright', 'Logistics Platform. All rights reserved.')}
-            </p>
+        {/* Footer - Sticky to bottom */}
+        <footer className="py-12 px-4 border-t border-border/50 bg-background/30 backdrop-blur-md mt-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+              {/* Company Info */}
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                    <img 
+                      src="/daorsforge-logo.jpg"
+                      alt="DaorsForge AI Systems"
+                      className="w-10 h-10 object-contain mix-blend-plus-lighter"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">DaorsForge</h3>
+                    <p className="text-xs text-muted-foreground">AI Logistics Systems</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4 max-w-md">
+                  {t('landing.footer.description', 'Revolutionizing logistics with AI-powered solutions for real-time tracking, route optimization, and intelligent supply chain management.')}
+                </p>
+              </div>
+              
+              {/* Quick Links */}
+              <div>
+                <h4 className="font-semibold mb-4">{t('landing.footer.quickLinks', 'Quick Links')}</h4>
+                <ul className="space-y-2 text-sm">
+                  <li><Link to="/item-tracking" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.footer.tracking', 'Package Tracking')}</Link></li>
+                  <li><Link to="/live-map" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.footer.liveMap', 'Live Map')}</Link></li>
+                  <li><Link to="/reports" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.footer.reports', 'Reports')}</Link></li>
+                  <li><Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.footer.support', 'Support')}</Link></li>
+                </ul>
+              </div>
+              
+              {/* Contact */}
+              <div>
+                <h4 className="font-semibold mb-4">{t('landing.footer.contact', 'Contact')}</h4>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p>contact@daorsforge.com</p>
+                  <p>+387 33 123 456</p>
+                  <p>Sarajevo, Bosnia and Herzegovina</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bottom Footer */}
+            <div className="pt-8 border-t border-border/30 text-center">
+              <p className="text-sm text-muted-foreground">
+                © {new Date().getFullYear()} {t('landing.footer.copyright', 'DaorsForge AI Systems. All rights reserved.')}
+              </p>
+            </div>
           </div>
         </footer>
       </div>
