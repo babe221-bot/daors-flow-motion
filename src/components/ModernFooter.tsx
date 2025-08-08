@@ -10,13 +10,10 @@ import {
   Instagram,
   Heart,
   ExternalLink,
-  Send,
   Truck,
   Globe,
   Shield
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import './ModernFooter.css';
@@ -115,7 +112,7 @@ const ModernFooter = () => {
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary/10">
                 <img 
-                  src="/lovable-uploads/logo.jpg"
+                  src="/daorsforge-new-logo.jpg"
                   alt="DaorsForge AI Systems"
                   className="w-8 h-8 object-contain mix-blend-plus-lighter"
                 />
@@ -177,30 +174,6 @@ const ModernFooter = () => {
               </ul>
             </div>
           ))}
-        </div>
-
-        {/* Newsletter Signup */}
-        <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-primary/5 to-secondary/5 border border-border/50 backdrop-blur-sm">
-          <div className="max-w-2xl mx-auto text-center">
-            <h4 className="font-bold text-2xl mb-2">{t('footer.newsletter.title', 'Stay Updated')}</h4>
-            <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-              {t('footer.newsletter.description', 'Get the latest updates on new features, industry insights, and logistics trends.')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <div className="relative flex-1">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder={t('footer.newsletter.placeholder', 'Enter your email')}
-                  className="pl-10 h-12 bg-background/80 border-border/50"
-                  type="email"
-                />
-              </div>
-              <Button size="lg" className="group">
-                {t('footer.newsletter.subscribe', 'Subscribe')}
-                <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </div>
-          </div>
         </div>
 
         <Separator className="my-12 bg-border/30" />
