@@ -5,7 +5,6 @@ import { type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/lib/ui-variants"
 import { animateButtonHover } from "@/lib/animation-utils"
-import anime from 'animejs'
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -25,7 +24,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       if (!el) return
       
       // Create animation
-      let animation: anime.AnimeInstance | null = null
+      let animation: any = null
       
       const startAnimation = () => {
         setIsHovered(true)

@@ -6,7 +6,7 @@ interface LogoProps {
   size?: "sm" | "md" | "lg";
   showText?: boolean;
   className?: string;
-  linkTo?: string;
+  linkTo?: string | null;
 }
 
 const Logo = ({ size = "md", showText = true, className, linkTo = "/" }: LogoProps) => {
@@ -51,7 +51,7 @@ const Logo = ({ size = "md", showText = true, className, linkTo = "/" }: LogoPro
     </div>
   );
 
-  if (linkTo) {
+  if (linkTo && linkTo !== "") {
     return (
       <Link to={linkTo} className="hover:opacity-80 transition-opacity">
         {logoContent}

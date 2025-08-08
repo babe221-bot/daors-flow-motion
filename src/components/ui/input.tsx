@@ -2,7 +2,6 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { animateInputFocus } from "@/lib/animation-utils"
-import anime from 'animejs'
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -13,7 +12,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       if (!el) return
       
       // Animation instance
-      let animation: anime.AnimeInstance | null = null
+      let animation: any = null
       
       const handleFocus = () => {
         animation = animateInputFocus(el)
