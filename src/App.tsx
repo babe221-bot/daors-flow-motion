@@ -25,10 +25,6 @@ import ModernFooter from './components/ModernFooter';
 import LanguageChangeNotification from './components/LanguageChangeNotification';
 
 const AppContent = () => {
-  const location = useLocation();
-  const isLandingPage = location.pathname === '/';
-  const isAuthPage = ['/login', '/signup'].includes(location.pathname);
-
   return (
     <div className="flex flex-col min-h-screen">
       <LanguageChangeNotification />
@@ -61,8 +57,8 @@ const AppContent = () => {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {/* Only show ModernFooter on non-landing and non-auth pages */}
-      {!isLandingPage && !isAuthPage && <ModernFooter />}
+      {/* ModernFooter on all pages */}
+      <ModernFooter />
     </div>
   );
 };

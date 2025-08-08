@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import NaviBar from '@/components/NaviBar';
-import Footer from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -202,8 +201,6 @@ const Dashboard = () => {
           </motion.div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };
