@@ -2,10 +2,6 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import { Suspense, lazy } from 'react';
 import LoadingScreen from './components/LoadingScreen';
 import LanguageChangeNotification from './components/LanguageChangeNotification';
-import SimpleTest from './components/SimpleTest';
-
-// Check if we should use simple test mode
-const isTestMode = window.location.search.includes('test=true');
 
 // Lazy load components to improve initial load time
 const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard'));
@@ -76,11 +72,6 @@ const AppContent = () => {
 };
 
 const App = () => {
-  // If in test mode, show simple test component
-  if (isTestMode) {
-    return <SimpleTest />;
-  }
-
   return (
     <Router>
       <AppContent />
