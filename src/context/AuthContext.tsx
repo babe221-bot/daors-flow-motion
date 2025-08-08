@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { User, Role, ROLES } from '@/lib/types';
-import { loginAsGuest } from '@/lib/guestLogin';
 
 interface AuthContextType {
   user: User | null;
@@ -43,7 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         const sessionPromise = supabase.auth.getSession();
         
-        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
         
         if (session?.user) {
           try {
@@ -58,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
             );
             
-            const { data: profile, error } = await Promise.race([profilePromise, profileTimeoutPromise]);
+            const { data: profile, error } = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
             
             if (error && error.message !== 'Profile fetch timeout') {
               console.warn('Error fetching user profile:', error);
@@ -82,3 +81,189 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 associatedItemIds: []
               });
             }
+          } catch (profileError) {
+            console.warn('Profile fetch failed, using session data:', profileError);
+            // Fallback to session data
+            setUser({
+              id: session.user.id,
+              username: session.user.email?.split('@')[0] || 'User',
+              role: ROLES.CLIENT,
+              avatarUrl: undefined,
+              associatedItemIds: []
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('Session check failed, continuing without auth:', error);
+        // Don't block the app if auth fails
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        // Fetch user profile
+        const { data: profile, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user profile:', error);
+        }
+        
+        if (profile) {
+          setUser({
+            id: profile.id,
+            username: profile.full_name || profile.email?.split('@')[0] || 'User',
+            role: (profile.role as Role) || ROLES.CLIENT,
+            avatarUrl: undefined,
+            associatedItemIds: []
+          });
+        } else {
+          // Create a minimal user object if profile doesn't exist
+          setUser({
+            id: session.user.id,
+            username: session.user.email?.split('@')[0] || 'User',
+            role: ROLES.CLIENT,
+            avatarUrl: undefined,
+            associatedItemIds: []
+          });
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { error };
+      }
+
+      // User will be set via the auth state change listener
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const signup = async (email: string, password: string, username: string, role: Role = ROLES.CLIENT) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { error };
+      }
+
+      if (data.user) {
+        // Create user profile
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert({
+            id: data.user.id,
+            full_name: username,
+            role,
+            email
+          });
+
+        if (profileError) {
+          return { error: profileError };
+        }
+      }
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  const hasRole = (allowedRoles: Role[]): boolean => {
+    if (!user) return false;
+    return allowedRoles.includes(user.role);
+  };
+
+  const loginAsGuest = async () => {
+    try {
+      // Create anonymous guest session
+      const { data, error } = await supabase.auth.signInAnonymously();
+
+      if (error) {
+        return { error };
+      }
+
+      if (data?.user) {
+        // Create guest profile with GUEST role
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert({
+            id: data.user.id,
+            email: `guest-${data.user.id}@example.com`,
+            full_name: 'Guest User',
+            role: ROLES.GUEST,
+          });
+
+        if (profileError) {
+          console.error('Error creating guest profile:', profileError);
+        }
+
+        // Set user context
+        setUser({
+          id: data.user.id,
+          username: 'Guest',
+          role: ROLES.GUEST,
+          avatarUrl: undefined,
+          associatedItemIds: []
+        });
+      }
+
+      return { error: null };
+    } catch (error) {
+      console.error('Error during guest login:', error);
+      return { error: error as Error };
+    }
+  };
+
+  const value: AuthContextType = {
+    user,
+    isAuthenticated: !!user,
+    login,
+    logout,
+    signup,
+    hasRole,
+    loginAsGuest,
+    loading,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
