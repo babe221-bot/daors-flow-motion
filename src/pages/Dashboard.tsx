@@ -9,14 +9,7 @@ import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Initialize particles background
   useEffect(() => {
-    // Video autoplay logic
-    if (videoRef.current) {
-      videoRef.current.play().catch(e => console.error("Video autoplay failed:", e));
-    }
   }, []);
 
   // Sample data for charts
@@ -33,17 +26,8 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background text-foreground">
       <NaviBar />
       
-      {/* Hero Section with Video Background */}
+      {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <video
-          ref={videoRef}
-          src="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        />
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-background/90 via-background/70 to-background/50 z-10"></div>
         
         <div className="relative z-20 container mx-auto px-4 md:px-6 text-center">
