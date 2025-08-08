@@ -2,6 +2,7 @@
   "login.title": "Anmelden",
   "login.description": "Geben Sie Ihre Anmeldedaten ein, um auf Ihr Konto zuzugreifen",
   "login.email": "E-Mail",
+  "login.email.placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
   "login.password": "Passwort",
   "login.rememberMe": "Angemeldet bleiben",
   "login.forgotPassword": "Passwort vergessen?",

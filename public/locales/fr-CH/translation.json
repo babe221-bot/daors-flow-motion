@@ -2,6 +2,7 @@
   "login.title": "Connexion",
   "login.description": "Entrez vos identifiants pour accéder à votre compte",
   "login.email": "Email",
+  "login.email.placeholder": "Entrez votre adresse email",
   "login.password": "Mot de passe",
   "login.rememberMe": "Se souvenir de moi",
   "login.forgotPassword": "Mot de passe oublié ?",

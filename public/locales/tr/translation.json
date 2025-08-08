@@ -2,6 +2,7 @@
   "login.title": "Giriş Yap",
   "login.description": "Hesabınıza erişmek için kimlik bilgilerinizi girin",
   "login.email": "E-posta",
+  "login.email.placeholder": "E-posta adresinizi girin",
   "login.password": "Şifre",
   "login.rememberMe": "Beni hatırla",
   "login.forgotPassword": "Şifrenizi mi unuttunuz?",

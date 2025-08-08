@@ -2,6 +2,7 @@
   "login.title": "Prijavite se",
   "login.description": "Unesite svoje podatke za pristup",
   "login.email": "Email",
+  "login.email.placeholder": "Унесите вашу email адресу",
   "login.password": "Lozinka",
   "login.rememberMe": "Zapamti me",
   "login.forgotPassword": "Zaboravili ste lozinku?",
