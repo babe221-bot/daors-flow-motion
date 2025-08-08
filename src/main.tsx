@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App.tsx';
 import './index.css';
-import './i18n';
+// import './i18n'; // Temporarily disabled
 import { AuthProvider } from './context/AuthContext';
 
 // Create a client

@@ -6,12 +6,12 @@ import Logo from "@/components/Logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next'; // Temporarily disabled
 import { ROLES } from "@/lib/types"; // Import Role type
 import MediaBackground from "@/components/MediaBackground";
 
 const Login = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation(); // Temporarily disabled
   const { isAuthenticated, login, user, loading: authLoading, loginAsGuest } = useAuth(); // Destructure loginAsGuest
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -75,13 +75,13 @@ const Login = () => {
             <div className="flex justify-center mb-6">
               <Logo size="lg" showText={true} linkTo={null} />
             </div>
-            <CardTitle className="text-xl">{t('login.title', 'Login to your Account')}</CardTitle>
-            <CardDescription>{t('login.description', 'Enter your credentials to access the dashboard.')}</CardDescription>
+            <CardTitle className="text-xl">Login to your Account</CardTitle>
+            <CardDescription>Enter your credentials to access the dashboard.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">{t('login.email', 'Email')}</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -92,7 +92,7 @@ const Login = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">{t('login.password', 'Password')}</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -103,19 +103,19 @@ const Login = () => {
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
+                {loading ? 'Logging in...' : 'Login'}
               </Button>
             </form>
             <div className="mt-4 text-center text-sm">
-              {t('login.no_account', "Don't have an account?")}{' '}
+              Don't have an account?{' '}
               <Link to="/signup" className="underline">
-                {t('login.signup', 'Sign up')}
+                Sign up
               </Link>
             </div>
             {/* Guest Login Button */}
             <div className="mt-4 text-center">
               <Button variant="outline" className="w-full" onClick={handleGuestLogin} disabled={loading}>
-                {t('login.guest', 'Login as Guest')}
+                Login as Guest
               </Button>
             </div>
           </CardContent>

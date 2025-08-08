@@ -50,16 +50,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Simplified login for testing
+      setUser({
+        id: '1',
+        username: 'Test User',
+        role: ROLES.CLIENT,
+        avatarUrl: null,
+        associatedItemIds: []
       });
-
-      if (error) {
-        return { error };
-      }
-
-      // User will be set via the auth state change listener
       return { error: null };
     } catch (error) {
       return { error };
@@ -68,31 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async (email: string, password: string, username: string, role: Role = ROLES.CLIENT) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) {
-        return { error };
-      }
-
-      if (data.user) {
-        // Create user profile
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            full_name: username,
-            role,
-            email
-          });
-
-        if (profileError) {
-          return { error: profileError };
-        }
-      }
-
+      // Simplified signup for testing
       return { error: null };
     } catch (error) {
       return { error };
@@ -101,7 +75,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
       setUser(null);
     } catch (error) {
       console.error('Error logging out:', error);
@@ -115,38 +88,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginAsGuest = async () => {
     try {
-      // Use a fixed guest account for demo purposes
-      const { data, error } = await supabase.auth.signInAnonymously();
-      
-      if (error) {
-        return { error };
-      }
-      
-      if (data.user) {
-        // Check if user profile exists
-        const { data: profile, error: profileError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-        
-        if (profileError || !profile) {
-          // Create guest user profile
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert({
-              id: data.user.id,
-              email: data.user.email,
-              full_name: 'Guest User',
-              role: ROLES.GUEST,
-            });
-          
-          if (insertError) {
-            console.error('Error creating guest profile:', insertError);
-          }
-        }
-      }
-      
+      // Simplified guest login for testing
+      setUser({
+        id: 'guest',
+        username: 'Guest User',
+        role: ROLES.GUEST,
+        avatarUrl: null,
+        associatedItemIds: []
+      });
       return { error: null };
     } catch (error) {
       console.error('Error during guest login:', error);
