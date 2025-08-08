@@ -231,6 +231,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (profileError) {
           console.error('Error creating guest profile:', profileError);
+          // Manually sign out the anonymous user if profile creation fails
+          await supabase.auth.signOut();
+          return { error: new Error('Failed to create guest user profile. Please contact support.') };
         }
 
         // Set user context
