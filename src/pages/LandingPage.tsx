@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
@@ -9,20 +10,14 @@ import {
   Shield, 
   Zap,
   CheckCircle,
-  ArrowRight,
-  Languages
+  ArrowRight
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import MediaBackground from '@/components/MediaBackground';
 import ParticleBackground from '@/components/ParticleBackground';
-import i18n from '@/i18n';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const LandingPage = () => {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
@@ -32,23 +27,23 @@ const LandingPage = () => {
   const features = [
     {
       icon: Truck,
-      title: "Real-time Tracking",
-      description: "Monitor your shipments in real-time with our advanced GPS tracking system."
+      title: t('landing.features.tracking.title', 'Real-time Tracking'),
+      description: t('landing.features.tracking.description', 'Monitor your shipments in real-time with our advanced GPS tracking system.')
     },
     {
       icon: Globe,
-      title: "Global Coverage",
-      description: "Seamless logistics across borders with our extensive international network."
+      title: t('landing.features.coverage.title', 'Global Coverage'),
+      description: t('landing.features.coverage.description', 'Seamless logistics across borders with our extensive international network.')
     },
     {
       icon: Shield,
-      title: "Secure Handling",
-      description: "Military-grade security protocols to ensure your cargo arrives safely."
+      title: t('landing.features.security.title', 'Secure Handling'),
+      description: t('landing.features.security.description', 'Military-grade security protocols to ensure your cargo arrives safely.')
     },
     {
       icon: Zap,
-      title: "Fast Delivery",
-      description: "Optimized routes and efficient processes for the fastest delivery times."
+      title: t('landing.features.speed.title', 'Fast Delivery'),
+      description: t('landing.features.speed.description', 'Optimized routes and efficient processes for the fastest delivery times.')
     }
   ];
 
@@ -80,39 +75,7 @@ const LandingPage = () => {
       
       <div className="relative z-10">
         {/* Language Selector */}
-        <div className="absolute top-4 right-4 z-50">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-background/90 transition-all duration-300 shadow-md">
-                <Languages className="h-5 w-5" />
-                <span className="sr-only">Select language</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-background/90 backdrop-blur-lg border-border/50 shadow-lg rounded-lg">
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('bs')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                Bosanski
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('hr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                Hrvatski
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('sr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                Српски
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('de-CH')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                Schweizer Deutsch
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('fr-CH')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                Français Suisse
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => i18n.changeLanguage('tr')} className="cursor-pointer hover:bg-primary/10 transition-colors">
-                Türkçe
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <LanguageSwitcher variant="floating" />
         
         {/* Hero Section */}
         <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center backdrop-blur-sm bg-background/20">
@@ -128,7 +91,7 @@ const LandingPage = () => {
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Revolutionizing Logistics with AI
+              {t('landing.hero.title', 'Revolutionizing Logistics with AI')}
             </motion.h1>
             
             <motion.p 
@@ -137,7 +100,7 @@ const LandingPage = () => {
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Intelligent supply chain solutions that predict, optimize, and automate your logistics operations.
+              {t('landing.hero.subtitle', 'Intelligent supply chain solutions that predict, optimize, and automate your logistics operations.')}
             </motion.p>
             
             <motion.div
@@ -148,14 +111,14 @@ const LandingPage = () => {
             >
               <Button asChild size="lg" className="group text-xl px-10 py-7 bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full">
                 <Link to="/signup">
-                  Get Started
+                  {t('landing.cta.getStarted', 'Get Started')}
                   <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               
               <Button asChild variant="outline" size="lg" className="text-xl px-10 py-7 border-2 backdrop-blur-sm bg-background/30 hover:bg-background/50 rounded-full">
                 <Link to="/login">
-                  Login
+                  {t('landing.cta.login', 'Login')}
                 </Link>
               </Button>
             </motion.div>
@@ -169,10 +132,10 @@ const LandingPage = () => {
             animate={isVisible ? "visible" : {}}
           >
             {[
-              { value: "99.9%", label: "On-Time Delivery" },
-              { value: "24/7", label: "Tracking" },
-              { value: "150+", label: "Countries" },
-              { value: "1M+", label: "Shipments" }
+              { value: "99.9%", label: t('landing.stats.onTime', 'On-Time Delivery') },
+              { value: "24/7", label: t('landing.stats.tracking', 'Tracking') },
+              { value: "150+", label: t('landing.stats.countries', 'Countries') },
+              { value: "1M+", label: t('landing.stats.shipments', 'Shipments') }
             ].map((stat, index) => (
               <motion.div 
                 key={index}
@@ -200,9 +163,9 @@ const LandingPage = () => {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.features.title', 'Powerful Features')}</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Our platform offers cutting-edge solutions for modern logistics challenges
+                {t('landing.features.subtitle', 'Our platform offers cutting-edge solutions for modern logistics challenges')}
               </p>
             </motion.div>
             
@@ -244,22 +207,22 @@ const LandingPage = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Logistics?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('landing.cta.title', 'Ready to Transform Your Logistics?')}</h2>
               <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-                Join thousands of businesses that trust our platform for their supply chain needs
+                {t('landing.cta.subtitle', 'Join thousands of businesses that trust our platform for their supply chain needs')}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="group text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary">
                   <Link to="/signup">
-                    Start Free Trial
+                    {t('landing.cta.startTrial', 'Start Free Trial')}
                     <CheckCircle className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 
                 <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2">
                   <Link to="/contact">
-                    Contact Sales
+                    {t('landing.cta.contactSales', 'Contact Sales')}
                   </Link>
                 </Button>
               </div>
@@ -271,7 +234,7 @@ const LandingPage = () => {
         <footer className="py-10 px-4 border-t border-border/50">
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-muted-foreground">
-              © {new Date().getFullYear()} Logistics Platform. All rights reserved.
+              © {new Date().getFullYear()} {t('landing.footer.copyright', 'Logistics Platform. All rights reserved.')}
             </p>
           </div>
         </footer>

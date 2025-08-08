@@ -13,6 +13,7 @@ import Logo from '@/components/Logo';
 import { Link } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const NaviBar = () => {
   const { t } = useTranslation();
@@ -69,6 +70,8 @@ const NaviBar = () => {
           </NavigationMenu>
           
           <div className="flex items-center gap-3">
+            <LanguageSwitcher variant="compact" />
+            
             <Button 
               variant="ghost" 
               asChild
@@ -76,7 +79,7 @@ const NaviBar = () => {
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                {t('navbar.login')}
+                {t('navbar.login', 'Login')}
               </Link>
             </Button>
             
@@ -86,7 +89,7 @@ const NaviBar = () => {
             >
               <Link to="/signup">
                 <UserPlus className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-                {t('navbar.signup')}
+                {t('navbar.signup', 'Sign Up')}
               </Link>
             </Button>
           </div>
@@ -118,13 +121,17 @@ const NaviBar = () => {
                   transition={{ duration: 0.3 }}
                   className="flex flex-col gap-4"
                 >
+                  <div className="flex justify-center mb-4">
+                    <LanguageSwitcher variant="default" />
+                  </div>
+                  
                   <Link 
                     to="/login" 
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-primary/10 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <LogIn className="h-5 w-5 text-primary" />
-                    <span className="font-medium">{t('navbar.login')}</span>
+                    <span className="font-medium">{t('navbar.login', 'Login')}</span>
                   </Link>
                   <Link 
                     to="/signup" 
@@ -132,7 +139,7 @@ const NaviBar = () => {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <UserPlus className="h-5 w-5" />
-                    <span>{t('navbar.signup')}</span>
+                    <span>{t('navbar.signup', 'Sign Up')}</span>
                   </Link>
                 </motion.div>
               </div>

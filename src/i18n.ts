@@ -1,57 +1,29 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-// import HttpApi from "i18next-http-backend";
-
-// Import translation files directly
-import bsTranslation from '/locales/bs/translation.json?url';
-import enTranslation from '/locales/en/translation.json?url';
-import hrTranslation from '/locales/hr/translation.json?url';
-import srTranslation from '/locales/sr/translation.json?url';
-import deCHTranslation from '/locales/de-CH/translation.json?url';
-import frCHTranslation from '/locales/fr-CH/translation.json?url';
-import trTranslation from '/locales/tr/translation.json?url';
+import HttpApi from "i18next-http-backend";
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  // .use(HttpApi)
+  .use(HttpApi)
   .init({
-    debug: true,
-    fallbackLng: "bs",
+    debug: false,
+    fallbackLng: "en",
     supportedLngs: ["bs", "en", "hr", "sr", "de-CH", "fr-CH", "tr"],
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
-    resources: {
-      bs: {
-        translation: bsTranslation
-      },
-      en: {
-        translation: enTranslation
-      },
-      hr: {
-        translation: hrTranslation
-      },
-      sr: {
-        translation: srTranslation
-      },
-      "de-CH": {
-        translation: deCHTranslation
-      },
-      "fr-CH": {
-        translation: frCHTranslation
-      },
-      tr: {
-        translation: trTranslation
-      }
+    backend: {
+      loadPath: '/locales/{{lng}}/translation.json',
     },
     detection: {
-      // Prevents i18next from automatically detecting the language
-      // This allows us to manually control the language
-      order: ['localStorage', 'cookie'],
+      order: ['localStorage', 'cookie', 'navigator'],
       caches: ['localStorage', 'cookie']
     },
+    react: {
+      useSuspense: false
+    }
   }, (err, t) => {
     if (err) return console.log('something went wrong loading', err);
     console.log('i18n initialized successfully');

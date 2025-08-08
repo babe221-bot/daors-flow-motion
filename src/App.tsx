@@ -22,11 +22,13 @@ import LandingPage from './pages/LandingPage';
 import ResponsiveLayout from './components/ResponsiveLayout';
 import DemoPage from './pages/DemoPage';
 import ModernFooter from './components/ModernFooter';
+import LanguageChangeNotification from './components/LanguageChangeNotification';
 
 const App = () => {
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
+        <LanguageChangeNotification />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<ResponsiveLayout><Index /></ResponsiveLayout>} />

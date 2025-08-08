@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { User, Shield, Bell, Palette, Save } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,17 +12,14 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import ParticleBackground from "@/components/ParticleBackground";
 import EnhancedFeatures from "@/components/EnhancedFeatures";
-import i18n from "@/i18n";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSave = () => {
-    toast.success("Changes saved successfully!");
-  };
-
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
+    toast.success(t('settings.saveChanges.success', 'Settings saved successfully!'));
   };
 
   return (
@@ -33,8 +31,8 @@ const Settings = () => {
         <main className={cn("transition-all duration-300 pt-header", sidebarOpen ? "ml-64" : "ml-16")}>
           <div className="p-6 space-y-6">
             <header className="space-y-2 animate-slide-up-fade">
-              <h1 className="text-3xl font-bold gradient-text">Settings</h1>
-              <p className="text-muted-foreground">Manage your account and preferences.</p>
+              <h1 className="text-3xl font-bold gradient-text">{t('settings.title', 'Settings')}</h1>
+              <p className="text-muted-foreground">{t('settings.description', 'Manage your account and preferences.')}</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -154,21 +152,13 @@ const Settings = () => {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="language">Language</Label>
-                      <Select defaultValue="en" onValueChange={handleLanguageChange}>
-                        <SelectTrigger id="language">
-                          <SelectValue placeholder="Select a language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="bs">Bosnian</SelectItem>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="hr">Croatian</SelectItem>
-                          <SelectItem value="sr">Serbian</SelectItem>
-                          <SelectItem value="de-CH">Swiss German</SelectItem>
-                          <SelectItem value="fr-CH">Swiss French</SelectItem>
-                          <SelectItem value="tr">Turkish</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="language">{t('settings.appearance.language', 'Language')}</Label>
+                      <div className="flex items-center gap-4">
+                        <LanguageSwitcher variant="default" className="flex-1" />
+                        <span className="text-sm text-muted-foreground">
+                          {t('settings.appearance.language.description', 'Choose your preferred language')}
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
