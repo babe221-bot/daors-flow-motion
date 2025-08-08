@@ -48,6 +48,7 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
             <Route path="/portal" element={<CustomerPortalLayout />}>
               <Route index element={<PortalDashboard />} />
+              <Route path="dashboard" element={<PortalDashboard />} />
               <Route path="profile" element={<PortalProfile />} />
               <Route path="shipments" element={<PortalShipments />} />
             </Route>
