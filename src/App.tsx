@@ -9,12 +9,11 @@ const Index = lazy(() => import('./pages/Index'));
 const Inventory = lazy(() => import('./pages/Inventory'));
 const ItemTracking = lazy(() => import('./pages/ItemTracking'));
 const LiveMap = lazy(() => import('./pages/LiveMap'));
-const Login = lazy(() => import('./pages/Login'));
+const AuthPage = lazy(() => import('./pages/AuthPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Reports = lazy(() => import('./pages/Reports'));
 const RouteOptimization = lazy(() => import('./pages/RouteOptimization'));
 const Settings = lazy(() => import('./pages/Settings'));
-const SignUp = lazy(() => import('./pages/SignUp'));
 const Support = lazy(() => import('./pages/Support'));
 const Team = lazy(() => import('./pages/Team'));
 const EnhancedDashboard = lazy(() => import('./pages/EnhancedDashboard'));
@@ -36,8 +35,8 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<ResponsiveLayout><Index /></ResponsiveLayout>} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/signup" element={<AuthPage />} />
           <Route path="/customer-dashboard" element={<ResponsiveLayout><CustomerDashboard /></ResponsiveLayout>} />
           <Route path="/inventory" element={<ResponsiveLayout><Inventory /></ResponsiveLayout>} />
           <Route path="/item-tracking" element={<ResponsiveLayout><ItemTracking /></ResponsiveLayout>} />
