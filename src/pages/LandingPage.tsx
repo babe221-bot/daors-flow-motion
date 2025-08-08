@@ -69,16 +69,18 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen">
+    <div className="relative min-h-screen flex flex-col">
       <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
       <ParticleBackground />
       
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col min-h-screen">
         {/* Language Selector */}
         <LanguageSwitcher variant="floating" />
         
-        {/* Hero Section */}
-        <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center backdrop-blur-sm bg-background/20">
+        {/* Main Content */}
+        <div className="flex-1">
+          {/* Hero Section */}
+          <section className="min-h-screen flex flex-col justify-center items-center px-4 py-12 text-center backdrop-blur-sm bg-background/20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -152,9 +154,9 @@ const LandingPage = () => {
             ))}
           </motion.div>
         </section>
-        
-        {/* Features Section */}
-        <section className="py-20 px-4">
+          
+          {/* Features Section */}
+          <section className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -196,10 +198,10 @@ const LandingPage = () => {
               ))}
             </motion.div>
           </div>
-        </section>
-        
-        {/* CTA Section */}
-        <section className="py-20 px-4">
+          </section>
+          
+          {/* CTA Section */}
+          <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -228,10 +230,11 @@ const LandingPage = () => {
               </div>
             </motion.div>
           </div>
-        </section>
+          </section>
+        </div>
         
-        {/* Footer */}
-        <footer className="py-10 px-4 border-t border-border/50">
+        {/* Footer - Always at bottom */}
+        <footer className="mt-auto py-10 px-4 border-t border-border/50 bg-background/20 backdrop-blur-sm">
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-muted-foreground">
               © {new Date().getFullYear()} {t('landing.footer.copyright', 'Logistics Platform. All rights reserved.')}

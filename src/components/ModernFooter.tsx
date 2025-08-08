@@ -27,47 +27,47 @@ const ModernFooter = () => {
 
   const footerSections = [
     {
-      title: 'Company',
+      title: t('footer.company', 'Company'),
       links: [
-        { name: 'About Us', href: '/about' },
-        { name: 'Careers', href: '/careers' },
-        { name: 'Press', href: '/press' },
-        { name: 'Blog', href: '/blog' }
+        { name: t('footer.aboutUs', 'About Us'), href: '/about' },
+        { name: t('footer.careers', 'Careers'), href: '/careers' },
+        { name: t('footer.press', 'Press'), href: '/press' },
+        { name: t('footer.blog', 'Blog'), href: '/blog' }
       ]
     },
     {
-      title: 'Services',
+      title: t('footer.services', 'Services'),
       links: [
-        { name: 'Package Tracking', href: '/item-tracking' },
-        { name: 'Route Optimization', href: '/route-optimization' },
-        { name: 'Live Map', href: '/live-map' },
-        { name: 'Reports', href: '/reports' }
+        { name: t('footer.packageTracking', 'Package Tracking'), href: '/item-tracking' },
+        { name: t('footer.routeOptimization', 'Route Optimization'), href: '/route-optimization' },
+        { name: t('footer.liveMap', 'Live Map'), href: '/live-map' },
+        { name: t('footer.reports', 'Reports'), href: '/reports' }
       ]
     },
     {
-      title: 'Support',
+      title: t('footer.support', 'Support'),
       links: [
-        { name: 'Help Center', href: '/support' },
-        { name: 'Contact Us', href: '/contact' },
-        { name: 'API Documentation', href: '/docs' },
-        { name: 'Status Page', href: '/status' }
+        { name: t('footer.helpCenter', 'Help Center'), href: '/support' },
+        { name: t('footer.contactUs', 'Contact Us'), href: '/contact' },
+        { name: t('footer.apiDocs', 'API Documentation'), href: '/docs' },
+        { name: t('footer.statusPage', 'Status Page'), href: '/status' }
       ]
     },
     {
-      title: 'Legal',
+      title: t('footer.legal', 'Legal'),
       links: [
-        { name: 'Privacy Policy', href: '/privacy' },
-        { name: 'Terms of Service', href: '/terms' },
-        { name: 'Cookie Policy', href: '/cookies' },
-        { name: 'GDPR', href: '/gdpr' }
+        { name: t('footer.privacyPolicy', 'Privacy Policy'), href: '/privacy' },
+        { name: t('footer.termsOfService', 'Terms of Service'), href: '/terms' },
+        { name: t('footer.cookiePolicy', 'Cookie Policy'), href: '/cookies' },
+        { name: t('footer.gdpr', 'GDPR'), href: '/gdpr' }
       ]
     }
   ];
 
   const features = [
-    { icon: Truck, title: 'Real-time Tracking', description: 'Monitor shipments live' },
-    { icon: Globe, title: 'Global Coverage', description: 'Worldwide logistics network' },
-    { icon: Shield, title: 'Secure Handling', description: 'End-to-end security' }
+    { icon: Truck, title: t('footer.features.tracking.title', 'Real-time Tracking'), description: t('footer.features.tracking.description', 'Monitor shipments live') },
+    { icon: Globe, title: t('footer.features.coverage.title', 'Global Coverage'), description: t('footer.features.coverage.description', 'Worldwide logistics network') },
+    { icon: Shield, title: t('footer.features.security.title', 'Secure Handling'), description: t('footer.features.security.description', 'End-to-end security') }
   ];
 
   const socialLinks = [
@@ -128,8 +128,7 @@ const ModernFooter = () => {
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-              Revolutionizing logistics with AI-powered solutions for real-time tracking, 
-              route optimization, and intelligent supply chain management.
+              {t('footer.description', 'Revolutionizing logistics with AI-powered solutions for real-time tracking, route optimization, and intelligent supply chain management.')}
             </p>
             
             {/* Contact Info */}
@@ -183,21 +182,21 @@ const ModernFooter = () => {
         {/* Newsletter Signup */}
         <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-primary/5 to-secondary/5 border border-border/50 backdrop-blur-sm">
           <div className="max-w-2xl mx-auto text-center">
-            <h4 className="font-bold text-2xl mb-2">Stay Updated</h4>
+            <h4 className="font-bold text-2xl mb-2">{t('footer.newsletter.title', 'Stay Updated')}</h4>
             <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-              Get the latest updates on new features, industry insights, and logistics trends.
+              {t('footer.newsletter.description', 'Get the latest updates on new features, industry insights, and logistics trends.')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <div className="relative flex-1">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
-                  placeholder="Enter your email" 
+                  placeholder={t('footer.newsletter.placeholder', 'Enter your email')}
                   className="pl-10 h-12 bg-background/80 border-border/50"
                   type="email"
                 />
               </div>
               <Button size="lg" className="group">
-                Subscribe
+                {t('footer.newsletter.subscribe', 'Subscribe')}
                 <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
@@ -209,9 +208,9 @@ const ModernFooter = () => {
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>© {currentYear} DaorsForge AI Systems. Made with</span>
+            <span>© {currentYear} {t('footer.copyright.company', 'DaorsForge AI Systems')}. {t('footer.copyright.madeWith', 'Made with')}</span>
             <Heart className="h-4 w-4 text-red-500 fill-current animate-pulse" />
-            <span>in Bosnia and Herzegovina</span>
+            <span>{t('footer.copyright.location', 'in Bosnia and Herzegovina')}</span>
           </div>
 
           {/* Social Links */}
