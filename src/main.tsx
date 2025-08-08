@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './App.tsx';
+import MinimalApp from './MinimalApp.tsx';
 import './index.css';
 // import './i18n'; // Temporarily disabled
 import { AuthProvider } from './context/AuthContext';
@@ -22,11 +22,9 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <MinimalApp />
+      </AuthProvider>
     </React.StrictMode>
   );
 } else {
