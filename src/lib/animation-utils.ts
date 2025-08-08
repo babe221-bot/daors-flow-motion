@@ -1,4 +1,5 @@
-import anime from 'animejs';
+// @ts-ignore
+import anime from 'animejs/lib/anime.es.js';
 
 // Theme transition animation
 export function animateThemeChange() {

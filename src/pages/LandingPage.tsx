@@ -70,7 +70,7 @@ const LandingPage = () => {
 
   return (
     <div className="relative min-h-screen">
-      <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
+      <MediaBackground mediaSrc="/hero-logistics.jpg" type="image" />
       <ParticleBackground />
       
       <div className="relative z-10 min-h-screen flex flex-col">

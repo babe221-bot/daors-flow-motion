@@ -16,6 +16,9 @@ i18n
     },
     backend: {
       loadPath: '/locales/{{lng}}/translation.json',
+      requestOptions: {
+        cache: 'default'
+      }
     },
     detection: {
       order: ['localStorage', 'cookie', 'navigator'],
@@ -23,9 +26,18 @@ i18n
     },
     react: {
       useSuspense: false
-    }
+    },
+    // Add timeout and retry options
+    load: 'languageOnly',
+    cleanCode: true,
+    // Prevent hanging on network issues
+    initImmediate: false
   }, (err, t) => {
-    if (err) return console.log('something went wrong loading', err);
+    if (err) {
+      console.warn('i18n initialization error:', err);
+      // Continue with fallback language
+      return;
+    }
     console.log('i18n initialized successfully');
     console.log('Current language:', i18n.language);
   });

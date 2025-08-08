@@ -1,69 +1,86 @@
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import CustomerDashboard from './pages/CustomerDashboard';
-import Index from './pages/Index';
-import Inventory from './pages/Inventory';
-import ItemTracking from './pages/ItemTracking';
-import LiveMap from './pages/LiveMap';
-import Login from './pages/Login';
-import NotFound from './pages/NotFound';
-import Reports from './pages/Reports';
-import RouteOptimization from './pages/RouteOptimization';
-import Settings from './pages/Settings';
-import SignUp from './pages/SignUp';
-import Support from './pages/Support';
-import Team from './pages/Team';
-import EnhancedDashboard from './pages/EnhancedDashboard';
-import PortalDashboard from './pages/portal/Dashboard';
-import PortalProfile from './pages/portal/Profile';
-import PortalShipments from './pages/portal/Shipments';
-import CustomerPortalLayout from './components/CustomerPortalLayout';
-import ProtectedRoute from './components/ProtectedRoute';
-import LandingPage from './pages/LandingPage';
-import ResponsiveLayout from './components/ResponsiveLayout';
-import DemoPage from './pages/DemoPage';
-import ModernFooter from './components/ModernFooter';
+import { Suspense, lazy } from 'react';
+import LoadingScreen from './components/LoadingScreen';
 import LanguageChangeNotification from './components/LanguageChangeNotification';
+import SimpleTest from './components/SimpleTest';
+
+// Check if we should use simple test mode
+const isTestMode = window.location.search.includes('test=true');
+
+// Lazy load components to improve initial load time
+const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard'));
+const Index = lazy(() => import('./pages/Index'));
+const Inventory = lazy(() => import('./pages/Inventory'));
+const ItemTracking = lazy(() => import('./pages/ItemTracking'));
+const LiveMap = lazy(() => import('./pages/LiveMap'));
+const Login = lazy(() => import('./pages/Login'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const Reports = lazy(() => import('./pages/Reports'));
+const RouteOptimization = lazy(() => import('./pages/RouteOptimization'));
+const Settings = lazy(() => import('./pages/Settings'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const Support = lazy(() => import('./pages/Support'));
+const Team = lazy(() => import('./pages/Team'));
+const EnhancedDashboard = lazy(() => import('./pages/EnhancedDashboard'));
+const PortalDashboard = lazy(() => import('./pages/portal/Dashboard'));
+const PortalProfile = lazy(() => import('./pages/portal/Profile'));
+const PortalShipments = lazy(() => import('./pages/portal/Shipments'));
+const CustomerPortalLayout = lazy(() => import('./components/CustomerPortalLayout'));
+const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const ResponsiveLayout = lazy(() => import('./components/ResponsiveLayout'));
+const DemoPage = lazy(() => import('./pages/DemoPage'));
+const ModernFooter = lazy(() => import('./components/ModernFooter'));
 
 const AppContent = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <LanguageChangeNotification />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/dashboard" element={<ResponsiveLayout><Index /></ResponsiveLayout>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/customer-dashboard" element={<ResponsiveLayout><CustomerDashboard /></ResponsiveLayout>} />
-        <Route path="/inventory" element={<ResponsiveLayout><Inventory /></ResponsiveLayout>} />
-        <Route path="/item-tracking" element={<ResponsiveLayout><ItemTracking /></ResponsiveLayout>} />
-        <Route path="/live-map" element={<ResponsiveLayout><LiveMap /></ResponsiveLayout>} />
-        <Route path="/reports" element={<ResponsiveLayout><Reports /></ResponsiveLayout>} />
-        <Route path="/route-optimization" element={<ResponsiveLayout><RouteOptimization /></ResponsiveLayout>} />
-        <Route path="/settings" element={<ResponsiveLayout><Settings /></ResponsiveLayout>} />
-        <Route path="/support" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
-        <Route path="/team" element={<ResponsiveLayout><Team /></ResponsiveLayout>} />
-        <Route path="/enhanced-dashboard" element={<ResponsiveLayout><EnhancedDashboard /></ResponsiveLayout>} />
-        <Route path="/contact" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
-        <Route path="/demo" element={<ResponsiveLayout><DemoPage /></ResponsiveLayout>} />
-        
-        <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
-          <Route path="/portal" element={<CustomerPortalLayout />}>
-            <Route index element={<PortalDashboard />} />
-            <Route path="dashboard" element={<PortalDashboard />} />
-            <Route path="profile" element={<PortalProfile />} />
-            <Route path="shipments" element={<PortalShipments />} />
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<ResponsiveLayout><Index /></ResponsiveLayout>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/customer-dashboard" element={<ResponsiveLayout><CustomerDashboard /></ResponsiveLayout>} />
+          <Route path="/inventory" element={<ResponsiveLayout><Inventory /></ResponsiveLayout>} />
+          <Route path="/item-tracking" element={<ResponsiveLayout><ItemTracking /></ResponsiveLayout>} />
+          <Route path="/live-map" element={<ResponsiveLayout><LiveMap /></ResponsiveLayout>} />
+          <Route path="/reports" element={<ResponsiveLayout><Reports /></ResponsiveLayout>} />
+          <Route path="/route-optimization" element={<ResponsiveLayout><RouteOptimization /></ResponsiveLayout>} />
+          <Route path="/settings" element={<ResponsiveLayout><Settings /></ResponsiveLayout>} />
+          <Route path="/support" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
+          <Route path="/team" element={<ResponsiveLayout><Team /></ResponsiveLayout>} />
+          <Route path="/enhanced-dashboard" element={<ResponsiveLayout><EnhancedDashboard /></ResponsiveLayout>} />
+          <Route path="/contact" element={<ResponsiveLayout><Support /></ResponsiveLayout>} />
+          <Route path="/demo" element={<ResponsiveLayout><DemoPage /></ResponsiveLayout>} />
+          
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}>
+            <Route path="/portal" element={<CustomerPortalLayout />}>
+              <Route index element={<PortalDashboard />} />
+              <Route path="dashboard" element={<PortalDashboard />} />
+              <Route path="profile" element={<PortalProfile />} />
+              <Route path="shipments" element={<PortalShipments />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
       {/* ModernFooter on all pages */}
-      <ModernFooter />
+      <Suspense fallback={<div className="h-20" />}>
+        <ModernFooter />
+      </Suspense>
     </div>
   );
 };
 
 const App = () => {
+  // If in test mode, show simple test component
+  if (isTestMode) {
+    return <SimpleTest />;
+  }
+
   return (
     <Router>
       <AppContent />

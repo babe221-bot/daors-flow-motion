@@ -35,29 +35,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Check if user is already logged in
     const getSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Session check timeout')), 5000)
+        );
+        
+        const sessionPromise = supabase.auth.getSession();
+        
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        
         if (session?.user) {
-          // Fetch user profile from your users table
-          const { data: profile, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (error) {
-            console.error('Error fetching user profile:', error);
-          }
-          
-          if (profile) {
-            setUser({
-              id: profile.id,
-              username: profile.full_name || profile.email?.split('@')[0] || 'User',
-              role: (profile.role as Role) || ROLES.CLIENT,
-              avatarUrl: null, // Not in schema
-              associatedItemIds: [] // Not in schema, would need a join query to populate
-            });
-          } else {
-            // Create a minimal user object if profile doesn't exist
+          try {
+            // Fetch user profile from your users table with timeout
+            const profilePromise = supabase
+              .from('users')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+            
+            const profileTimeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
+            );
+            
+            const { data: profile, error } = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
+            
+            if (error && error.message !== 'Profile fetch timeout') {
+              console.warn('Error fetching user profile:', error);
+            }
+            
+            if (profile) {
+              setUser({
+                id: profile.id,
+                username: profile.full_name || profile.email?.split('@')[0] || 'User',
+                role: (profile.role as Role) || ROLES.CLIENT,
+                avatarUrl: null, // Not in schema
+                associatedItemIds: [] // Not in schema, would need a join query to populate
+              });
+            } else {
+              // Create a minimal user object if profile doesn't exist
+              setUser({
+                id: session.user.id,
+                username: session.user.email?.split('@')[0] || 'User',
+                role: ROLES.CLIENT,
+                avatarUrl: null,
+                associatedItemIds: []
+              });
+            }
+          } catch (profileError) {
+            console.warn('Profile fetch failed, using session data:', profileError);
+            // Fallback to session data
             setUser({
               id: session.user.id,
               username: session.user.email?.split('@')[0] || 'User',
@@ -68,7 +94,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error('Error getting session:', error);
+        console.warn('Session check failed, continuing without auth:', error);
+        // Don't block the app if auth fails
       } finally {
         setLoading(false);
       }
