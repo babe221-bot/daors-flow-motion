@@ -211,23 +211,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginAsGuest = async () => {
     try {
-      // Use a fixed guest account for demo purposes
-      const { data, error } = await supabase.auth.signInAnonymously();
-      
+      // Use configured guest credentials (recommended)
+      const guestEmail = (import.meta as any).env?.VITE_GUEST_EMAIL as string | undefined;
+      const guestPassword = (import.meta as any).env?.VITE_GUEST_PASSWORD as string | undefined;
+
+      if (!guestEmail || !guestPassword) {
+        return { error: new Error('Guest credentials are not configured. Please set VITE_GUEST_EMAIL and VITE_GUEST_PASSWORD in your environment.') };
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: guestEmail,
+        password: guestPassword,
+      });
+
       if (error) {
         return { error };
       }
-      
-      if (data.user) {
-        // Check if user profile exists
+
+      if (data?.user) {
+        // Ensure a profile exists and has GUEST role
         const { data: profile, error: profileError } = await supabase
           .from('users')
           .select('*')
           .eq('id', data.user.id)
           .single();
-        
+
         if (profileError || !profile) {
-          // Create guest user profile
           const { error: insertError } = await supabase
             .from('users')
             .insert({
@@ -236,13 +245,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               full_name: 'Guest User',
               role: ROLES.GUEST,
             });
-          
           if (insertError) {
             console.error('Error creating guest profile:', insertError);
           }
+        } else if (profile.role !== ROLES.GUEST) {
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({ role: ROLES.GUEST })
+            .eq('id', data.user.id);
+          if (updateError) {
+            console.error('Error updating profile to GUEST:', updateError);
+          }
         }
       }
-      
+
       return { error: null };
     } catch (error) {
       console.error('Error during guest login:', error);

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types";
 import VideoBackground from "@/components/VideoBackground";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AuthPage = () => {
   const { t } = useTranslation();
@@ -96,124 +97,148 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <VideoBackground videoSrc="/background-video.mp4" />
-      <div className="relative z-10 w-full max-w-md">
-        <Card className="w-full glass hover-lift transition-all duration-300">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-6">
-              <Logo size="lg" showText={true} linkTo={null} />
-            </div>
-            <CardTitle className="text-xl">
-              {isLoginMode ? t('login.title', 'Login to your Account') : t('signup.title', 'Create an Account')}
-            </CardTitle>
-            <CardDescription>
-              {isLoginMode 
-                ? t('login.description', 'Enter your credentials to access the dashboard.') 
-                : t('signup.description', 'Sign up to get started.')
-              }
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoginMode ? (
-              // Login Form
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">{t('login.email', 'Email')}</Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    placeholder={t('login.email.placeholder', 'user@example.com')}
-                    required
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">{t('login.password', 'Password')}</Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    required
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                  />
-                </div>
-                {loginError && <p className="text-sm text-destructive">{loginError}</p>}
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
-                </Button>
-                <Button variant="outline" className="w-full" onClick={handleGuestLogin} disabled={loading}>
-                  {t('login.guest', 'Login as Guest')}
-                </Button>
-              </form>
-            ) : (
-              // Signup Form
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-username">{t('signup.username', 'Username')}</Label>
-                  <Input
-                    id="signup-username"
-                    type="text"
-                    placeholder="your_username"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">{t('signup.email', 'Email')}</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder={t('signup.email.placeholder', 'user@example.com')}
-                    required
-                    value={signupEmail}
-                    onChange={(e) => setSignupEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">{t('signup.password', 'Password')}</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    required
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                  />
-                </div>
-                {signupError && <p className="text-sm text-destructive">{signupError}</p>}
-                {signupMessage && <p className="text-sm text-green-500">{signupMessage}</p>}
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? t('signup.loading', 'Creating account...') : t('signup.submit', 'Sign Up')}
-                </Button>
-              </form>
-            )}
-            
-            <div className="mt-4 text-center text-sm">
-              {isLoginMode ? (
-                <>
-                  {t('login.no_account', "Don't have an account?")}{' '}
-                  <button 
-                    onClick={() => setIsLoginMode(false)} 
-                    className="underline text-primary hover:text-primary/80"
+      {/* Swapped to branded background and added smooth fade overlay */}
+      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
+      <div className="relative z-10 w-full max-w-md px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 12, scale: 0.98 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Card className="w-full glass hover-lift transition-all duration-300">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-6">
+                <Logo size="lg" showText={true} linkTo={null} />
+              </div>
+              <CardTitle className="text-xl">
+                {isLoginMode ? t('login.title', 'Login to your Account') : t('signup.title', 'Create an Account')}
+              </CardTitle>
+              <CardDescription>
+                {isLoginMode 
+                  ? t('login.description', 'Enter your credentials to access the dashboard.') 
+                  : t('signup.description', 'Sign up to get started.')
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AnimatePresence mode="wait">
+                {isLoginMode ? (
+                  <motion.form
+                    key="login"
+                    onSubmit={handleLogin}
+                    className="space-y-4"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25 }}
                   >
-                    {t('login.signup', 'Sign up')}
-                  </button>
-                </>
-              ) : (
-                <>
-                  {t('signup.have_account', 'Already have an account?')}{' '}
-                  <button 
-                    onClick={() => setIsLoginMode(true)} 
-                    className="underline text-primary hover:text-primary/80"
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email">{t('login.email', 'Email')}</Label>
+                      <Input
+                        id="login-email"
+                        type="email"
+                        placeholder={t('login.email.placeholder', 'user@example.com')}
+                        required
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password">{t('login.password', 'Password')}</Label>
+                      <Input
+                        id="login-password"
+                        type="password"
+                        required
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                      />
+                    </div>
+                    {loginError && <p className="text-sm text-destructive">{loginError}</p>}
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
+                    </Button>
+                    <Button type="button" variant="outline" className="w-full" onClick={handleGuestLogin} disabled={loading}>
+                      {t('login.guest', 'Login as Guest')}
+                    </Button>
+                  </motion.form>
+                ) : (
+                  <motion.form
+                    key="signup"
+                    onSubmit={handleSignUp}
+                    className="space-y-4"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25 }}
                   >
-                    {t('signup.login', 'Log in')}
-                  </button>
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-username">{t('signup.username', 'Username')}</Label>
+                      <Input
+                        id="signup-username"
+                        type="text"
+                        placeholder="your_username"
+                        required
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email">{t('signup.email', 'Email')}</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder={t('signup.email.placeholder', 'user@example.com')}
+                        required
+                        value={signupEmail}
+                        onChange={(e) => setSignupEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password">{t('signup.password', 'Password')}</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        required
+                        value={signupPassword}
+                        onChange={(e) => setSignupPassword(e.target.value)}
+                      />
+                    </div>
+                    {signupError && <p className="text-sm text-destructive">{signupError}</p>}
+                    {signupMessage && <p className="text-sm text-green-500">{signupMessage}</p>}
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? t('signup.loading', 'Creating account...') : t('signup.submit', 'Sign Up')}
+                    </Button>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+              
+              <div className="mt-4 text-center text-sm">
+                {isLoginMode ? (
+                  <>
+                    {t('login.no_account', "Don't have an account?")}{' '}
+                    <button 
+                      onClick={() => setIsLoginMode(false)} 
+                      className="underline text-primary hover:text-primary/80"
+                    >
+                      {t('login.signup', 'Sign up')}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {t('signup.have_account', 'Already have an account?')}{' '}
+                    <button 
+                      onClick={() => setIsLoginMode(true)} 
+                      className="underline text-primary hover:text-primary/80"
+                    >
+                      {t('signup.login', 'Log in')}
+                    </button>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
