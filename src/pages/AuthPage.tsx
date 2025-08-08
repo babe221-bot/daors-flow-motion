@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types";
-import MediaBackground from "@/components/MediaBackground";
+import VideoBackground from "@/components/VideoBackground";
 
 const AuthPage = () => {
   const { t } = useTranslation();
@@ -96,7 +96,7 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <MediaBackground mediaSrc="/hero-logistics.jpg" type="image" />
+      <VideoBackground videoSrc="/background-video.mp4" />
       <div className="relative z-10 w-full max-w-md">
         <Card className="w-full glass hover-lift transition-all duration-300">
           <CardHeader className="text-center">

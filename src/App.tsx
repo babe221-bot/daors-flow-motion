@@ -28,6 +28,12 @@ const DemoPage = lazy(() => import('./pages/DemoPage'));
 const ModernFooter = lazy(() => import('./components/ModernFooter'));
 
 const AppContent = () => {
+  const location = useLocation();
+  
+  // Pages where footer should be hidden
+  const hideFooterPaths = ['/login', '/signup'];
+  const shouldHideFooter = hideFooterPaths.includes(location.pathname);
+
   return (
     <div className="flex flex-col min-h-screen">
       <LanguageChangeNotification />
@@ -62,10 +68,12 @@ const AppContent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-      {/* ModernFooter on all pages */}
-      <Suspense fallback={<div className="h-20" />}>
-        <ModernFooter />
-      </Suspense>
+      {/* ModernFooter on all pages except auth pages */}
+      {!shouldHideFooter && (
+        <Suspense fallback={<div className="h-20" />}>
+          <ModernFooter />
+        </Suspense>
+      )}
     </div>
   );
 };
