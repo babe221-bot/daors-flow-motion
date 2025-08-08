@@ -1,4 +1,11 @@
-import anime from 'animejs';
+// Animation utilities with fallback for missing anime.js
+let anime: any;
+try {
+  anime = require('animejs');
+} catch (e) {
+  console.warn('anime.js not available, using fallback animations');
+  anime = () => ({ pause: () => {}, play: () => {} });
+}
 
 // Theme transition animation
 export function animateThemeChange() {

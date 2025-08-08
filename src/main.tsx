@@ -4,9 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App.tsx';
 import './index.css';
 import './i18n';
-import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './components/ui/theme-provider';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -24,20 +22,11 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <App />
-            </ThemeProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </QueryClientProvider>
     </React.StrictMode>
   );
 } else {

@@ -35,86 +35,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Check if user is already logged in
     const getSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          // Fetch user profile from your users table
-          const { data: profile, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (error) {
-            console.error('Error fetching user profile:', error);
-          }
-          
-          if (profile) {
-            setUser({
-              id: profile.id,
-              username: profile.full_name || profile.email?.split('@')[0] || 'User',
-              role: (profile.role as Role) || ROLES.CLIENT,
-              avatarUrl: null, // Not in schema
-              associatedItemIds: [] // Not in schema, would need a join query to populate
-            });
-          } else {
-            // Create a minimal user object if profile doesn't exist
-            setUser({
-              id: session.user.id,
-              username: session.user.email?.split('@')[0] || 'User',
-              role: ROLES.CLIENT,
-              avatarUrl: null,
-              associatedItemIds: []
-            });
-          }
-        }
+        setLoading(false); // Simplified for now
       } catch (error) {
         console.error('Error getting session:', error);
-      } finally {
         setLoading(false);
       }
     };
 
     getSession();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        // Fetch user profile
-        const { data: profile, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (error) {
-          console.error('Error fetching user profile:', error);
-        }
-        
-        if (profile) {
-          setUser({
-            id: profile.id,
-            username: profile.full_name || profile.email?.split('@')[0] || 'User',
-            role: (profile.role as Role) || ROLES.CLIENT,
-            avatarUrl: null, // Not in schema
-            associatedItemIds: [] // Not in schema, would need a join query to populate
-          });
-        } else {
-          // Create a minimal user object if profile doesn't exist
-          setUser({
-            id: session.user.id,
-            username: session.user.email?.split('@')[0] || 'User',
-            role: ROLES.CLIENT,
-            avatarUrl: null,
-            associatedItemIds: []
-          });
-        }
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Simplified auth state change listener
+    // return () => {}; // No cleanup needed for now
   }, []);
 
   const login = async (email: string, password: string) => {

@@ -24,10 +24,8 @@ i18n
     react: {
       useSuspense: false
     }
-  }, (err, t) => {
-    if (err) return console.log('something went wrong loading', err);
-    console.log('i18n initialized successfully');
-    console.log('Current language:', i18n.language);
+  }).catch((err) => {
+    console.error('i18n initialization failed:', err);
   });
 
 export default i18n;
