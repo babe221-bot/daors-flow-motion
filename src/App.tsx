@@ -43,6 +43,8 @@ const PaymentProcessing = lazy(() => import('./pages/payments/PaymentProcessing'
 const DocumentManagement = lazy(() => import('./pages/documents/DocumentManagement'));
 const ReportGeneration = lazy(() => import('./pages/reports/ReportGeneration'));
 const Chatbot = lazy(() => import('./pages/chatbot/Chatbot'));
+const FleetTracking = lazy(() => import('./pages/FleetTracking'));
+const FleetTracking = lazy(() => import('./pages/FleetTracking'));
 
 const AppContent = () => {
   const location = useLocation();
@@ -104,6 +106,8 @@ const AppContent = () => {
               { path: '/document-management', element: <DocumentManagement /> },
               { path: '/report-generation', element: <ReportGeneration /> },
               { path: '/chatbot', element: <Chatbot /> },
+              { path: '/fleet-tracking', element: <FleetTracking /> },
+              { path: '/fleet-tracking', element: <FleetTracking /> },
             ].map(({ path, element }) => (
               <Route
                 key={path}

@@ -2,20 +2,40 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Map } from "lucide-react";
 import MapView, { Vehicle } from "@/components/MapView";
-import { getLiveRoutes } from "@/lib/api";
 import { LiveRoute, Anomaly } from "@/lib/types";
 import { predictEta } from "@/lib/eta-predictor";
 import { detectAnomalies } from "@/lib/anomaly-detector";
 import { useQuery } from "@tanstack/react-query";
+import { GeoAPI } from "@/lib/api/gateway";
 
 const LiveMap = () => {
   const { t } = useTranslation();
-  const { data: initialRoutes = [] } = useQuery({ queryKey: ['liveRoutes'], queryFn: getLiveRoutes });
   const [liveRoutes, setLiveRoutes] = useState<LiveRoute[]>([]);
+  const { data: vehiclesResp } = useQuery({ queryKey: ['vehicles'], queryFn: GeoAPI.vehicles });
 
+  // Build routes from gateway vehicles for now (mock live routes)
   useEffect(() => {
-    setLiveRoutes(initialRoutes);
-  }, [initialRoutes]);
+    if (!vehiclesResp?.data) return;
+    const routes: LiveRoute[] = vehiclesResp.data.map(v => ({
+      id: v.id,
+      from: 'Unknown',
+      to: 'Unknown',
+      status: v.speed > 0 ? 'In Progress' : 'Stopped',
+      progress: 0,
+      eta: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      driver: v.id,
+      predictedEta: { time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), confidence: 80 },
+      anomalies: [],
+      currentPosition: { lat: v.lat, lng: v.lng },
+      speed: v.speed,
+      lastMoved: v.updatedAt,
+      plannedRoute: [
+        { lat: v.lat, lng: v.lng },
+        { lat: v.lat + 0.2, lng: v.lng + 0.2 },
+      ],
+    }));
+    setLiveRoutes(routes);
+  }, [vehiclesResp]);
 
   useEffect(() => {
     const interval = setInterval(() => {
