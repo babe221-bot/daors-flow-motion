@@ -147,7 +147,7 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <VideoBackground videoSrc="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
+      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
       <div className="z-10 w-full max-w-md px-4">
         <motion.div
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
