@@ -201,6 +201,15 @@ All colors MUST be HSL for consistency and theming.
     animation: chart-bar-grow 1.2s ease-out;
   }
 
+  /* Animation delays */
+  .animation-delay-1000 {
+    animation-delay: 1s;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
   /* Glass morphism effect */
   .glass {
     background: hsl(var(--card-glass));

@@ -97,6 +97,7 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
+      <VideoBackground videoSrc="/videos/auth-background.mp4" />
       <div className="z-10 w-full max-w-md px-4">
         <motion.div
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
