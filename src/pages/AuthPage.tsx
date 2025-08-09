@@ -84,8 +84,14 @@ const AuthPage = () => {
           setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
           
           // Show more details about the error if available
-          if (result.error.details) {
-            console.error('Error details:', result.error.details);
+          // Using a safer approach to access potential error details
+          try {
+            const errorDetails = (result.error as Error & { details?: unknown }).details;
+            if (errorDetails) {
+              console.error('Error details:', errorDetails);
+            }
+          } catch (detailsErr) {
+            console.error('Failed to access error details');
           }
         }
       } else {
