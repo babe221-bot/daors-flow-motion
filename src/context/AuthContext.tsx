@@ -73,24 +73,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize from Supabase current session
+  // Initialize from Supabase current session with timeout
   useEffect(() => {
     let isMounted = true;
+    let timeoutId: NodeJS.Timeout;
+    
+    // Set a timeout to prevent hanging indefinitely
+    const initTimeout = setTimeout(() => {
+      if (isMounted && loading) {
+        console.warn('Auth initialization timed out, proceeding as guest');
+        setLoading(false);
+        // Optionally set as guest user to allow app to function
+        setUser({ id: 'timeout-guest', username: 'Guest User', role: ROLES.GUEST });
+      }
+    }, 5000); // 5 second timeout
+    
     (async () => {
       try {
-        const { data: sessionData } = await supabase.auth.getSession();
-        const { data: userData } = await supabase.auth.getUser();
+        // Use Promise.race to add timeout to Supabase calls
+        const sessionPromise = supabase.auth.getSession();
+        const sessionResult = await Promise.race([
+          sessionPromise,
+          new Promise<null>((_, reject) => 
+            setTimeout(() => reject(new Error('Session fetch timeout')), 3000)
+          )
+        ]);
+        
         if (!isMounted) return;
+        
+        // If we got here, we have session data
+        const { data: sessionData } = sessionResult as any;
         setSession(sessionData?.session ?? null);
+        
+        // Now get user data
+        const userPromise = supabase.auth.getUser();
+        const userResult = await Promise.race([
+          userPromise,
+          new Promise<null>((_, reject) => 
+            setTimeout(() => reject(new Error('User fetch timeout')), 3000)
+          )
+        ]);
+        
+        if (!isMounted) return;
+        
+        // If we got here, we have user data
+        const { data: userData } = userResult as any;
         setUser(mapSupabaseUserToAppUser(userData?.user ?? null));
       } catch (e) {
-        // Non-fatal; fallback to guest/local state above
+        console.warn('Auth initialization error:', e);
+        // Non-fatal; fallback to guest/local state
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          clearTimeout(initTimeout);
+        }
       }
     })();
+    
     return () => {
       isMounted = false;
+      clearTimeout(initTimeout);
     };
   }, []);
 
