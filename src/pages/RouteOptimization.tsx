@@ -42,7 +42,7 @@ const RouteOptimization = () => {
         },
         distance: data.stops.length * 50000, // placeholder
         duration: data.stops.length * 1800,  // placeholder
-      } as any),
+      } as any);
       setRoutes(routeOptions);
       setSelectedRoute(routeOptions[0]); // Select the first route by default
     },
