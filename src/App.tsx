@@ -28,6 +28,7 @@ const ResponsiveLayout = lazy(() => import('./components/ResponsiveLayout'));
 const DemoPage = lazy(() => import('./pages/DemoPage'));
 const ModernFooter = lazy(() => import('./components/ModernFooter'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const DashboardLayout = lazy(() => import('./components/layout/DashboardLayout'));
 
 // New Dashboard Pages
 const MainDashboard = lazy(() => import('./pages/dashboard/MainDashboard'));
@@ -108,7 +109,7 @@ const AppContent = () => {
                 key={path}
                 path={path}
                 element={
-                  <ResponsiveLayout>
+                  <DashboardLayout>
                     <motion.div
                       key={location.pathname}
                       initial={{ opacity: 0, x: 24 }}
@@ -119,7 +120,7 @@ const AppContent = () => {
                     >
                       {element}
                     </motion.div>
-                  </ResponsiveLayout>
+                  </DashboardLayout>
                 }
               />
             ))}

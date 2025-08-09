@@ -7,6 +7,7 @@ import './i18n';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './components/ui/theme-provider';
+import { LayoutProvider } from '@/components/providers/LayoutProvider';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -34,7 +35,9 @@ if (container) {
                 enableSystem
                 disableTransitionOnChange
               >
-                <App />
+                <LayoutProvider>
+                  <App />
+                </LayoutProvider>
               </ThemeProvider>
             </AuthProvider>
           </QueryClientProvider>
