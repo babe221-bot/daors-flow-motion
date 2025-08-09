@@ -97,9 +97,7 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      {/* Swapped to branded background and added smooth fade overlay */}
-      <VideoBackground videoSrc="/Whisk_cauajde4m2myzdrmlwfkyzutnduzyi1hngqzltk.mp4" />
-      <div className="relative z-10 w-full max-w-md px-4">
+      <div className="z-10 w-full max-w-md px-4">
         <motion.div
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
