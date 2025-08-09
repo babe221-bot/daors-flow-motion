@@ -5,66 +5,66 @@ export const loginAsGuest = async () => {
   try {
     console.log('Starting guest login process...');
     
-    // Create anonymous guest session
-    const { data, error } = await supabase.auth.signInAnonymously();
+    // 1. Create anonymous guest session
+    const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
 
-    if (error) {
-      console.error('Anonymous sign-in error:', error);
-      return { error };
+    if (authError) {
+      console.error('Anonymous sign-in error:', authError);
+      return { error: authError };
     }
 
-    if (!data?.user) {
-      console.error('No user data returned from anonymous sign-in');
-      return { error: new Error('No user data returned from anonymous sign-in') };
+    if (!authData?.user) {
+      const noUserError = new Error('No user data returned from anonymous sign-in');
+      console.error(noUserError.message);
+      return { error: noUserError };
     }
 
-    console.log('Anonymous sign-in successful, creating guest profile...');
+    console.log('Anonymous sign-in successful, creating guest profile via RPC...');
     
-    // Create a user object regardless of database success
-    const guestUser = {
-      id: data.user.id,
-      username: 'Guest',
-      role: ROLES.GUEST,
-      avatarUrl: undefined,
-      associatedItemIds: []
-    };
-    
-    try {
-      // Attempt to create guest profile with GUEST role, but continue even if it fails
-      const { error: profileError } = await supabase
-        .from('users')
-        .upsert({
-          id: data.user.id,
-          email: `guest-${data.user.id}@example.com`,
-          full_name: 'Guest User',
-          role: ROLES.GUEST,
-        }, { onConflict: 'id' });
+    // 2. Create the guest profile by calling the PostgreSQL function
+    const { data: profileData, error: rpcError } = await supabase.rpc('create_guest_user', {
+      user_id: authData.user.id,
+    });
 
-      if (profileError) {
-        console.error('Error creating guest profile in database:', profileError);
-        // Continue with guest login even if profile creation fails
-        console.log('Continuing with guest login despite profile error');
-      } else {
-        console.log('Guest profile created successfully');
-      }
-    } catch (profileError) {
-      // Log the error but don't fail the guest login
-      console.error('Exception during profile creation:', profileError);
-      console.log('Continuing with guest login despite profile error');
+    if (rpcError) {
+      console.error('Error creating guest profile via RPC:', rpcError);
+      // Clean up the created anonymous user if profile creation fails
+      await supabase.auth.signOut();
+      return { error: rpcError };
     }
 
-    // Return user even if profile creation failed
+    // The RPC function returns an array, so we take the first element.
+    const userProfile = profileData?.[0];
+
+    if (!userProfile) {
+        const noProfileError = new Error('Guest profile creation failed: No data returned from RPC.');
+        console.error(noProfileError.message);
+        await supabase.auth.signOut();
+        return { error: noProfileError };
+    }
+
+    console.log('Guest profile created successfully via RPC.');
+    
+    // 3. Return a consolidated user object
     return {
-      user: guestUser,
+      user: {
+        id: userProfile.id,
+        role: userProfile.role,
+        email: userProfile.email,
+        username: 'Guest',
+        avatarUrl: undefined,
+        associatedItemIds: []
+      },
       error: null
     };
   } catch (error) {
     console.error('Error during guest login:', error);
+    // Attempt to sign out to clean up any partial state
     try {
-      await supabase.auth.signOut(); // Clean up on error
+      await supabase.auth.signOut();
     } catch (signOutError) {
       console.error('Error during sign out cleanup:', signOutError);
     }
-    return { error: error as Error };
+    return { error: error instanceof Error ? error : new Error('An unexpected error occurred') };
   }
 };
