@@ -49,6 +49,8 @@ This document outlines a phased approach to implementing all the features descri
    - React Query for server state
    - Context API for authentication and global state
    - Local storage for persistent preferences
+   - Redux for complex state management (if needed)
+   
 
 ### Timeline: 2-3 weeks
 
