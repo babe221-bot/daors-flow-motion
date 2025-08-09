@@ -26,6 +26,7 @@ import { Link } from "react-router-dom";
 import ParticleBackground from "@/components/ParticleBackground";
 import { useQuery } from "@tanstack/react-query";
 import { getItems, getMetricData } from "@/lib/api";
+import GlobalFilterBar from "@/components/filters/GlobalFilterBar";
 
 const EnhancedDashboard = () => {
   const { user, hasRole } = useAuth();
@@ -162,6 +163,8 @@ const EnhancedDashboard = () => {
                   </Badge>
                 </div>
               </div>
+              {/* Global filters synced to URL */}
+              <GlobalFilterBar className="mt-4" />
             </header>
 
             {/* Key Metrics */}
