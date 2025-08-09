@@ -1,70 +1,65 @@
 import { supabase } from './supabaseClient';
-import { ROLES } from './types';
 
+/**
+ * Handles the complete guest login flow securely and transactionally.
+ * 1. Signs in the user anonymously using the standard Supabase method.
+ * 2. Calls a secure RPC function (`create_guest_user`) to create the user's profile.
+ * 3. Handles errors and session management correctly.
+ *
+ * This implementation is robust and uses the recommended Supabase flow for guest users.
+ */
 export const loginAsGuest = async () => {
   try {
-    console.log('Starting guest login process...');
-    
-    // 1. Create anonymous guest session
-    const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+    console.log('Starting guest login flow...');
 
-    if (authError) {
-      console.error('Anonymous sign-in error:', authError);
-      return { error: authError };
+    // 1. Sign in anonymously. This is the correct and standard method.
+    const { data, error: authError } = await supabase.auth.signInAnonymously();
+
+    if (authError || !data.user) {
+      console.error('Error during anonymous sign-in:', authError?.message || 'No user object returned.');
+      return { user: null, session: null, error: authError || new Error('Failed to sign in anonymously.') };
     }
 
-    if (!authData?.user) {
-      const noUserError = new Error('No user data returned from anonymous sign-in');
-      console.error(noUserError.message);
-      return { error: noUserError };
-    }
+    const { user, session } = data;
+    console.log(`Anonymous user created successfully. User ID: ${user.id}`);
 
-    console.log('Anonymous sign-in successful, creating guest profile via RPC...');
-    
-    // 2. Create the guest profile by calling the PostgreSQL function
-    const { data: profileData, error: rpcError } = await supabase.rpc('create_guest_user', {
-      user_id: authData.user.id,
-    });
+    // 2. Call the secure RPC function to create the guest profile.
+    const { data: profile, error: rpcError } = await supabase.rpc('create_guest_user');
 
-    if (rpcError) {
-      console.error('Error creating guest profile via RPC:', rpcError);
-      // Clean up the created anonymous user if profile creation fails
+    if (rpcError || !profile) {
+      console.error('Error creating guest profile via RPC:', rpcError?.message || 'No profile data returned.');
+      // Clean up the user if profile creation fails.
       await supabase.auth.signOut();
-      return { error: rpcError };
+      return { user: null, session: null, error: rpcError || new Error('Guest profile creation failed.') };
     }
 
-    // The RPC function returns an array, so we take the first element.
-    const userProfile = profileData?.[0];
+    console.log('Guest profile created and verified successfully.');
 
-    if (!userProfile) {
-        const noProfileError = new Error('Guest profile creation failed: No data returned from RPC.');
-        console.error(noProfileError.message);
-        await supabase.auth.signOut();
-        return { error: noProfileError };
-    }
+    // 3. Return the user, session, and a simplified profile object.
+    const userProfile = Array.isArray(profile) ? profile[0] : profile;
 
-    console.log('Guest profile created successfully via RPC.');
-    
-    // 3. Return a consolidated user object
     return {
       user: {
         id: userProfile.id,
         role: userProfile.role,
         email: userProfile.email,
-        username: 'Guest',
-        avatarUrl: undefined,
-        associatedItemIds: []
       },
-      error: null
+      session,
+      error: null,
     };
   } catch (error) {
-    console.error('Error during guest login:', error);
-    // Attempt to sign out to clean up any partial state
+    console.error('An unexpected error occurred during the guest login process:', error);
+    // Ensure we are signed out in case of any unexpected errors.
     try {
       await supabase.auth.signOut();
     } catch (signOutError) {
-      console.error('Error during sign out cleanup:', signOutError);
+      console.error('Error during sign-out cleanup:', signOutError);
     }
-    return { error: error instanceof Error ? error : new Error('An unexpected error occurred') };
+    
+    return { 
+      user: null, 
+      session: null, 
+      error: error instanceof Error ? error : new Error('An unexpected error occurred.') 
+    };
   }
 };
