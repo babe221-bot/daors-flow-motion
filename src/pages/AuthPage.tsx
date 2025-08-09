@@ -73,9 +73,8 @@ const AuthPage = () => {
       // Add debug logging
       console.log('Starting guest login...');
       
-      // Check which method is available and use that one
+      // Use the context method with improved error handling
       if (typeof loginAsGuest === 'function') {
-        // First attempt - use the context function
         console.log('Using AuthContext.loginAsGuest()');
         const result = await loginAsGuest();
         console.log('Guest login result from context:', result);
@@ -83,17 +82,38 @@ const AuthPage = () => {
         if (result.error) {
           console.error('Guest login error from context:', result.error);
           setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
+          
+          // Show more details about the error if available
+          if (result.error.details) {
+            console.error('Error details:', result.error.details);
+          }
         }
       } else {
-        // Fallback - use direct Supabase API
-        console.log('Fallback: Using direct Supabase signInAnonymously()');
-        const { data, error } = await supabase.auth.signInAnonymously();
-        
-        if (error) {
-          console.error('Direct Supabase guest login error:', error);
-          setLoginError(error.message || 'Failed to login as guest. Please try again.');
-        } else {
-          console.log('Direct guest login successful:', data);
+        // If context method is not available, import and use the utility function
+        console.log('Context method not available, importing utility function');
+        try {
+          const { loginAsGuest: guestLoginUtil } = await import('@/lib/guestLogin');
+          const result = await guestLoginUtil();
+          
+          console.log('Guest login result from utility:', result);
+          
+          if (result.error) {
+            console.error('Guest login error from utility:', result.error);
+            setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
+          }
+        } catch (importErr) {
+          console.error('Failed to import guest login utility:', importErr);
+          
+          // Last resort fallback - direct Supabase API call
+          console.log('Fallback: Using direct Supabase signInAnonymously()');
+          const { data, error } = await supabase.auth.signInAnonymously();
+          
+          if (error) {
+            console.error('Direct Supabase guest login error:', error);
+            setLoginError(error.message || 'Failed to login as guest. Please try again.');
+          } else {
+            console.log('Direct guest login successful:', data);
+          }
         }
       }
     } catch (err) {
@@ -121,7 +141,7 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <VideoBackground videoSrc="https://assets.mixkit.co/videos/preview/mixkit-waves-of-a-blue-ocean-3812-large.mp4" />
+      <VideoBackground videoSrc="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
       <div className="z-10 w-full max-w-md px-4">
         <motion.div
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
