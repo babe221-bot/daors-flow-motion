@@ -2,11 +2,7 @@
 FROM node:20-alpine AS base
 WORKDIR /app
 COPY package*.json ./
-RUN npx prisma generate
-COPY --from=base /app/prisma ./prisma
 RUN npm ci || npm install
-COPY prisma ./prisma
-RUN npx prisma generate
 COPY prisma ./prisma
 RUN npx prisma generate
 COPY tsconfig.json ./

@@ -4,9 +4,6 @@ import morgan from 'morgan';
 import http from 'http';
 import { Server } from 'socket.io';
 import { PrismaClient } from '@prisma/client';
-import http from 'http';
-import { Server } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
 
 // Initialize Express app
 const app = express();
@@ -24,12 +21,7 @@ const io = new Server(server, {
 });
 
 // Initialize Prisma client for database operations
-const prisma = new PrismaClient(
-// Initialize Express app);
-
-// Create HTTP server and Socket.io instance
-const server = http.createServer(app);
-const io = new Server(server, {
+const prisma = new PrismaClient();
   cors: {
     origin: '*',
     methods: ['GET', 'POST']
