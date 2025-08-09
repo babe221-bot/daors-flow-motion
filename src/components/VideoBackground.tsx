@@ -16,6 +16,24 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
+      // Check if the video source exists before attempting to play
+      const checkVideoExists = async () => {
+        try {
+          const response = await fetch(videoSrc, { method: 'HEAD' });
+          if (!response.ok) {
+            console.warn(`Video not found: ${videoSrc}`);
+            setVideoError(true);
+            return;
+          }
+        } catch (err) {
+          console.warn(`Error checking video: ${videoSrc}`, err);
+          setVideoError(true);
+          return;
+        }
+      };
+      
+      checkVideoExists();
+      
       video.onended = () => {
         video.play();
       };
@@ -25,6 +43,7 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({
       };
       
       video.onerror = () => {
+        console.warn(`Error loading video: ${videoSrc}`);
         setVideoError(true);
       };
       

@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types";
 import VideoBackground from "@/components/VideoBackground";
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabaseClient';
 
 const AuthPage = () => {
   const { t } = useTranslation();
@@ -69,11 +70,34 @@ const AuthPage = () => {
     setLoading(true);
     setLoginError('');
     try {
-      const { error: guestError } = await loginAsGuest();
-      if (guestError) {
-        setLoginError(guestError.message);
+      // Add debug logging
+      console.log('Starting guest login...');
+      
+      // Check which method is available and use that one
+      if (typeof loginAsGuest === 'function') {
+        // First attempt - use the context function
+        console.log('Using AuthContext.loginAsGuest()');
+        const result = await loginAsGuest();
+        console.log('Guest login result from context:', result);
+        
+        if (result.error) {
+          console.error('Guest login error from context:', result.error);
+          setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
+        }
+      } else {
+        // Fallback - use direct Supabase API
+        console.log('Fallback: Using direct Supabase signInAnonymously()');
+        const { data, error } = await supabase.auth.signInAnonymously();
+        
+        if (error) {
+          console.error('Direct Supabase guest login error:', error);
+          setLoginError(error.message || 'Failed to login as guest. Please try again.');
+        } else {
+          console.log('Direct guest login successful:', data);
+        }
       }
     } catch (err) {
+      console.error('Unexpected error during guest login:', err);
       setLoginError('An unexpected error occurred during guest login.');
     } finally {
       setLoading(false);
@@ -97,7 +121,7 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen">
-      <VideoBackground videoSrc="/videos/auth-background.mp4" />
+      <VideoBackground videoSrc="https://assets.mixkit.co/videos/preview/mixkit-waves-of-a-blue-ocean-3812-large.mp4" />
       <div className="z-10 w-full max-w-md px-4">
         <motion.div
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
@@ -157,8 +181,16 @@ const AuthPage = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
                     </Button>
-                    <Button type="button" variant="outline" className="w-full" onClick={handleGuestLogin} disabled={loading}>
-                      {t('login.guest', 'Login as Guest')}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleGuestLogin}
+                      disabled={loading}
+                    >
+                      {loading && loginEmail === '' && loginPassword === ''
+                        ? t('login.loading', 'Logging in...')
+                        : t('login.guest', 'Login as Guest')}
                     </Button>
                   </motion.form>
                 ) : (
