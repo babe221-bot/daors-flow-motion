@@ -1,22 +1,24 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Session, User } from '@supabase/supabase-js';
+import { Role } from '../lib/types';
 
 interface AuthContextType {
-  session: Session | null;
-  user: User | null;
+  session: any | null;
+  user: any | null;
   signOut: () => void;
+  hasRole: (roles: Role[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   signOut: () => {},
+  hasRole: () => false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,10 +35,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const hasRole = (roles: Role[]) => {
+    if (!user) return false;
+    // @ts-expect-error - userrole is a custom claim
+    return roles.includes(user.app_metadata.userrole);
+  };
+
   const value = {
     session,
     user,
-    signOut: () => supabase.auth.signOut(),
+    signOut: () => {
+      supabase.auth.signOut();
+    },
+    hasRole,
   };
 
   return (

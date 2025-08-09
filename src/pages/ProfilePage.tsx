@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabaseClient";
-import { Session, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,24 +8,12 @@ import { useToast } from "@/components/ui/use-toast";
 import Avatar from "@/components/Avatar";
 
 export default function ProfilePage() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
   const [website, setWebsite] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -157,7 +145,7 @@ export default function ProfilePage() {
           <Button
             className="w-full"
             variant="outline"
-            onClick={() => supabase.auth.signOut()}
+            onClick={() => signOut()}
           >
             Sign Out
           </Button>

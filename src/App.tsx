@@ -27,6 +27,7 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const ResponsiveLayout = lazy(() => import('./components/ResponsiveLayout'));
 const DemoPage = lazy(() => import('./pages/DemoPage'));
 const ModernFooter = lazy(() => import('./components/ModernFooter'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 const AppContent = () => {
   const location = useLocation();
@@ -72,6 +73,7 @@ const AppContent = () => {
               { path: '/enhanced-dashboard', element: <EnhancedDashboard /> },
               { path: '/contact', element: <Support /> },
               { path: '/demo', element: <DemoPage /> },
+              { path: '/profile', element: <ProfilePage /> },
             ].map(({ path, element }) => (
               <Route
                 key={path}
