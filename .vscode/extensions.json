@@ -1,5 +1,6 @@
 {
-    "recommendations": [
-        "saoudrizwan.claude-dev"
-    ]
+  "recommendations": [
+    "saoudrizwan.claude-dev",
+    "yuichinukiyama.vscode-preview-server"
+  ]
 }

@@ -10,4 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    // Open the default browser automatically when the dev server starts
+    open: true
+  }
 });
