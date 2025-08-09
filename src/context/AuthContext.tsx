@@ -36,9 +36,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const getSession = async () => {
       try {
         // Add timeout to prevent hanging
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Session check timeout')), 5000)
-        );
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Session check timeout')), 5000);
+        });
         
         const sessionPromise = supabase.auth.getSession();
         
@@ -94,7 +94,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
       } catch (error) {
-        console.warn('Session check failed, continuing without auth:', error);
+        console.warn('Session check failed, continuing without auth:',
+          error instanceof Error ? error.message : String(error));
         // Don't block the app if auth fails
       } finally {
         setLoading(false);
