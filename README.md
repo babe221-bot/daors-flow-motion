@@ -20,6 +20,10 @@ This project is built with the following technologies:
 
 This project is a client-side application and does not include a backend. It likely connects to external APIs for data.
 
+### Features
+
+*   **User Profile:** A page where users can view and update their profile information.
+
 ## Getting Started
 
 To run this project locally, you'll need to have Node.js and npm installed.
