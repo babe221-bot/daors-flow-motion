@@ -22,7 +22,7 @@ app.use(limiter);
 
 // Simple JWT auth middleware (RBAC-ready)
 app.use((req, res, next) => {
-  if (req.path.startsWith('/public') || req.path === '/health') return next();
+  if (req.path.startsWith('/public') || req.path === '/health' || req.path === '/readyz') return next();
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ error: 'Missing Authorization header' });
   const token = auth.replace('Bearer ', '');
@@ -48,13 +48,56 @@ const targets = {
   notify: process.env.NOTIFY_SERVICE_URL || 'http://localhost:4006'
 };
 
-// Basic proxy routes
-app.use('/api/v1/users', createProxyMiddleware({ target: targets.user, changeOrigin: true }));
-app.use('/api/v1/inventory', createProxyMiddleware({ target: targets.inventory, changeOrigin: true }));
-app.use('/api/v1/orders', createProxyMiddleware({ target: targets.orders, changeOrigin: true }));
-app.use('/api/v1/routes', createProxyMiddleware({ target: targets.routing, changeOrigin: true }));
-app.use('/api/v1/tracking', createProxyMiddleware({ target: targets.geo, changeOrigin: true }));
-app.use('/api/v1/notifications', createProxyMiddleware({ target: targets.notify, changeOrigin: true }));
+// Basic proxy routes with identity propagation
+const withIdentity = (target: string) =>
+  createProxyMiddleware({
+    target,
+    changeOrigin: true,
+    onProxyReq: (proxyReq, req) => {
+      const user = (req as any).user;
+      if (user) {
+        proxyReq.setHeader('x-user-id', user.sub || user.id || 'unknown');
+        proxyReq.setHeader('x-user-roles', Array.isArray(user.roles) ? user.roles.join(',') : '');
+      }
+    },
+  });
+
+app.use('/api/v1/users', withIdentity(targets.user));
+app.use('/api/v1/inventory', withIdentity(targets.inventory));
+app.use('/api/v1/orders', withIdentity(targets.orders));
+app.use('/api/v1/routes', withIdentity(targets.routing));
+app.use('/api/v1/tracking', withIdentity(targets.geo));
+app.use('/api/v1/notifications', withIdentity(targets.notify));
+
+// Readiness probe - checks downstream services
+app.get('/readyz', async (_req, res) => {
+  try {
+    const { default: axios } = await import('axios');
+    const endpoints: Record<string, string> = {
+      user: `${targets.user}/health`,
+      inventory: `${targets.inventory}/health`,
+      orders: `${targets.orders}/health`,
+      routing: `${targets.routing}/health`,
+      geo: `${targets.geo}/health`,
+      notify: `${targets.notify}/health`,
+    };
+
+    const results: Record<string, string> = {};
+    await Promise.all(
+      Object.entries(endpoints).map(async ([name, url]) => {
+        try {
+          const r = await axios.get(url, { timeout: 1200 });
+          results[name] = r.data?.status || 'ok';
+        } catch {
+          results[name] = 'down';
+        }
+      })
+    );
+    res.json({ status: 'ok', services: results });
+  } catch (e) {
+    res.status(500).json({ status: 'error', error: (e as Error).message });
+  }
+});
 
 app.listen(port, () => {
   console.log(`API Gateway listening on ${port}`);
