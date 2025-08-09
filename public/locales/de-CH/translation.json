@@ -10,7 +10,6 @@
   "login.continueWith": "Oder weiter mit",
   "login.google": "Google",
   "login.facebook": "Facebook",
-  "login.guest": "Als Gast anmelden",
   "2fa.title": "2FA-Code eingeben",
   "2fa.description": "Ein Code wurde an Ihr Gerät gesendet",
   "2fa.submitButton": "Senden",

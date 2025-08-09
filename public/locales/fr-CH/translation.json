@@ -10,7 +10,6 @@
   "login.continueWith": "Ou continuer avec",
   "login.google": "Google",
   "login.facebook": "Facebook",
-  "login.guest": "Se connecter en tant qu'invité",
   "2fa.title": "Entrez le code 2FA",
   "2fa.description": "Un code a été envoyé à votre appareil",
   "2fa.submitButton": "Soumettre",

@@ -10,7 +10,6 @@
   "login.continueWith": "Ili nastavite sa",
   "login.google": "Google",
   "login.facebook": "Facebook",
-  "login.guest": "Prijavi se kao gost",
   "2fa.title": "Unesite 2FA kod",
   "2fa.description": "Kod je poslat na vaš uređaj",
   "2fa.submitButton": "Potvrdi",

@@ -10,7 +10,6 @@
   "login.continueWith": "Veya şununla devam edin",
   "login.google": "Google",
   "login.facebook": "Facebook",
-  "login.guest": "Misafir olarak giriş yap",
   "2fa.title": "2FA Kodunu Girin",
   "2fa.description": "Cihazınıza bir kod gönderildi",
   "2fa.submitButton": "Gönder",

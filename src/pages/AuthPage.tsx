@@ -14,7 +14,7 @@ import { supabase } from '@/lib/supabaseClient';
 
 const AuthPage = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, login, signup, user, loading: authLoading, loginAsGuest } = useAuth();
+  const { isAuthenticated, login, signup, user, loading: authLoading } = useAuth();
   const [isLoginMode, setIsLoginMode] = useState(true);
   
   // Login form state
@@ -66,29 +66,6 @@ const AuthPage = () => {
     }
   };
 
-  const handleGuestLogin = async () => {
-    setLoading(true);
-    setLoginError('');
-    
-    try {
-      console.log('Starting guest login...');
-      
-      // Use the context method for guest login
-      const result = await loginAsGuest();
-      
-      if (result.error) {
-        console.error('Guest login error:', result.error);
-        setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
-      } else {
-        console.log('Guest login successful');
-      }
-    } catch (err) {
-      console.error('Unexpected error during guest login:', err);
-      setLoginError('An unexpected error occurred during guest login. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (authLoading) {
     return (
@@ -99,7 +76,7 @@ const AuthPage = () => {
   }
 
   if (isAuthenticated) {
-    if (user?.role === ROLES.CLIENT || user?.role === ROLES.GUEST) {
+    if (user?.role === ROLES.CLIENT) {
       return <Navigate to="/portal" replace />;
     }
     return <Navigate to="/" replace />;
@@ -166,17 +143,6 @@ const AuthPage = () => {
                     {loginError && <p className="text-sm text-destructive">{loginError}</p>}
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={handleGuestLogin}
-                      disabled={loading}
-                    >
-                      {loading && loginEmail === '' && loginPassword === ''
-                        ? t('login.loading', 'Logging in...')
-                        : t('login.guest', 'Login as Guest')}
                     </Button>
                   </motion.form>
                 ) : (
