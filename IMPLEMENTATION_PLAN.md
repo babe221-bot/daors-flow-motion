@@ -84,13 +84,56 @@ This document outlines a phased approach to implementing all the features descri
    - ChartWidget - Multiple chart types (bar, line, pie, area)
    - ActivityFeed - Real-time activity tracking
    - GlobalSearch - Intelligent search across all content
-   - NotificationCenter - Real-time notifications system
+   - NotificationCenter - Real-time notifications 
+   - UserAvatar - Customizable user profile picture
+   - Button - Customizable button styles
+   - InputField - Customizable input fields
+   - SelectDropdown - Customizable dropdown menus
+   - ToggleSwitch - Customizable toggle switches
+   - ModalDialog - Customizable modal dialogs
+   - Tooltip - Hover tooltips for additional information
+   - ProgressIndicator - Visual representation of progress
+   - TableWithPagination - Responsive table with pagination and sorting
+   - FormBuilder - Drag-and-drop form builder
+   - DynamicFormGenerator - Generate forms based on JSON schema
+   - DynamicTable - Generate tables based on JSON data
+   - DynamicChartBuilder - Build custom charts based on JSON data
+   - DynamicMapRenderer - Render maps based on JSON data
+   - DynamicFormValidator - Validate forms dynamically using JSON schema
+   - DynamicReportGenerator - Generate reports dynamically using JSON templates
+   - DynamicNotificationSystem - Send notifications dynamically using JSON payloads
+   - DynamicChatbot - AI-driven chatbot responses
+   - DynamicEmailSender - Email sending based on JSON templates
+   - DynamicSMSNotifier - SMS notification based on JSON payloads
+   - DynamicPushNotificationSender - Push notification sender based on JSON payloads
+   - DynamicWebhookTriggerer - Webhook triggerer based on JSON payloads
+   - DynamicFileUploader - File uploader based on JSON configurations
+   - DynamicFileDownloader - File downloader based on JSON configurations
+   - DynamicImageOptimizer - Image optimizer based on JSON configurations
+   - DynamicVideoConverter - Video converter based on JSON configurations
+   - DynamicAudio
+   - DynamicBarcodeGenerator - Barcode generator based on JSON configurations
+   - DynamicQRCodeGenerator - QR code generator based on JSON configurations
+   - DynamicBarcodeScanner - Barcode scanner based on JSON configurations
+   - DynamicQRCodeScanner - QR code scanner based on JSON configurations
+   
+
+
+
 
 3. **Navigation & Layout**
    - Responsive Navbar with search and user menu
    - Collapsible Sidebar with role-based navigation
    - Breadcrumbs for navigation path indicators
    - Mobile navigation improvements
+   - Responsive layout for various screen sizes and devices
+   - Customizable layout with drag-and-drop components
+   - Responsive grid system for layout management
+   - Sticky headers and footers(dont change colors and background)
+   - Customizable header and footer components
+   - Header with logo, title, and subtitle
+   - Customizable layouts for different use cases
+   - Responsive typography for better readability
 
 ### Timeline: 3-4 weeks
 
