@@ -127,7 +127,7 @@ const AppContent = () => {
 
             {/* Portal with nested routes: fade/slide container while children render */}
             <Route
-              element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT']} />}
+              element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DRIVER', 'CLIENT', 'GUEST']} />}
             >
               <Route
                 path="/portal"
