@@ -58,31 +58,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- USERS TABLE POLICIES
--- Users can read their own profile
-CREATE POLICY "Users can read own profile" ON public.users
-    FOR SELECT USING (auth.uid() = id);
-
--- Users can update their own profile (except role)
-CREATE POLICY "Users can update own profile" ON public.users
-    FOR UPDATE USING (auth.uid() = id)
-    WITH CHECK (auth.uid() = id AND role = (SELECT role FROM public.users WHERE id = auth.uid()));
-
--- Admins can read all users
-CREATE POLICY "Admins can read all users" ON public.users
-    FOR SELECT USING (get_user_role() = 'ADMIN');
-
--- Admins can update all users
-CREATE POLICY "Admins can update all users" ON public.users
-    FOR UPDATE USING (get_user_role() = 'ADMIN');
-
--- TEMPORARY POLICY FOR DEBUGGING GUEST LOGIN
--- This is intentionally permissive and should be replaced.
-CREATE POLICY "TEMP - Allow any authenticated user to insert into users" ON public.users
-    FOR INSERT TO authenticated WITH CHECK (true);
-
--- Allow user creation during signup
-CREATE POLICY "Allow user creation during signup" ON public.users
-    FOR INSERT WITH CHECK (auth.uid() = id);
+-- [REMOVED FOR DEBUGGING GUEST LOGIN]
 
 -- ITEMS TABLE POLICIES
 -- Users can read items based on their role and access rights
