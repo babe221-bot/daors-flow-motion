@@ -249,6 +249,16 @@ export interface Vehicle {
   odometerReading?: number;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  fullName?: string;
+  role: 'ADMIN' | 'MANAGER' | 'DRIVER' | 'CLIENT' | 'WAREHOUSE_STAFF' | 'GUEST';
+  phone?: string;
+  avatar?: string;
+  createdAt: Date;
+}
+
 export interface DeliveryRoute {
   id: string;
   routeNumber: string;
@@ -304,3 +314,265 @@ export interface RouteStop {
     lat: number;
     lng: number;
   };
+
+  // Timing
+  plannedArrival?: Date;
+  arrivalWindow?: {
+    start: Date;
+    end: Date;
+  };
+  actualArrival?: Date;
+  actualDeparture?: Date;
+
+  // Status
+  status: 'pending' | 'skipped' | 'completed' | 'failed';
+  failureReason?: string;
+
+  // Proof of delivery
+  signatureRequired: boolean;
+  photoRequired: boolean;
+  notes?: string;
+}
+
+// ============================================
+// REAL-TIME TRACKING TYPES
+// ============================================
+
+export interface GPSTrack {
+  id: string;
+  vehicleId?: string;
+  driverId?: string;
+  routeId?: string;
+
+  // Location data
+  location: {
+    lat: number;
+    lng: number;
+  };
+  altitudeM?: number;
+  speedKmh?: number;
+  headingDegrees?: number;
+  accuracyM?: number;
+
+  // Device info
+  deviceId?: string;
+  batteryLevel?: number;
+
+  recordedAt: Date;
+}
+
+export interface LogisticsEvent {
+  id: string;
+  eventType: 'delay' | 'accident' | 'breakdown' | 'traffic' | 'weather' | 'delivery_failed';
+  severity: 'info' | 'warning' | 'critical';
+
+  // Related entities
+  routeId?: string;
+  vehicleId?: string;
+  shipmentId?: string;
+
+  // Event details
+  title: string;
+  description?: string;
+  location?: {
+    lat: number;
+    lng: number;
+  };
+  impactMinutes?: number; // Estimated delay
+
+  // Resolution
+  resolved: boolean;
+  resolvedAt?: Date;
+  resolutionNotes?: string;
+
+  createdAt: Date;
+  createdBy?: string;
+}
+
+// ============================================
+// RETURNS MANAGEMENT TYPES
+// ============================================
+
+export interface Return {
+  id: string;
+  returnNumber: string;
+  orderId?: string;
+  order?: Order;
+  customerId?: string;
+
+  // Return details
+  status: 'requested' | 'approved' | 'label_sent' | 'in_transit' | 'received' | 'processed' | 'refunded';
+  reason: string;
+  reasonDetails?: string;
+
+  // Items
+  items: ReturnItem[];
+
+  // Processing
+  inspectionNotes?: string;
+  restockingFee?: number;
+  refundAmount?: number;
+
+  // Shipping
+  returnLabelUrl?: string;
+  returnTrackingNumber?: string;
+  carrier?: string;
+
+  // Timestamps
+  requestedAt: Date;
+  approvedAt?: Date;
+  receivedAt?: Date;
+  processedAt?: Date;
+  refundedAt?: Date;
+}
+
+export interface ReturnItem {
+  itemId: string;
+  item?: InventoryItem;
+  quantity: number;
+  condition: 'new' | 'like_new' | 'good' | 'fair' | 'damaged';
+  reason?: string;
+}
+
+// ============================================
+// KPI AND ANALYTICS TYPES
+// ============================================
+
+export interface KPIMetrics {
+  id: string;
+  metricDate: Date;
+  metricType: 'daily' | 'weekly' | 'monthly';
+
+  // Operational Efficiency
+  ordersProcessed: number;
+  averageFulfillmentHours: number;
+  averageDeliveryHours: number;
+  onTimeDeliveryRate: number;
+
+  // Inventory Metrics
+  inventoryAccuracy: number;
+  stockoutEvents: number;
+  inventoryTurnoverRatio: number;
+
+  // Route Optimization
+  totalRoutes: number;
+  averageStopsPerRoute: number;
+  averageRouteEfficiency: number; // actual vs optimal distance %
+  fuelCostPerDelivery: number;
+
+  // Financial
+  revenue: number;
+  shippingRevenue: number;
+  shippingCosts: number;
+  grossMargin: number;
+
+  createdAt: Date;
+}
+
+// ============================================
+// WEBHOOK AND INTEGRATION TYPES
+// ============================================
+
+export interface WebhookConfig {
+  id: string;
+  platform: 'shopify' | 'magento' | 'woocommerce';
+  eventType: 'order_created' | 'order_updated' | 'order_cancelled';
+  endpointUrl: string;
+  secretKey?: string;
+  isActive: boolean;
+  lastTriggeredAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WebhookLog {
+  id: string;
+  webhookConfigId: string;
+  eventType: string;
+  payload: Record<string, unknown>;
+  responseStatus?: number;
+  responseBody?: string;
+  processingTimeMs?: number;
+  createdAt: Date;
+}
+
+// ============================================
+// API RESPONSE TYPES
+// ============================================
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface BatchOperation {
+  operation: 'create' | 'update' | 'delete';
+  resource: string;
+  data: Record<string, unknown>;
+}
+
+export interface BatchOperationResult {
+  success: boolean;
+  operations: Array<{
+    index: number;
+    success: boolean;
+    error?: string;
+    data?: Record<string, unknown>;
+  }>;
+}
+
+// ============================================
+// NOTIFICATION TYPES
+// ============================================
+
+export interface Notification {
+  id: string;
+  type: 'order' | 'shipment' | 'inventory' | 'alert' | 'system';
+  title: string;
+  message: string;
+  userId?: string;
+  relatedId?: string; // Order ID, Shipment ID, etc.
+  read: boolean;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  createdAt: Date;
+}
+
+// ============================================
+// SEARCH AND FILTER TYPES
+// ============================================
+
+export interface SearchFilters {
+  query?: string;
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+  status?: string[];
+  warehouses?: string[];
+  carriers?: string[];
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export interface DashboardStats {
+  totalOrders: number;
+  pendingOrders: number;
+  inTransitShipments: number;
+  completedToday: number;
+  activeRoutes: number;
+  totalInventoryValue: number;
+  lowStockItems: number;
+  returnsInProgress: number;
+  weeklyRevenue: number;
+  onTimeDeliveryRate: number;
+}
