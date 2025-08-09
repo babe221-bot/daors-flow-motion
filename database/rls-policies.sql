@@ -75,6 +75,11 @@ CREATE POLICY "Admins can read all users" ON public.users
 CREATE POLICY "Admins can update all users" ON public.users
     FOR UPDATE USING (get_user_role() = 'ADMIN');
 
+-- TEMPORARY POLICY FOR DEBUGGING GUEST LOGIN
+-- This is intentionally permissive and should be replaced.
+CREATE POLICY "TEMP - Allow any authenticated user to insert into users" ON public.users
+    FOR INSERT TO authenticated WITH CHECK (true);
+
 -- Allow user creation during signup
 CREATE POLICY "Allow user creation during signup" ON public.users
     FOR INSERT WITH CHECK (auth.uid() = id);
