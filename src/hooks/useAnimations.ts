@@ -1,6 +1,7 @@
 // Custom hook for managing anime.js animations
 import { useRef, useCallback, useEffect } from 'react';
-import anime, { AnimeInstance } from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
+import type { AnimeInstance } from 'animejs';
 import { AnimationConfig, AnimatedElementConfig, AnimationTrigger } from '@/types/animations';
 
 interface UseAnimationsOptions {
