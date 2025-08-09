@@ -22,9 +22,9 @@ This document outlines a phased approach to implementing all the features descri
 2. **Core UI Components**
    - Responsive Layout (Mobile-first design)
    - Dark/Light Theme switching
-   - advance navigation components (Navbar, Sidebar, MobileNav)
+   - Advanced navigation components (Navbar, Sidebar, MobileNav)
    - Loading states and error boundaries
-   - modern  Footer component
+   - Modern Footer component
    - Error Handling and Logging
    - Search bar with autocomplete suggestions
    - Notifications system with customizable alerts
@@ -32,16 +32,15 @@ This document outlines a phased approach to implementing all the features descri
    - Pagination and infinite scroll
    - Form validation and submission handling
    - Toast notifications for quick messages
-   -file upload and download functionality
-   - file upload and download functionality
-   - responsive table with pagination and sorting
-   - form builder with drag-and-drop interface
-   - dynamic form generation based on JSON schema
-- - MAKE SHURE THAT WE DONT CHANGE COLORS AND OR BACKGROUND AND VIDEO LOOP 
-- AND FOR IMPLEMENTATION OF UI AND FRONT END USE ANIME.JS https://animejs.com/documentation/getting-started/, AND https://reactbits.dev/
+   - File upload and download functionality
+   - Responsive table with pagination and sorting
+   - Form builder with drag-and-drop interface
+   - Dynamic form generation based on JSON schema
+   - IMPORTANT: Do not change brand colors, background, or the background video loop
+   - UI/Frontend animations must use Anime.js (https://animejs.com/documentation/getting-started/) and ReactBits-inspired patterns (https://reactbits.dev/)
 
 3. **Internationalization**
-   - Multi-language support (English, Bosnian, Serbian, Croatian,swis german, swiw frach)
+   - Multi-language support (English, Bosnian, Serbian, Croatian, Swiss German, Swiss French)
    - Dynamic language switching
    - Localized content management
 
@@ -64,59 +63,90 @@ This document outlines a phased approach to implementing all the features descri
 
 ### Features to Implement:
 1. **Dashboard Pages**
-   - Main Dashboard (`/`) - Overview with metrics and charts
-   - Enhanced Dashboard (`/enhanced-dashboard`) - Advanced analytics with widgets
-   - Customer Portal (`/portal`) - Client dashboard with shipment tracking
-   - Driver Dashboard (`/driver-dashboard`) - Vehicle tracking and dispatch
-   - Manager Dashboard (`/manager-dashboard`) - Fleet management and order overview
-   - Admin Dashboard (`/admin-dashboard`) - System-wide administration
-   - Order Management (`/order-management`) - Centralized order processing
-   - Shipment Tracking (`/shipment-tracking`) - Real-time shipment status updates
-   - Vehicle Tracking (`/vehicle-tracking`) - GPS tracking of vehicles
-   - Invoice Generation (`/invoice-generation`) - Automated invoice creation
-   - Payment Processing (`/payment-processing`) - Secure payment gateway integration
-   - Document Management (`/document-management`) - File storage and sharing
-   - Report Generation (`/report-generation`) - Customizable reports
-   - Chatbot (`/chatbot`) - AI-driven customer service chatbot
+   - Main Dashboard (`/`) — Overview with metrics and charts
+   - Enhanced Dashboard (`/enhanced-dashboard`) — Advanced analytics with widgets
+   - Customer Portal (`/portal`) — Client dashboard with shipment tracking
+   - Driver Dashboard (`/driver-dashboard`) — Vehicle tracking and dispatch
+   - Manager Dashboard (`/manager-dashboard`) — Fleet management and order overview
+   - Admin Dashboard (`/admin-dashboard`) — System-wide administration
+   - Order Management (`/order-management`) — Centralized order processing
+   - Shipment Tracking (`/shipment-tracking`) — Real-time shipment status updates
+   - Vehicle Tracking (`/vehicle-tracking`) — GPS tracking of vehicles
+   - Invoice Generation (`/invoice-generation`) — Automated invoice creation
+   - Payment Processing (`/payment-processing`) — Secure payment gateway integration
+   - Document Management (`/document-management`) — File storage and sharing
+   - Report Generation (`/report-generation`) — Customizable reports
+   - Chatbot (`/chatbot`) — AI-driven customer service chatbot
+
+   - Cross-cutting dashboard capabilities:
+     - Global filters (time range, status, region, customer, vehicle) with URL state sync and per-user saved views/defaults
+     - Widget framework: add/remove/drag/resize widgets (react-grid-layout or equivalent) with per-user, per-role layout persistence
+     - Drill-down and cross-filtering from charts/tables to detail pages
+     - Real-time refresh toggle with rate limiting/backoff and a last-updated indicator
+     - Export/share: CSV/XLSX/PDF/image snapshot; expiring share links (permission-aware)
+     - KPI catalogue with thresholds/SLA indicators and chart annotations
+     - Consistent loading skeletons, empty states, and error states for every dashboard section
+     - i18n-ready text (no hardcoded strings) and RTL-safe layouts
+     - Anime.js micro-interactions that respect prefers-reduced-motion
+
+   - Page-specific add-ons (initial scope):
+     - Customer Portal: request shipment, address book, invoice/document downloads
+     - Driver Dashboard: job queue, route list, Proof of Delivery (signature/photos)
+     - Manager Dashboard: dispatch board and exception queue overview
+     - Admin Dashboard: RBAC matrix overview and audit log listing
 
 2. **UI Components**
-   - MetricCard - Reusable metric display with trends
-   - ChartWidget - Multiple chart types (bar, line, pie, area)
-   - ActivityFeed - Real-time activity tracking
-   - GlobalSearch - Intelligent search across all content
-   - NotificationCenter - Real-time notifications 
-   - UserAvatar - Customizable user profile picture
-   - Button - Customizable button styles
-   - InputField - Customizable input fields
-   - SelectDropdown - Customizable dropdown menus
-   - ToggleSwitch - Customizable toggle switches
-   - ModalDialog - Customizable modal dialogs
-   - Tooltip - Hover tooltips for additional information
-   - ProgressIndicator - Visual representation of progress
-   - TableWithPagination - Responsive table with pagination and sorting
-   - FormBuilder - Drag-and-drop form builder
-   - DynamicFormGenerator - Generate forms based on JSON schema
-   - DynamicTable - Generate tables based on JSON data
-   - DynamicChartBuilder - Build custom charts based on JSON data
-   - DynamicMapRenderer - Render maps based on JSON data
-   - DynamicFormValidator - Validate forms dynamically using JSON schema
-   - DynamicReportGenerator - Generate reports dynamically using JSON templates
-   - DynamicNotificationSystem - Send notifications dynamically using JSON payloads
-   - DynamicChatbot - AI-driven chatbot responses
-   - DynamicEmailSender - Email sending based on JSON templates
-   - DynamicSMSNotifier - SMS notification based on JSON payloads
-   - DynamicPushNotificationSender - Push notification sender based on JSON payloads
-   - DynamicWebhookTriggerer - Webhook triggerer based on JSON payloads
-   - DynamicFileUploader - File uploader based on JSON configurations
-   - DynamicFileDownloader - File downloader based on JSON configurations
-   - DynamicBarcodeGenerator - Barcode generator based on JSON configurations
-   - DynamicQRCodeGenerator - QR code generator based on JSON configurations
-   - DynamicBarcodeScanner - Barcode scanner based on JSON configurations
-   - DynamicQRCodeScanner - QR code scanner based on JSON configurations
-   
+   - MetricCard — Reusable metric display with trends
+   - ChartWidget — Multiple chart types (bar, line, pie, area)
+   - ActivityFeed — Real-time activity tracking
+   - GlobalSearch — Intelligent search across all content
+   - NotificationCenter — Real-time notifications 
+   - UserAvatar — Customizable user profile picture
+   - Button — Customizable button styles
+   - InputField — Customizable input fields
+   - SelectDropdown — Customizable dropdown menus
+   - ToggleSwitch — Customizable toggle switches
+   - ModalDialog — Customizable modal dialogs
+   - Tooltip — Hover tooltips for additional information
+   - ProgressIndicator — Visual representation of progress
+   - TableWithPagination — Responsive table with pagination and sorting
+   - FormBuilder — Drag-and-drop form builder
+   - DynamicFormGenerator — Generate forms based on JSON schema
+   - DynamicTable — Generate tables based on JSON data
+   - DynamicChartBuilder — Build custom charts based on JSON data
+   - DynamicMapRenderer — Render maps based on JSON data
+   - DynamicFormValidator — Validate forms dynamically using JSON schema
+   - DynamicReportGenerator — Generate reports dynamically using JSON templates
+   - DynamicNotificationSystem — Send notifications dynamically using JSON payloads
+   - DynamicChatbot — AI-driven chatbot responses
+   - DynamicEmailSender — Email sending based on JSON templates
+   - DynamicSMSNotifier — SMS notification based on JSON payloads
+   - DynamicPushNotificationSender — Push notification sender based on JSON payloads
+   - DynamicWebhookTriggerer — Webhook triggerer based on JSON payloads
+   - DynamicFileUploader — File uploader based on JSON configurations
+   - DynamicFileDownloader — File downloader based on JSON configurations
+   - DynamicBarcodeGenerator — Barcode generator based on JSON configurations
+   - DynamicQRCodeGenerator — QR code generator based on JSON configurations
+   - DynamicBarcodeScanner — Barcode scanner based on JSON configurations
+   - DynamicQRCodeScanner — QR code scanner based on JSON configurations
 
+   - Additional components to complete the system:
+     - DatePicker/DateTimeRangePicker, Tabs, Accordion, Stepper/Wizard
+     - FilterBar, SegmentedControl, Tag/Chips, Badge, CommandPalette (Ctrl/Cmd+K)
+     - Menu/ContextMenu, Popover, ConfirmDialog, PaginationControls (standalone), InlineEditableText
+     - Virtualized DataGrid (pin/resize/reorder/filter/multi-select/export)
+     - TreeView, Kanban Board, Calendar/Timeline
+     - SkeletonLoader, EmptyState, ErrorState, unified Snackbar/Toast with variants/durations
+     - InputMask, PhoneInput (with country codes), OTP input, AddressAutocomplete, RichTextEditor, FormWizard
+     - FileDropzone with chunked/resumable uploads, progress, pause/resume; FilePreview (images/PDF); ImageCropper
+     - Map primitives: Marker, Cluster, RouteLayer, GeofenceEditor
+     - Chart annotations/threshold bands, brush/zoom, export-to-image
+     - AvatarGroup, PresenceIndicator, DeltaIndicator (KPI trend)
 
-
+   - Component quality bar:
+     - Accessibility-first (ARIA, focus management, keyboard navigation)
+     - Theme tokens and design system (CSS variables) without altering existing brand colors/background/video
+     - i18n-ready, SSR-safe, code-splitting-friendly; Storybook docs and tests per component
 
 3. **Navigation & Layout**
    - Responsive Navbar with search and user menu
@@ -126,11 +156,21 @@ This document outlines a phased approach to implementing all the features descri
    - Responsive layout for various screen sizes and devices
    - Customizable layout with drag-and-drop components
    - Responsive grid system for layout management
-   - Sticky headers and footers(dont change colors and background)
+   - Sticky headers and footers (do not change existing colors/background)
    - Customizable header and footer components
    - Header with logo, title, and subtitle
    - Customizable layouts for different use cases
    - Responsive typography for better readability
+
+   - Upgrades and implementation details:
+     - Route-level guards (role, tenant, feature flag) and preloaders
+     - Error pages 404/403/500; route-level error boundaries with retry
+     - Suspense boundaries per route with lazy loading and prefetch-on-hover
+     - Deep-linking and URL state sync for filters/sorts/ranges
+     - Keyboard "Skip to content" and focus management after navigation
+     - Central NavConfig (role → routes → labels → icons → feature flags) with i18n labels
+     - Persist sidebar collapse state; remember last visited route per role
+     - Code-splitting by route and by widget; route transition animations via Anime.js honoring reduced motion
 
 ### Timeline: 3-4 weeks
 
