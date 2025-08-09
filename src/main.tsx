@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './components/ui/theme-provider';
 import { LayoutProvider } from '@/components/providers/LayoutProvider';
+import { debug, initDebug } from './lib/debug';
 
 // Create a client with more resilient configuration
 const queryClient = new QueryClient({
@@ -58,27 +59,38 @@ const renderFallbackUI = (container: HTMLElement, message: string) => {
 // Main rendering logic
 const container = document.getElementById('root');
 
+// Initialize debug system
+initDebug();
+debug('Application initialization started', 'info');
+
 if (container) {
   try {
-    console.log('Initializing application...');
+    debug('Root container found', 'info');
     
     // Add a global error handler
     window.onerror = function(message, source, lineno, colno, error) {
-      console.error('Global error caught:', { message, source, lineno, colno, error });
+      debug('Global error caught', 'error', { message, source, lineno, colno, error });
       return false; // Let other error handlers run
     };
     
     // Create root and render app
+    debug('Creating React root', 'info');
     const root = createRoot(container);
+    
+    // Render each component with debug logs
+    debug('Starting React render', 'info');
     
     // Wrap the entire app in error boundaries
     root.render(
       <React.StrictMode>
         <ErrorBoundary>
+          {debug('Rendering QueryClientProvider', 'info') || null}
           <QueryClientProvider client={queryClient}>
             <ErrorBoundary>
+              {debug('Rendering AuthProvider', 'info') || null}
               <AuthProvider>
                 <ErrorBoundary>
+                  {debug('Rendering ThemeProvider', 'info') || null}
                   <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
@@ -86,7 +98,9 @@ if (container) {
                     disableTransitionOnChange
                   >
                     <ErrorBoundary>
+                      {debug('Rendering LayoutProvider', 'info') || null}
                       <LayoutProvider>
+                        {debug('Rendering App component', 'info') || null}
                         <App />
                       </LayoutProvider>
                     </ErrorBoundary>
@@ -99,14 +113,14 @@ if (container) {
       </React.StrictMode>
     );
     
-    console.log('Application rendered successfully');
+    debug('React render completed successfully', 'info');
   } catch (error) {
-    console.error('Failed to render React app:', error);
+    debug('Failed to render React app', 'critical', error);
     // Fallback rendering
     renderFallbackUI(container, 'Failed to load the application. Please refresh the page.');
   }
 } else {
-  console.error("Root element with ID 'root' was not found in the document. Make sure it exists in your index.html file.");
+  debug('Root element with ID "root" was not found', 'critical');
   // If root is not found, try to render to body
   if (document.body) {
     renderFallbackUI(document.body, 'Root element not found. Please check the HTML configuration.');

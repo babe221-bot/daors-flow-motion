@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import LanguageChangeNotification from './components/LanguageChangeNotification';
 import ErrorBoundary from './components/ErrorBoundary';
+import DebugOverlay from './components/DebugOverlay';
+import { debug } from './lib/debug';
 
 // Simple fallback component for lazy loading errors
 const LazyLoadingErrorFallback = () => (
@@ -93,19 +95,38 @@ const AppContent = () => {
   const hideFooterPaths = ['/login', '/signup'];
   const shouldHideFooter = hideFooterPaths.includes(location.pathname);
 
-  // Simulate initial loading
+  // Log when AppContent component is rendered
   useEffect(() => {
+    debug('AppContent component mounted', 'info');
+    debug(`Current location: ${location.pathname}`, 'info');
+    
+    return () => {
+      debug('AppContent component unmounted', 'info');
+    };
+  }, [location.pathname]);
+
+  // Simulate initial loading with debug logs
+  useEffect(() => {
+    debug('Starting initial loading timer', 'info');
+    
     const timer = setTimeout(() => {
+      debug('Initial loading completed', 'info');
       setIsLoading(false);
     }, 1000);
     
-    return () => clearTimeout(timer);
+    return () => {
+      debug('Clearing initial loading timer', 'info');
+      clearTimeout(timer);
+    };
   }, []);
 
   // If still in initial loading state, show loading screen
   if (isLoading) {
+    debug('Rendering LoadingScreen', 'info');
     return <LoadingScreen />;
   }
+  
+  debug('Rendering main application content', 'info');
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -341,10 +362,20 @@ const AppContent = () => {
 };
 
 const App = () => {
+  // Log when App component is rendered
+  useEffect(() => {
+    debug('App component mounted', 'info');
+    return () => {
+      debug('App component unmounted', 'info');
+    };
+  }, []);
+
   return (
     <ErrorBoundary>
       <Router>
         <AppContent />
+        {/* Debug overlay - press Ctrl+Shift+D to show/hide */}
+        <DebugOverlay enabled={true} />
       </Router>
     </ErrorBoundary>
   );
