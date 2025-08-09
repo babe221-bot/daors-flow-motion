@@ -109,9 +109,6 @@ This document outlines a phased approach to implementing all the features descri
    - DynamicWebhookTriggerer - Webhook triggerer based on JSON payloads
    - DynamicFileUploader - File uploader based on JSON configurations
    - DynamicFileDownloader - File downloader based on JSON configurations
-   - DynamicImageOptimizer - Image optimizer based on JSON configurations
-   - DynamicVideoConverter - Video converter based on JSON configurations
-   - DynamicAudio
    - DynamicBarcodeGenerator - Barcode generator based on JSON configurations
    - DynamicQRCodeGenerator - QR code generator based on JSON configurations
    - DynamicBarcodeScanner - Barcode scanner based on JSON configurations
