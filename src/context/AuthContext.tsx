@@ -1,52 +1,201 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Role } from '../lib/types';
+import { ROLES, Role, User as AppUser } from '@/lib/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface AuthContextType {
+  // Session & user state
   session: any | null;
-  user: any | null;
-  signOut: () => void;
+  user: (AppUser & { email?: string }) | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+
+  // Actions
+  login: (email: string, password: string) => Promise<{ error?: { message: string } }>;
+  signup: (
+    email: string,
+    password: string,
+    username?: string,
+    role?: Role
+  ) => Promise<{ error?: { message: string } }>;
+  loginAsGuest: () => Promise<{ error?: { message: string } }>;
+  signOut: () => Promise<void>;
+
+  // Authz helpers
   hasRole: (roles: Role[]) => boolean;
+}
+
+function mapSupabaseUserToAppUser(supaUser: any | null): (AppUser & { email?: string }) | null {
+  if (!supaUser) return null;
+  const role: Role =
+    (supaUser.user_metadata?.role as Role) ||
+    (supaUser.app_metadata?.userrole as Role) ||
+    ROLES.CLIENT;
+  const username =
+    supaUser.user_metadata?.username ||
+    supaUser.user_metadata?.name ||
+    supaUser.email?.split('@')?.[0] ||
+    'user';
+  return {
+    id: supaUser.id,
+    username,
+    role,
+    avatarUrl: supaUser.user_metadata?.avatar_url,
+    associatedItemIds: [],
+    email: supaUser.email ?? undefined,
+  };
 }
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
-  signOut: () => {},
+  loading: true,
+  isAuthenticated: false,
+  login: async () => ({}),
+  signup: async () => ({}),
+  loginAsGuest: async () => ({ }),
+  signOut: async () => {},
   hasRole: () => false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<any | null>(null);
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<(AppUser & { email?: string }) | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Restore guest session if any
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    const guest = localStorage.getItem('df_guest_session');
+    if (guest === 'true') {
+      setUser({ id: 'guest', username: 'guest', role: ROLES.GUEST });
       setLoading(false);
-    });
+    }
+  }, []);
 
+  // Initialize from Supabase current session
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const { data: userData } = await supabase.auth.getUser();
+        if (!isMounted) return;
+        setSession(sessionData?.session ?? null);
+        setUser(mapSupabaseUserToAppUser(userData?.user ?? null));
+      } catch (e) {
+        // Non-fatal; fallback to guest/local state above
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    })();
     return () => {
-      subscription.unsubscribe();
+      isMounted = false;
     };
   }, []);
 
-  const hasRole = (roles: Role[]) => {
-    if (!user) return false;
-    // @ts-expect-error - userrole is a custom claim
-    return roles.includes(user.app_metadata.userrole);
+  // Listen to session changes
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      setSession(newSession);
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        setUser(mapSupabaseUserToAppUser(userData?.user ?? null));
+        // Clear guest flag if a real session exists
+        if (newSession?.access_token) {
+          localStorage.removeItem('df_guest_session');
+        }
+      } catch (_) {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+    return () => {
+      data.subscription.unsubscribe();
+    };
+  }, []);
+
+  const isAuthenticated = useMemo(() => !!user && (user.role ? true : !!session), [user, session]);
+
+  // React Query mutation for login (minimal wrapper)
+  const loginMutation = useMutation({
+    mutationKey: ['auth', 'login'],
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries();
+      const { data: userData } = await supabase.auth.getUser();
+      setUser(mapSupabaseUserToAppUser(userData?.user ?? null));
+      localStorage.removeItem('df_guest_session');
+    },
+  });
+
+  const login = async (email: string, password: string) => {
+    try {
+      await loginMutation.mutateAsync({ email, password });
+      return { };
+    } catch (err: any) {
+      return { error: { message: err?.message || 'Login failed' } };
+    }
   };
 
-  const value = {
+  const signup = async (
+    email: string,
+    password: string,
+    username?: string,
+    role: Role = ROLES.CLIENT
+  ) => {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username, role },
+        },
+      });
+      if (error) return { error: { message: error.message } };
+      return {};
+    } catch (err: any) {
+      return { error: { message: err?.message || 'Signup failed' } };
+    }
+  };
+
+  const loginAsGuest = async () => {
+    try {
+      // Client-side ephemeral guest session
+      localStorage.setItem('df_guest_session', 'true');
+      setUser({ id: 'guest', username: 'guest', role: ROLES.GUEST });
+      setSession(null);
+      return {};
+    } catch (err: any) {
+      return { error: { message: err?.message || 'Guest login failed' } };
+    }
+  };
+
+  const signOut = async () => {
+    localStorage.removeItem('df_guest_session');
+    await supabase.auth.signOut();
+    setSession(null);
+    setUser(null);
+  };
+
+  const hasRole = (roles: Role[]) => {
+    if (!user) return false;
+    return roles.includes(user.role);
+  };
+
+  const value: AuthContextType = {
     session,
     user,
-    signOut: () => {
-      supabase.auth.signOut();
-    },
+    loading,
+    isAuthenticated,
+    login,
+    signup,
+    loginAsGuest,
+    signOut,
     hasRole,
   };
 
