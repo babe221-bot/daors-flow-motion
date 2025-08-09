@@ -108,6 +108,13 @@ This document outlines a phased approach to implementing all the features descri
    - Live Map (`/live-map`) - Interactive map with real-time vehicle tracking
    - Route Optimization (`/route-optimization`) - AI-powered route planning
    - Inventory Management (`/inventory`) - Stock and warehouse management
+   - Order Fulfillment (`/order-fulfillment`) - Automated order processing and shipping
+   - Warehouse Management (`/warehouse-management`) - Warehouse operations and inventory control
+   - Delivery Management (`/delivery-management`) - Delivery scheduling and tracking
+   - Return Management (`/return-management`) - Return processing and inventory updates
+   
+
+
 
 2. **Data Visualization**
    - Line Charts for trend analysis
