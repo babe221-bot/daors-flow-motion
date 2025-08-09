@@ -29,6 +29,20 @@ const DemoPage = lazy(() => import('./pages/DemoPage'));
 const ModernFooter = lazy(() => import('./components/ModernFooter'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
+// New Dashboard Pages
+const MainDashboard = lazy(() => import('./pages/dashboard/MainDashboard'));
+const DriverDashboard = lazy(() => import('./pages/driver/DriverDashboard'));
+const ManagerDashboard = lazy(() => import('./pages/manager/ManagerDashboard'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const OrderManagement = lazy(() => import('./pages/orders/OrderManagement'));
+const ShipmentTracking = lazy(() => import('./pages/shipments/ShipmentTracking'));
+const VehicleTracking = lazy(() => import('./pages/vehicles/VehicleTracking'));
+const InvoiceGeneration = lazy(() => import('./pages/invoices/InvoiceGeneration'));
+const PaymentProcessing = lazy(() => import('./pages/payments/PaymentProcessing'));
+const DocumentManagement = lazy(() => import('./pages/documents/DocumentManagement'));
+const ReportGeneration = lazy(() => import('./pages/reports/ReportGeneration'));
+const Chatbot = lazy(() => import('./pages/chatbot/Chatbot'));
+
 const AppContent = () => {
   const location = useLocation();
   
@@ -60,6 +74,7 @@ const AppContent = () => {
 
             {/* Logistics-themed slide/fade for key app sections */}
             {[
+              // Original routes
               { path: '/dashboard', element: <Index /> },
               { path: '/customer-dashboard', element: <CustomerDashboard /> },
               { path: '/inventory', element: <Inventory /> },
@@ -74,6 +89,20 @@ const AppContent = () => {
               { path: '/contact', element: <Support /> },
               { path: '/demo', element: <DemoPage /> },
               { path: '/profile', element: <ProfilePage /> },
+              
+              // New dashboard pages
+              { path: '/main-dashboard', element: <MainDashboard /> },
+              { path: '/driver-dashboard', element: <DriverDashboard /> },
+              { path: '/manager-dashboard', element: <ManagerDashboard /> },
+              { path: '/admin-dashboard', element: <AdminDashboard /> },
+              { path: '/order-management', element: <OrderManagement /> },
+              { path: '/shipment-tracking', element: <ShipmentTracking /> },
+              { path: '/vehicle-tracking', element: <VehicleTracking /> },
+              { path: '/invoice-generation', element: <InvoiceGeneration /> },
+              { path: '/payment-processing', element: <PaymentProcessing /> },
+              { path: '/document-management', element: <DocumentManagement /> },
+              { path: '/report-generation', element: <ReportGeneration /> },
+              { path: '/chatbot', element: <Chatbot /> },
             ].map(({ path, element }) => (
               <Route
                 key={path}
