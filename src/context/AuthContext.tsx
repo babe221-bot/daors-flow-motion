@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         const sessionPromise = supabase.auth.getSession();
         
-        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as { data: { session: any } };
         
         if (session?.user) {
           try {
@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
             );
             
-            const { data: profile, error } = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
+            const { data: profile, error } = await Promise.race([profilePromise, profileTimeoutPromise]) as { data: any; error: any };
             
             if (error && error.message !== 'Profile fetch timeout') {
               console.warn('Error fetching user profile:', error);
@@ -104,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       if (event === 'SIGNED_IN' && session?.user) {
         // Fetch user profile
         const { data: profile, error } = await supabase
@@ -215,40 +215,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { data, error } = await supabase.auth.signInAnonymously();
 
       if (error) {
+        console.error('Anonymous sign-in error:', error);
         return { error };
       }
 
-      if (data?.user) {
-        // Create guest profile with GUEST role
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            email: `guest-${data.user.id}@example.com`,
-            full_name: 'Guest User',
-            role: ROLES.GUEST,
-          });
-
-        if (profileError) {
-          console.error('Error creating guest profile:', profileError);
-          // Manually sign out the anonymous user if profile creation fails
-          await supabase.auth.signOut();
-          return { error: new Error('Failed to create guest user profile. Please contact support.') };
-        }
-
-        // Set user context
-        setUser({
-          id: data.user.id,
-          username: 'Guest',
-          role: ROLES.GUEST,
-          avatarUrl: undefined,
-          associatedItemIds: []
-        });
+      if (!data?.user) {
+        return { error: new Error('No user data returned from anonymous sign-in') };
       }
+
+      // Create guest profile with GUEST role
+      const { error: profileError } = await supabase
+        .from('users')
+        .upsert({
+          id: data.user.id,
+          email: `guest-${data.user.id}@example.com`,
+          full_name: 'Guest User',
+          role: ROLES.GUEST,
+        }, { onConflict: 'id' });
+
+      if (profileError) {
+        console.error('Error creating guest profile:', profileError);
+        // Manually sign out the anonymous user if profile creation fails
+        await supabase.auth.signOut();
+        return { error: new Error('Failed to create guest user profile. Please try again.') };
+      }
+
+      // Set user context manually
+      setUser({
+        id: data.user.id,
+        username: 'Guest',
+        role: ROLES.GUEST,
+        avatarUrl: undefined,
+        associatedItemIds: []
+      });
 
       return { error: null };
     } catch (error) {
       console.error('Error during guest login:', error);
+      await supabase.auth.signOut(); // Clean up on error
       return { error: error as Error };
     }
   };

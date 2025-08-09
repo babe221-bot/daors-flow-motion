@@ -7,42 +7,44 @@ export const loginAsGuest = async () => {
     const { data, error } = await supabase.auth.signInAnonymously();
 
     if (error) {
+      console.error('Anonymous sign-in error:', error);
       return { error };
     }
 
-    if (data?.user) {
-      // Create guest profile with GUEST role
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert({
-          id: data.user.id,
-          email: `guest-${data.user.id}@example.com`,
-          full_name: 'Guest User',
-          role: ROLES.GUEST,
-        });
-
-      if (profileError) {
-        console.error('Error creating guest profile:', profileError);
-        // Manually sign out the anonymous user if profile creation fails
-        await supabase.auth.signOut();
-        return { error: new Error('Failed to create guest user profile. Please contact support.') };
-      }
-
-      return {
-        user: {
-          id: data.user.id,
-          username: 'Guest',
-          role: ROLES.GUEST,
-          avatarUrl: undefined,
-          associatedItemIds: []
-        },
-        error: null
-      };
+    if (!data?.user) {
+      return { error: new Error('No user data returned from anonymous sign-in') };
     }
 
-    return { error: new Error('Failed to create guest session') };
+    // Create guest profile with GUEST role using upsert for idempotency
+    const { error: profileError } = await supabase
+      .from('users')
+      .upsert({
+        id: data.user.id,
+        email: `guest-${data.user.id}@example.com`,
+        full_name: 'Guest User',
+        role: ROLES.GUEST,
+      }, { onConflict: 'id' });
+
+    if (profileError) {
+      console.error('Error creating guest profile:', profileError);
+      // Manually sign out the anonymous user if profile creation fails
+      await supabase.auth.signOut();
+      return { error: new Error('Failed to create guest user profile. Please try again.') };
+    }
+
+    return {
+      user: {
+        id: data.user.id,
+        username: 'Guest',
+        role: ROLES.GUEST,
+        avatarUrl: undefined,
+        associatedItemIds: []
+      },
+      error: null
+    };
   } catch (error) {
     console.error('Error during guest login:', error);
+    await supabase.auth.signOut(); // Clean up on error
     return { error: error as Error };
   }
 };

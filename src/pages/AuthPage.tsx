@@ -69,130 +69,22 @@ const AuthPage = () => {
   const handleGuestLogin = async () => {
     setLoading(true);
     setLoginError('');
+    
     try {
-      // Enhanced debug logging
-      console.log('Starting guest login...', new Date().toISOString());
-      console.log('Authentication state:', { isAuthenticated, user, authLoading });
+      console.log('Starting guest login...');
       
-      // Use the context method with improved error handling
-      if (typeof loginAsGuest === 'function') {
-        console.log('Using AuthContext.loginAsGuest()');
-        
-        // Check if supabase is initialized properly
-        console.log('Supabase client status:', supabase.auth.getSession() ? 'Available' : 'Not available');
-        
-        const result = await loginAsGuest();
-        console.log('Guest login result from context:', result);
-        
-        if (result.error) {
-          console.error('Guest login error from context:', result.error);
-          setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
-          
-          // Show more details about the error if available
-          // Using a safer approach to access potential error details
-          try {
-            const errorDetails = (result.error as Error & { details?: unknown }).details;
-            if (errorDetails) {
-              console.error('Error details:', errorDetails);
-            }
-          } catch (detailsErr) {
-            console.error('Failed to access error details');
-          }
-        } else {
-          console.log('Guest login successful via context method');
-        }
+      // Use the context method for guest login
+      const result = await loginAsGuest();
+      
+      if (result.error) {
+        console.error('Guest login error:', result.error);
+        setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
       } else {
-        // If context method is not available, import and use the utility function
-        console.log('Context method not available, importing utility function');
-        try {
-          const { loginAsGuest: guestLoginUtil } = await import('@/lib/guestLogin');
-          console.log('Successfully imported guestLogin utility');
-          
-          const result = await guestLoginUtil();
-          console.log('Guest login result from utility:', result);
-          
-          if (result.error) {
-            console.error('Guest login error from utility:', result.error);
-            setLoginError(result.error.message || 'Failed to login as guest. Please try again.');
-          } else {
-            console.log('Guest login successful via utility function');
-          }
-        } catch (importErr) {
-          console.error('Failed to import guest login utility:', importErr);
-          
-          // Last resort fallback - direct Supabase API call
-          console.log('Fallback: Using direct Supabase signInAnonymously()');
-          
-          try {
-            // Verify Supabase client is ready
-            const sessionCheck = await supabase.auth.getSession();
-            console.log('Supabase session check before direct call:',
-              sessionCheck ? 'Session available' : 'No session');
-            
-            const { data, error } = await supabase.auth.signInAnonymously();
-            
-            if (error) {
-              console.error('Direct Supabase guest login error:', error);
-              setLoginError(error.message || 'Failed to login as guest. Please try again.');
-            } else {
-              console.log('Direct guest login successful:', data);
-              
-              // Try to create a user profile manually
-              try {
-                const { error: profileError } = await supabase
-                  .from('users')
-                  .insert({
-                    id: data.user.id,
-                    email: `guest-${data.user.id}@example.com`,
-                    full_name: 'Guest User',
-                    role: ROLES.GUEST,
-                  });
-                
-                if (profileError) {
-                  console.error('Error creating guest profile in fallback:', profileError);
-                } else {
-                  console.log('Successfully created guest profile in fallback');
-                }
-              } catch (profileErr) {
-                console.error('Exception while creating guest profile in fallback:', profileErr);
-              }
-            }
-          } catch (directAuthErr) {
-            console.error('Exception during direct Supabase auth call:', directAuthErr);
-            setLoginError('An unexpected error occurred during guest login. Please try again later.');
-          }
-        }
+        console.log('Guest login successful');
       }
     } catch (err) {
       console.error('Unexpected error during guest login:', err);
-      
-      // Detailed error logging
-      try {
-        const errorObject = err as Error;
-        console.error('Error name:', errorObject.name);
-        console.error('Error message:', errorObject.message);
-        console.error('Error stack:', errorObject.stack);
-        
-        // Check if it's a Supabase error with additional details
-        interface ExtendedError extends Error {
-          code?: string;
-          details?: unknown;
-          hint?: string;
-        }
-        
-        const extendedError = err as ExtendedError;
-        if (extendedError.code || extendedError.details || extendedError.hint) {
-          console.error('Additional error details:', {
-            code: extendedError.code,
-            details: extendedError.details,
-            hint: extendedError.hint
-          });
-        }
-      } catch (logErr) {
-        console.error('Error while logging error details:', logErr);
-      }
-      
-      setLoginError('An unexpected error occurred during guest login. Please check console for details.');
+      setLoginError('An unexpected error occurred during guest login. Please try again later.');
     } finally {
       setLoading(false);
     }
