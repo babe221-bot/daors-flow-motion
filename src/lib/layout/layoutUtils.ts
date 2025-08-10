@@ -1,86 +1,58 @@
-import { LayoutComponent } from '@/types/layout';
+import { LayoutTemplate, LayoutComponent } from '@/types/layout';
 
-export const generateLayoutTemplate = (template: string): LayoutComponent[] => {
+export const generateTemplate = (templateName: string): LayoutComponent[] => {
   const templates: Record<string, LayoutComponent[]> = {
     dashboard: [
       {
-        id: 'metrics-1',
-        type: 'metric-card',
-        title: 'Total Shipments',
-        description: '1,234 shipments today',
-        width: 1,
-        height: 1,
+        id: 'metrics-overview',
+        type: 'MetricCard',
+        props: { title: 'Total Shipments', value: 1247, trend: '+12%' },
         position: { x: 0, y: 0 },
+        size: { width: 3, height: 1 },
       },
       {
-        id: 'metrics-2',
-        type: 'metric-card',
-        title: 'Active Routes',
-        description: '45 routes active',
-        width: 1,
-        height: 1,
-        position: { x: 1, y: 0 },
+        id: 'active-routes',
+        type: 'RouteMap',
+        props: { showActiveRoutes: true },
+        position: { x: 3, y: 0 },
+        size: { width: 5, height: 3 },
       },
       {
-        id: 'metrics-3',
-        type: 'metric-card',
-        title: 'Delivered Today',
-        description: '89 deliveries completed',
-        width: 1,
-        height: 1,
-        position: { x: 2, y: 0 },
-      },
-      {
-        id: 'chart-1',
-        type: 'chart',
-        title: 'Shipment Trends',
-        description: 'Weekly shipment analysis',
-        width: 2,
-        height: 2,
+        id: 'recent-orders',
+        type: 'OrderList',
+        props: { limit: 10 },
         position: { x: 0, y: 1 },
-      },
-      {
-        id: 'map-1',
-        type: 'map',
-        title: 'Live Tracking',
-        description: 'Real-time fleet tracking',
-        width: 2,
-        height: 2,
-        position: { x: 2, y: 1 },
+        size: { width: 3, height: 2 },
       },
     ],
     analytics: [
       {
-        id: 'analytics-1',
-        type: 'chart',
-        title: 'Revenue Analytics',
-        description: 'Monthly revenue trends',
-        width: 3,
-        height: 2,
+        id: 'performance-chart',
+        type: 'AnimatedChart',
+        props: { type: 'line', data: [] },
         position: { x: 0, y: 0 },
+        size: { width: 6, height: 2 },
       },
       {
-        id: 'analytics-2',
-        type: 'table',
-        title: 'Performance Metrics',
-        description: 'Key performance indicators',
-        width: 2,
-        height: 3,
+        id: 'kpi-cards',
+        type: 'MetricCard',
+        props: { title: 'On-Time Delivery', value: '94%', trend: '+2%' },
         position: { x: 0, y: 2 },
+        size: { width: 2, height: 1 },
       },
     ],
   };
 
-  return templates[template] || templates.dashboard;
+  return templates[templateName] || templates.dashboard;
 };
 
 export const calculateGridPosition = (
   index: number,
   columns: number,
+  gap: number,
   itemWidth: number,
-  itemHeight: number,
-  gap: number
-) => {
+  itemHeight: number
+): { x: number; y: number } => {
   const row = Math.floor(index / columns);
   const col = index % columns;
   
@@ -90,27 +62,27 @@ export const calculateGridPosition = (
   };
 };
 
-export const getResponsiveColumns = (containerWidth: number, minItemWidth: number) => {
-  return Math.max(1, Math.floor(containerWidth / minItemWidth));
-};
-
-export const generateResponsiveLayout = (
+export const generateGridAreas = (
   components: LayoutComponent[],
-  containerWidth: number,
-  config: { gap: number; minItemWidth: number }
-) => {
-  const columns = getResponsiveColumns(containerWidth, config.minItemWidth);
-  const itemWidth = (containerWidth - (columns - 1) * config.gap) / columns;
-
-  return components.map((component, index) => ({
-    ...component,
-    width: itemWidth,
-    position: calculateGridPosition(
-      index,
-      columns,
-      itemWidth,
-      200, // Default height
-      config.gap
-    ),
-  }));
+  columns: number
+): string => {
+  const maxRow = Math.max(...components.map(c => c.position?.y || 0)) + 1;
+  const maxCol = Math.max(...components.map(c => c.position?.x || 0)) + 1;
+  
+  const grid = Array(maxRow).fill(null).map(() => Array(maxCol).fill('.'));
+  
+  components.forEach(component => {
+    const { x, y } = component.position || { x: 0, y: 0 };
+    const { width = 1, height = 1 } = component.size || {};
+    
+    for (let row = y; row < y + height; row++) {
+      for (let col = x; col < x + width; col++) {
+        if (grid[row] && grid[row][col] !== undefined) {
+          grid[row][col] = component.id;
+        }
+      }
+    }
+  });
+  
+  return grid.map(row => `"${row.join(' ')}"`).join(' ');
 };

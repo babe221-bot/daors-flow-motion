@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { Home, BarChart3, Package, Truck, Settings, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
-import { useAnimations } from '@/hooks/useAnimations';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, AlertTriangle, Home, Package, Truck, Users, BarChart3, Settings } from 'lucide-react';
+import { NavigationItem } from '@/types/navigation';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 interface CollapsibleSidebarProps {
   isOpen: boolean;
@@ -10,12 +12,49 @@ interface CollapsibleSidebarProps {
   className?: string;
 }
 
-const navigationItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: Home, href: '/' },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3, href: '/analytics' },
-  { id: 'shipments', label: 'Shipments', icon: Package, href: '/shipments' },
-  { id: 'fleet', label: 'Fleet', icon: Truck, href: '/fleet' },
-  { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
+const defaultNavigationItems: NavigationItem[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: Home,
+    href: '/',
+    allowedRoles: ['admin', 'manager', 'driver', 'customer'],
+  },
+  {
+    id: 'shipments',
+    label: 'Shipments',
+    icon: Package,
+    href: '/shipments',
+    allowedRoles: ['admin', 'manager', 'driver', 'customer'],
+  },
+  {
+    id: 'routes',
+    label: 'Routes',
+    icon: Truck,
+    href: '/routes',
+    allowedRoles: ['admin', 'manager', 'driver'],
+  },
+  {
+    id: 'customers',
+    label: 'Customers',
+    icon: Users,
+    href: '/customers',
+    allowedRoles: ['admin', 'manager'],
+  },
+  {
+    id: 'analytics',
+    label: 'Analytics',
+    icon: BarChart3,
+    href: '/analytics',
+    allowedRoles: ['admin', 'manager'],
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    icon: Settings,
+    href: '/settings',
+    allowedRoles: ['admin', 'manager', 'driver', 'customer'],
+  },
 ];
 
 export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
@@ -23,72 +62,73 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
   onToggle,
   onAlertsClick,
   alertsCount = 0,
-  className = '',
+  className,
 }) => {
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const { animateSidebarToggle } = useAnimations();
+  const { user } = useAuth();
+  const [activeItem, setActiveItem] = useState('dashboard');
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (sidebarRef.current) {
-      animateSidebarToggle(sidebarRef.current, isOpen);
+  const userRoles = user?.user_metadata?.roles || ['customer'];
+  
+  const filteredItems = defaultNavigationItems.filter(item => 
+    !item.allowedRoles || item.allowedRoles.some(role => userRoles.includes(role))
+  );
+
+  const handleItemClick = (item: NavigationItem) => {
+    setActiveItem(item.id);
+    if (item.onClick) {
+      item.onClick();
+    } else if (item.href) {
+      // Handle navigation
+      window.history.pushState({}, '', item.href);
     }
-  }, [isOpen, animateSidebarToggle]);
+  };
 
   return (
-    <div
-      ref={sidebarRef}
-      className={`fixed left-0 top-0 h-full bg-white shadow-lg border-r border-gray-200 transition-all duration-300 z-40 ${className}`}
-      style={{ width: isOpen ? '256px' : '64px' }}
-    >
+    <aside className={cn(
+      'fixed left-0 top-0 h-full bg-background border-r transition-all duration-300 z-40',
+      isOpen ? 'w-64' : 'w-16',
+      className
+    )}>
       <div className="flex flex-col h-full">
-        {/* Toggle button */}
-        <div className="flex justify-end p-4">
+        {/* Toggle Button */}
+        <div className="flex items-center justify-between p-4 border-b">
+          {isOpen && <span className="font-semibold">Navigation</span>}
           <button
             onClick={onToggle}
-            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+            className="p-2 rounded-md hover:bg-accent transition-colors"
           >
-            {isOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
         </div>
 
-        {/* Navigation items */}
-        <nav className="flex-1 px-2 space-y-1">
-          {navigationItems.map((item) => (
-            <a
-              key={item.id}
-              href={item.href}
-              className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >
-              <item.icon
-                className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                aria-hidden="true"
-              />
-              {isOpen && (
-                <span className="ml-3" data-animate-child>
+        {/* Navigation Items */}
+        <nav className="flex-1 py-4">
+          {filteredItems.map((item) => (
+            <div key={item.id} className="relative">
+              <button
+                onClick={() => handleItemClick(item)}
+                onMouseEnter={() => setHoveredItem(item.id)}
+                onMouseLeave={() => setHoveredItem(null)}
+                className={cn(
+                  'w-full flex items-center px-4 py-3 text-sm transition-colors',
+                  activeItem === item.id
+                    ? 'bg-primary/10 text-primary'
+                    : 'hover:bg-accent',
+                  !isOpen && 'justify-center'
+                )}
+              >
+                {item.icon && <item.icon className="h-5 w-5" />}
+                {isOpen && <span className="ml-3">{item.label}</span>}
+              </button>
+              
+              {/* Tooltip for collapsed state */}
+              {!isOpen && hoveredItem === item.id && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-sm rounded-md shadow-lg whitespace-nowrap">
                   {item.label}
-                </span>
+                </div>
               )}
-            </a>
+            </div>
           ))}
         </nav>
 
-        {/* Alerts section */}
-        {onAlertsClick && (
-          <div className="p-4 border-t border-gray-200">
-            <button
-              onClick={onAlertsClick}
-              className="w-full flex items-center justify-center px-2 py-2 text-sm font-medium rounded-md text-red-700 hover:bg-red-50"
-            >
-              <AlertTriangle className="h-5 w-5" />
-              {isOpen && (
-                <span className="ml-3" data-animate-child>
-                  Alerts {alertsCount > 0 && `(${alertsCount})`}
-                </span>
-              )}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};

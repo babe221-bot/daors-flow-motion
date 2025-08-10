@@ -25,7 +25,7 @@ export interface UserMenuItem {
 export interface SearchSuggestion {
   id: string;
   label: string;
-  type: 'route' | 'shipment' | 'customer' | 'location';
+  type: 'route' | 'shipment' | 'customer' | 'location' | 'order';
   icon?: React.ComponentType<{ className?: string }>;
   action?: () => void;
 }

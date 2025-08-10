@@ -1,4 +1,4 @@
-import anime from 'animejs';
+import anime from 'anime.js';
 import { AnimationConfig } from '@/types/animations';
 
 export const navigationAnimationPresets = {
@@ -10,78 +10,69 @@ export const navigationAnimationPresets = {
     duration: 200,
     easing: 'easeOutBack',
   },
-  breadcrumbTransition: {
+  dropdownSlide: {
     duration: 250,
-    easing: 'easeInOutQuad',
+    easing: 'easeOutCubic',
   },
-  mobileSlide: {
-    duration: 350,
+  searchExpand: {
+    duration: 400,
     easing: 'easeOutExpo',
+  },
+  userMenuSlide: {
+    duration: 300,
+    easing: 'easeOutQuart',
   },
 };
 
 export const animateSidebarToggle = (
   element: HTMLElement,
-  isExpanded: boolean,
+  isOpen: boolean,
   config: AnimationConfig = navigationAnimationPresets.sidebarToggle
 ) => {
   return anime({
     targets: element,
-    width: isExpanded ? '256px' : '64px',
+    translateX: isOpen ? 0 : '-100%',
+    opacity: isOpen ? 1 : 0,
     duration: config.duration,
     easing: config.easing,
-    complete: () => {
-      const children = element.querySelectorAll('[data-animate-child]');
-      if (children.length > 0) {
-        anime({
-          targets: children,
-          opacity: isExpanded ? [0, 1] : [1, 0],
-          translateX: isExpanded ? [-20, 0] : [0, -20],
-          duration: (config.duration || 300) * 0.6,
-          delay: anime.stagger(30),
-          easing: 'easeOutQuad',
-        });
-      }
-    },
   });
 };
 
 export const animateMenuItemHover = (
   element: HTMLElement,
-  isHovering: boolean,
   config: AnimationConfig = navigationAnimationPresets.menuItemHover
 ) => {
   return anime({
     targets: element,
-    translateX: isHovering ? 4 : 0,
-    backgroundColor: isHovering ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+    translateX: 4,
+    scale: 1.02,
     duration: config.duration,
     easing: config.easing,
   });
 };
 
-export const animateBreadcrumbTransition = (
-  elements: HTMLElement[],
-  config: AnimationConfig = navigationAnimationPresets.breadcrumbTransition
-) => {
-  return anime({
-    targets: elements,
-    opacity: [0, 1],
-    translateX: [-10, 0],
-    duration: config.duration,
-    delay: anime.stagger(50),
-    easing: config.easing,
-  });
-};
-
-export const animateMobileSlide = (
+export const animateDropdownSlide = (
   element: HTMLElement,
-  isVisible: boolean,
-  config: AnimationConfig = navigationAnimationPresets.mobileSlide
+  isOpen: boolean,
+  config: AnimationConfig = navigationAnimationPresets.dropdownSlide
 ) => {
   return anime({
     targets: element,
-    translateX: isVisible ? 0 : '-100%',
+    translateY: isOpen ? 0 : -10,
+    opacity: isOpen ? 1 : 0,
+    duration: config.duration,
+    easing: config.easing,
+  });
+};
+
+export const animateSearchExpand = (
+  element: HTMLElement,
+  isExpanded: boolean,
+  config: AnimationConfig = navigationAnimationPresets.searchExpand
+) => {
+  return anime({
+    targets: element,
+    width: isExpanded ? 300 : 200,
     duration: config.duration,
     easing: config.easing,
   });
