@@ -29,7 +29,8 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
 import { useAnimations } from '@/hooks/useAnimations';
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
-import { animateSearchExpand, animateHeaderSticky } from '@/lib/animations/navigationAnimations';
+import { animateSearchExpand } from '@/lib/animations/navigationAnimations';
+import { animateHeaderSticky } from '@/lib/animations/layoutAnimations';
 import { cn } from '@/lib/utils';
 import { NavbarConfig, SearchConfig } from '@/types/navigation';
 

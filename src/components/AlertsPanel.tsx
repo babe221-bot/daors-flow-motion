@@ -62,11 +62,11 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({ isOpen, onOpenChange, alerts:
   }, [alerts, filter]);
 
   const removeAlert = (id: string) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== id));
+    onRemoveAlert(id);
   };
 
   const clearAll = () => {
-    setAlerts([]);
+    onClearAlerts();
   };
 
   const getAlertIcon = (type: Alert["type"]) => {
@@ -88,7 +88,12 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({ isOpen, onOpenChange, alerts:
   };
 
   const getPriorityBadge = (priority: Alert["priority"]) => {
-    const variant = { high: 'destructive', medium: 'secondary', low: 'outline' }[priority] as const;
+    const variantMap: Record<Alert["priority"], "destructive" | "secondary" | "outline"> = {
+      high: "destructive",
+      medium: "secondary",
+      low: "outline",
+    };
+    const variant = variantMap[priority];
     return <Badge variant={variant}>{t(`alerts.${priority}`)}</Badge>
   };
 

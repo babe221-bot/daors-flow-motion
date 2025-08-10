@@ -7,7 +7,7 @@ import { Package, DollarSign, Clock, Globe, TrendingUp, AlertTriangle } from 'lu
 import { getMetricData, getShipmentData, getRevenueData, getRouteData } from '@/lib/api';
 
 // Components
-import { MetricCard } from '@/components/widgets/MetricCard';
+import MetricCard from '@/components/widgets/MetricCard';
 import { AnimatedChart } from '@/components/AnimatedChart';
 import { EnhancedTable } from '@/components/EnhancedTable';
 import { AlertsPanel } from '@/components/AlertsPanel';

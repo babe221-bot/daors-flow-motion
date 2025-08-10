@@ -1,5 +1,5 @@
 // Navigation-specific animations using anime.js
-import anime from 'animejs';
+import anime from '@/lib/anime';
 import { AnimationConfig, NavigationAnimations } from '@/types/animations';
 
 // Default animation configurations for navigation
