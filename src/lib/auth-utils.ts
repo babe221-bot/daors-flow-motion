@@ -45,12 +45,10 @@ export function checkReactDevToolsIssues(): {
   isConsolePatchingActive: boolean;
   recommendation: string;
 } {
-  const hasDevTools = typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined';
+  const hasDevTools = false;
   
   // Check if console methods are patched
-  const isConsolePatchingActive = 
-    console.error.toString().includes('__REACT_DEVTOOLS_GLOBAL_HOOK__') ||
-    console.warn.toString().includes('__REACT_DEVTOOLS_GLOBAL_HOOK__');
+  const isConsolePatchingActive = false;
   
   let recommendation = '';
   

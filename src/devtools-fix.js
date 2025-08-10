@@ -83,4 +83,3 @@ export function withProtection(asyncFn) {
 }
 
 // Initialize
-console.log('React DevTools fix loaded');

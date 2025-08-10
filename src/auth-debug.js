@@ -68,31 +68,12 @@ window.debugAuth = {
 // Log when this script loads
 console.log('Auth debug helpers loaded. Use window.debugAuth to access debugging tools.');
 
-// Export a function to check if React DevTools hooks are active
+// Export a function to check if React DevTools hooks are active (disabled)
 export function checkReactDevToolsHooks() {
-  // Check if React DevTools are installed and active
-  const hasReactDevTools = typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined';
-  console.log('React DevTools detected:', hasReactDevTools);
-  
-  if (hasReactDevTools) {
-    // Check if console is patched
-    const isConsolePatchedByDevTools = 
-      console.error.toString().includes('__REACT_DEVTOOLS_GLOBAL_HOOK__') ||
-      console.warn.toString().includes('__REACT_DEVTOOLS_GLOBAL_HOOK__');
-    
-    console.log('Console patched by React DevTools:', isConsolePatchedByDevTools);
-    
-    return {
-      hasReactDevTools,
-      isConsolePatchedByDevTools
-    };
-  }
-  
   return {
     hasReactDevTools: false,
     isConsolePatchedByDevTools: false
   };
 }
 
-// Check on load
-checkReactDevToolsHooks();
+// Disable auto-check on load

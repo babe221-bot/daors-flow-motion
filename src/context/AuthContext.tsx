@@ -265,9 +265,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      // Start protected operation to prevent React DevTools interference
-      startProtectedOperation();
-      
       // Try direct Supabase auth call first
       try {
         console.log('Attempting direct Supabase authentication...');

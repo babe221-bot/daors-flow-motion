@@ -60,4 +60,3 @@ export function checkReactDevToolsFix() {
 }
 
 // Check if the fix was applied
-console.log('React DevTools fix status:', checkReactDevToolsFix());
