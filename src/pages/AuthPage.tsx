@@ -199,7 +199,7 @@ const AuthPage = () => {
                       />
                     </div>
                     {loginError && <p className="text-sm text-destructive">{loginError}</p>}
-                    <Button type="submit" className="w-full" disabled={loading} onClick={handleLogin}>
+                    <Button type="button" className="w-full" disabled={loading} onClick={handleLogin}>
                       {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
                     </Button>
                     
