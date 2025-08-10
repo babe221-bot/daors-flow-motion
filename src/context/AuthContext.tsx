@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import { ROLES, Role, User as AppUser } from '@/lib/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
+import { pingSupabase, waitForSupabase } from '../lib/supabase-health';
 
 // Define proper types for auth responses
 interface AuthError {
@@ -102,6 +103,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser({ id: 'guest', username: 'guest', role: ROLES.GUEST });
           setLoading(false);
           return;
+        }
+
+        // First, check if Supabase is reachable
+        console.log('Checking Supabase connectivity...');
+        const isSupabaseReachable = await pingSupabase();
+        
+        if (!isSupabaseReachable) {
+          console.warn('Supabase is not reachable, waiting for connection...');
+          const connectionEstablished = await waitForSupabase(10000); // Wait up to 10 seconds
+          
+          if (!connectionEstablished) {
+            console.warn('Could not establish connection to Supabase, proceeding as guest');
+            setUser({ id: 'offline-guest', username: 'Guest User (Offline)', role: ROLES.GUEST });
+            setLoading(false);
+            return;
+          }
         }
 
         // Try to get session with increased timeout and retry logic
