@@ -1,71 +1,36 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { NavigationItem } from '@/types/navigation';
 
-interface NavigationState {
+interface UseNavigationReturn {
+  filteredItems: NavigationItem[];
   activeItem: string | null;
-  expandedItems: string[];
-  searchQuery: string;
+  setActiveItem: (id: string) => void;
+  hasRole: (roles: string[]) => boolean;
 }
 
-export const useNavigation = (
-  items: NavigationItem[],
-  userRole?: string
-) => {
-  const [state, setState] = useState<NavigationState>({
-    activeItem: null,
-    expandedItems: [],
-    searchQuery: '',
-  });
+export const useNavigation = (items: NavigationItem[]): UseNavigationReturn => {
+  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [userRoles] = useState<string[]>(['admin', 'user']); // Mock roles
 
-  const filteredItems = useMemo(() => {
-    let filtered = items;
+  const hasRole = (roles: string[] = []): boolean => {
+    if (roles.length === 0) return true;
+    return roles.some(role => userRoles.includes(role));
+  };
 
-    if (userRole) {
-      filtered = items.filter(item => 
-        !item.allowedRoles || item.allowedRoles.includes(userRole)
-      );
+  const filteredItems = items.filter(item => hasRole(item.allowedRoles));
+
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    const active = filteredItems.find(item => item.href === currentPath);
+    if (active) {
+      setActiveItem(active.id);
     }
-
-    if (state.searchQuery) {
-      const query = state.searchQuery.toLowerCase();
-      filtered = filtered.filter(item => 
-        item.label.toLowerCase().includes(query) ||
-        (item.children && item.children.some(child => 
-          child.label.toLowerCase().includes(query)
-        ))
-      );
-    }
-
-    return filtered;
-  }, [items, userRole, state.searchQuery]);
-
-  const setActiveItem = useCallback((itemId: string | null) => {
-    setState(prev => ({ ...prev, activeItem: itemId }));
-  }, []);
-
-  const toggleExpanded = useCallback((itemId: string) => {
-    setState(prev => ({
-      ...prev,
-      expandedItems: prev.expandedItems.includes(itemId)
-        ? prev.expandedItems.filter(id => id !== itemId)
-        : [...prev.expandedItems, itemId],
-    }));
-  }, []);
-
-  const setSearchQuery = useCallback((query: string) => {
-    setState(prev => ({ ...prev, searchQuery: query }));
-  }, []);
-
-  const isExpanded = useCallback((itemId: string) => {
-    return state.expandedItems.includes(itemId);
-  }, [state.expandedItems]);
+  }, [filteredItems]);
 
   return {
-    ...state,
     filteredItems,
+    activeItem,
     setActiveItem,
-    toggleExpanded,
-    setSearchQuery,
-    isExpanded,
+    hasRole,
   };
 };

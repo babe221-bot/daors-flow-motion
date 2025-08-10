@@ -1,22 +1,11 @@
 export interface LayoutComponent {
   id: string;
-  type: string;
+  type: 'metric' | 'chart' | 'table' | 'widget' | 'text';
   title: string;
-  position: { x: number; y: number };
   size: { width: number; height: number };
-  props?: Record<string, any>;
-  minSize?: { width: number; height: number };
-  maxSize?: { width: number; height: number };
-  isResizable?: boolean;
-  isDraggable?: boolean;
-  zIndex?: number;
-}
-
-export interface ResponsiveBreakpoint {
-  name: string;
-  minWidth: number;
-  columns: number;
-  containerPadding?: number;
+  position: { x: number; y: number };
+  data?: any;
+  config?: any;
 }
 
 export interface GridConfig {
@@ -24,6 +13,13 @@ export interface GridConfig {
   gap: number;
   minItemWidth: number;
   breakpoints: ResponsiveBreakpoint[];
+}
+
+export interface ResponsiveBreakpoint {
+  name: string;
+  minWidth: number;
+  columns: number;
+  containerPadding: number;
 }
 
 export interface LayoutTemplate {

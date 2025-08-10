@@ -1,91 +1,59 @@
-import { useState, useRef, useCallback } from 'react';
-import { LayoutComponent } from '@/types/layout';
+import { useState, useCallback, useRef } from 'react';
+import { LayoutComponent, DragDropState } from '@/types/layout';
 
-interface DragState {
-  isDragging: boolean;
-  draggedItem: LayoutComponent | null;
-  draggedOverId: string | null;
-  dragOffset: { x: number; y: number };
+interface UseDragDropReturn {
+  dragState: DragDropState;
+  handleDragStart: (e: React.DragEvent, component: LayoutComponent) => void;
+  handleDragOver: (e: React.DragEvent) => void;
+  handleDrop: (e: React.DragEvent, targetId: string) => void;
+  handleDragEnd: () => void;
 }
 
 export const useDragDrop = (
-  items: LayoutComponent[],
+  components: LayoutComponent[],
   onReorder: (newOrder: LayoutComponent[]) => void
-) => {
-  const [dragState, setDragState] = useState<DragState>({
+): UseDragDropReturn => {
+  const [dragState, setDragState] = useState<DragDropState>({
     isDragging: false,
     draggedItem: null,
     draggedOverId: null,
     dragOffset: { x: 0, y: 0 },
   });
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleDragStart = useCallback((
-    e: React.DragEvent<HTMLDivElement>,
-    item: LayoutComponent
-  ) => {
+  const handleDragStart = useCallback((e: React.DragEvent, component: LayoutComponent) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', component.id);
+    
     setDragState(prev => ({
       ...prev,
       isDragging: true,
-      draggedItem: item,
+      draggedItem: component,
     }));
-
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', item.id);
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const handleDragEnter = useCallback((
-    e: React.DragEvent<HTMLDivElement>,
-    targetId: string
-  ) => {
-    e.preventDefault();
-    setDragState(prev => ({
-      ...prev,
-      draggedOverId: targetId,
-    }));
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragState(prev => ({
-      ...prev,
-      draggedOverId: null,
-    }));
-  }, []);
-
-  const handleDrop = useCallback((
-    e: React.DragEvent<HTMLDivElement>,
-    targetId: string
-  ) => {
+  const handleDrop = useCallback((e: React.DragEvent, targetId: string) => {
     e.preventDefault();
     
-    if (!dragState.draggedItem) return;
-
-    const draggedId = e.dataTransfer.getData('text/plain');
-    const newItems = [...items];
-    
-    const draggedIndex = newItems.findIndex(item => item.id === draggedId);
-    const targetIndex = newItems.findIndex(item => item.id === targetId);
-
-    if (draggedIndex !== -1 && targetIndex !== -1) {
-      const [draggedItem] = newItems.splice(draggedIndex, 1);
-      newItems.splice(targetIndex, 0, draggedItem);
-      onReorder(newItems);
+    if (!dragState.draggedItem || dragState.draggedItem.id === targetId) {
+      return;
     }
 
-    setDragState({
-      isDragging: false,
-      draggedItem: null,
-      draggedOverId: null,
-      dragOffset: { x: 0, y: 0 },
-    });
-  }, [items, dragState.draggedItem, onReorder]);
+    const draggedIndex = components.findIndex(c => c.id === dragState.draggedItem!.id);
+    const targetIndex = components.findIndex(c => c.id === targetId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newComponents = [...components];
+    const [draggedComponent] = newComponents.splice(draggedIndex, 1);
+    newComponents.splice(targetIndex, 0, draggedComponent);
+
+    onReorder(newComponents);
+  }, [components, dragState.draggedItem, onReorder]);
 
   const handleDragEnd = useCallback(() => {
     setDragState({
@@ -98,11 +66,8 @@ export const useDragDrop = (
 
   return {
     dragState,
-    containerRef,
     handleDragStart,
     handleDragOver,
-    handleDragEnter,
-    handleDragLeave,
     handleDrop,
     handleDragEnd,
   };

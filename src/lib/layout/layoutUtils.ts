@@ -1,92 +1,133 @@
-import { LayoutComponent } from '@/types/layout';
+import { LayoutComponent, LayoutTemplate, GridConfig } from '@/types/layout';
 
-export const generateLayoutTemplate = (templateType: string): LayoutComponent[] => {
+export const generateLayoutTemplate = (templateName: string): LayoutComponent[] => {
   const templates: Record<string, LayoutComponent[]> = {
     dashboard: [
       {
-        id: 'metrics-overview',
-        type: 'metrics-card',
-        props: { title: 'Overview', variant: 'default' },
+        id: 'metrics-1',
+        type: 'metric',
+        title: 'Total Shipments',
+        size: { width: 3, height: 2 },
         position: { x: 0, y: 0 },
-        size: { width: 300, height: 200 },
-        isDraggable: true,
-        isResizable: true,
+        data: { value: 1234, trend: '+12%' },
       },
       {
-        id: 'recent-orders',
-        type: 'orders-table',
-        props: { title: 'Recent Orders', limit: 10 },
-        position: { x: 320, y: 0 },
-        size: { width: 400, height: 300 },
-        isDraggable: true,
-        isResizable: true,
+        id: 'metrics-2',
+        type: 'metric',
+        title: 'Active Orders',
+        size: { width: 3, height: 2 },
+        position: { x: 3, y: 0 },
+        data: { value: 89, trend: '+5%' },
       },
       {
-        id: 'shipment-map',
-        type: 'map-view',
-        props: { center: [0, 0], zoom: 10 },
-        position: { x: 0, y: 220 },
-        size: { width: 300, height: 250 },
-        isDraggable: true,
-        isResizable: true,
+        id: 'metrics-3',
+        type: 'metric',
+        title: 'Delivered Today',
+        size: { width: 3, height: 2 },
+        position: { x: 6, y: 0 },
+        data: { value: 45, trend: '-3%' },
+      },
+      {
+        id: 'metrics-4',
+        type: 'metric',
+        title: 'Pending Issues',
+        size: { width: 3, height: 2 },
+        position: { x: 9, y: 0 },
+        data: { value: 7, trend: '-2%' },
+      },
+      {
+        id: 'chart-1',
+        type: 'chart',
+        title: 'Shipment Trends',
+        size: { width: 6, height: 4 },
+        position: { x: 0, y: 2 },
+        data: { type: 'line' },
+      },
+      {
+        id: 'table-1',
+        type: 'table',
+        title: 'Recent Shipments',
+        size: { width: 6, height: 4 },
+        position: { x: 6, y: 2 },
+        data: { columns: ['ID', 'Status', 'ETA'] },
       },
     ],
     analytics: [
       {
-        id: 'revenue-chart',
+        id: 'analytics-1',
         type: 'chart',
-        props: { type: 'line', title: 'Revenue Trends' },
+        title: 'Revenue Overview',
+        size: { width: 8, height: 4 },
         position: { x: 0, y: 0 },
-        size: { width: 500, height: 300 },
-        isDraggable: true,
-        isResizable: true,
+        data: { type: 'bar' },
       },
       {
-        id: 'performance-metrics',
-        type: 'metrics-card',
-        props: { variant: 'analytics' },
-        position: { x: 520, y: 0 },
-        size: { width: 250, height: 300 },
-        isDraggable: true,
-        isResizable: true,
+        id: 'analytics-2',
+        type: 'metric',
+        title: 'Conversion Rate',
+        size: { width: 4, height: 2 },
+        position: { x: 8, y: 0 },
+        data: { value: '3.2%', trend: '+0.5%' },
       },
     ],
   };
 
-  return templates[templateType] || [];
+  return templates[templateName] || templates.dashboard;
 };
 
-export const validateLayout = (layout: LayoutComponent[]): boolean => {
-  if (!Array.isArray(layout)) return false;
-  
-  return layout.every(component => 
-    component.id && 
-    component.type && 
-    typeof component.position.x === 'number' &&
-    typeof component.position.y === 'number' &&
-    typeof component.size.width === 'number' &&
-    typeof component.size.height === 'number'
-  );
-};
-
-export const normalizeLayout = (layout: LayoutComponent[]): LayoutComponent[] => {
-  return layout.map(component => ({
+export const normalizeLayout = (components: LayoutComponent[]): LayoutComponent[] => {
+  return components.map((component, index) => ({
     ...component,
-    isDraggable: component.isDraggable ?? true,
-    isResizable: component.isResizable ?? true,
-    zIndex: component.zIndex ?? 1,
+    id: component.id || `component-${index}`,
+    position: component.position || { x: 0, y: 0 },
+    size: component.size || { width: 1, height: 1 },
   }));
 };
 
-export const getLayoutBounds = (layout: LayoutComponent[]) => {
-  if (layout.length === 0) {
-    return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
-  }
+export const calculateResponsiveColumns = (
+  containerWidth: number,
+  minItemWidth: number,
+  gap: number
+): number => {
+  const availableWidth = containerWidth + gap;
+  return Math.max(1, Math.floor(availableWidth / (minItemWidth + gap)));
+};
 
-  const minX = Math.min(...layout.map(c => c.position.x));
-  const minY = Math.min(...layout.map(c => c.position.y));
-  const maxX = Math.max(...layout.map(c => c.position.x + c.size.width));
-  const maxY = Math.max(...layout.map(c => c.position.y + c.size.height));
+export const generateResponsiveLayout = (
+  components: LayoutComponent[],
+  columns: number
+): LayoutComponent[] => {
+  let currentX = 0;
+  let currentY = 0;
+  let maxHeightInRow = 0;
 
-  return { minX, minY, maxX, maxY };
+  return components.map(component => {
+    const adjustedWidth = Math.min(component.size.width, columns);
+    
+    if (currentX + adjustedWidth > columns) {
+      currentX = 0;
+      currentY += maxHeightInRow;
+      maxHeightInRow = 0;
+    }
+
+    const positionedComponent = {
+      ...component,
+      position: { x: currentX, y: currentY },
+      size: { ...component.size, width: adjustedWidth },
+    };
+
+    currentX += adjustedWidth;
+    maxHeightInRow = Math.max(maxHeightInRow, component.size.height);
+
+    return positionedComponent;
+  });
+};
+
+export const validateLayout = (components: LayoutComponent[]): boolean => {
+  return components.every(component => 
+    component.id &&
+    component.type &&
+    component.size.width > 0 &&
+    component.size.height > 0
+  );
 };
