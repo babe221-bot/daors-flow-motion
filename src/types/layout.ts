@@ -1,30 +1,35 @@
+// Layout-related types
 export interface LayoutComponent {
   id: string;
   type: string;
-  title: string;
-  description?: string;
-  width?: number;
-  height?: number;
-  position: { x: number; y: number };
-  data?: any;
-}
-
-export interface GridConfig {
-  columns: number;
-  gap: number;
-  minItemWidth: number;
-  breakpoints: Breakpoint[];
-}
-
-export interface Breakpoint {
-  name: string;
-  minWidth: number;
-  columns: number;
-  containerPadding: number;
+  props?: Record<string, unknown>;
+  position?: { x: number; y: number };
+  size?: { width: number; height: number };
 }
 
 export interface LayoutTemplate {
+  id: string;
   name: string;
   components: LayoutComponent[];
-  config: GridConfig;
+  breakpoints?: ResponsiveBreakpoint[];
+}
+
+export interface ResponsiveBreakpoint {
+  name: string;
+  minWidth: number;
+  columns: number;
+  containerPadding: string;
+}
+
+export interface GridItem {
+  id: string;
+  component: React.ComponentType<unknown>;
+  props?: Record<string, unknown>;
+  gridArea?: string;
+}
+
+export interface DragDropConfig {
+  enableGridSnapping?: boolean;
+  showDropZones?: boolean;
+  animationDuration?: number;
 }

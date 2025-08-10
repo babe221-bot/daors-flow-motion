@@ -1,34 +1,33 @@
+// Animation configuration types
 export interface AnimationConfig {
   duration?: number;
   easing?: string;
   delay?: number;
   autoplay?: boolean;
+  loop?: boolean;
+  direction?: 'normal' | 'reverse' | 'alternate';
 }
-
-export type AnimationPreset = 
-  | 'fadeIn' 
-  | 'slideUp' 
-  | 'slideDown' 
-  | 'slideLeft' 
-  | 'slideRight' 
-  | 'scaleIn' 
-  | 'rotateIn';
 
 export interface NavigationAnimations {
   sidebarToggle: AnimationConfig;
   menuItemHover: AnimationConfig;
-  breadcrumbTransition: AnimationConfig;
-  mobileSlide: AnimationConfig;
+  dropdownSlide: AnimationConfig;
+  searchExpand: AnimationConfig;
+  userMenuSlide: AnimationConfig;
 }
 
 export interface LayoutAnimations {
   gridReorder: AnimationConfig;
-  componentResize: AnimationConfig;
-  layoutTransition: AnimationConfig;
+  componentEnter: AnimationConfig;
+  componentExit: AnimationConfig;
+  resize: AnimationConfig;
 }
 
 export interface InteractionAnimations {
   buttonHover: AnimationConfig;
   cardHover: AnimationConfig;
-  modalOpen: AnimationConfig;
+  ripple: AnimationConfig;
+  shake: AnimationConfig;
 }
+
+export type AnimationPreset = 'subtle' | 'medium' | 'intense' | 'custom';
