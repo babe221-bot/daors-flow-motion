@@ -1,11 +1,33 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { config } from './config'
 
+// Define proper types for Supabase responses
+interface Session {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+  user?: {
+    id: string;
+    email?: string;
+    user_metadata?: any;
+    app_metadata?: any;
+  };
+}
+
+interface AuthResponse {
+  data: {
+    session?: Session;
+    user?: any;
+  };
+  error: any;
+}
+
 // Create a more resilient Supabase client with timeout and error handling
-let supabaseInstance;
+let supabaseInstance: SupabaseClient;
 
 try {
-  supabaseInstance = createClient(
+  supabaseInstance = createClient<Session, any>(
     config.supabase.url,
     config.supabase.anonKey,
     {
@@ -39,7 +61,7 @@ try {
   console.error('Failed to initialize Supabase client:', error);
   
   // Create a fallback client with minimal configuration
-  supabaseInstance = createClient(
+  supabaseInstance = createClient<Session, any>(
     config.supabase.url,
     config.supabase.anonKey,
     {

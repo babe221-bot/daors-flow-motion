@@ -3,9 +3,30 @@ import { supabase } from '../lib/supabaseClient';
 import { ROLES, Role, User as AppUser } from '@/lib/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+// Define proper types for Supabase session and user
+interface SupabaseSession {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+  user?: {
+    id: string;
+    email?: string;
+    user_metadata?: Record<string, unknown>;
+    app_metadata?: Record<string, unknown>;
+  };
+}
+
+interface SupabaseUser {
+  id: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
+  app_metadata?: Record<string, unknown>;
+}
+
 interface AuthContextType {
   // Session & user state
-  session: any | null;
+  session: SupabaseSession | null;
   user: (AppUser & { email?: string }) | null;
   loading: boolean;
   isAuthenticated: boolean;
@@ -25,7 +46,7 @@ interface AuthContextType {
   hasRole: (roles: Role[]) => boolean;
 }
 
-function mapSupabaseUserToAppUser(supaUser: any | null): (AppUser & { email?: string }) | null {
+function mapSupabaseUserToAppUser(supaUser: SupabaseUser | null): (AppUser & { email?: string }) | null {
   if (!supaUser) return null;
   const role: Role =
     (supaUser.user_metadata?.role as Role) ||
@@ -40,7 +61,7 @@ function mapSupabaseUserToAppUser(supaUser: any | null): (AppUser & { email?: st
     id: supaUser.id,
     username,
     role,
-    avatarUrl: supaUser.user_metadata?.avatar_url,
+    avatarUrl: supaUser.user_metadata?.avatar_url as string | undefined,
     associatedItemIds: [],
     email: supaUser.email ?? undefined,
   };
@@ -60,7 +81,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-  const [session, setSession] = useState<any | null>(null);
+  const [session, setSession] = useState<SupabaseSession | null>(null);
   const [user, setUser] = useState<(AppUser & { email?: string }) | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,49 +107,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Optionally set as guest user to allow app to function
         setUser({ id: 'timeout-guest', username: 'Guest User', role: ROLES.GUEST });
       }
-    }, 5000); // 5 second timeout
+    }, 8000); // Increased to 8 seconds to give more time
     
-    (async () => {
+    const initializeAuth = async () => {
       try {
-        // Use Promise.race to add timeout to Supabase calls
-        const sessionPromise = supabase.auth.getSession();
-        const sessionResult = await Promise.race([
-          sessionPromise,
-          new Promise<null>((_, reject) => 
-            setTimeout(() => reject(new Error('Session fetch timeout')), 3000)
-          )
-        ]);
+        // Check if we're already in a guest session
+        const guest = localStorage.getItem('df_guest_session');
+        if (guest === 'true') {
+          setUser({ id: 'guest', username: 'guest', role: ROLES.GUEST });
+          setLoading(false);
+          return;
+        }
+
+        // Try to get session with timeout
+        let sessionData = null;
+        try {
+          const { data } = await Promise.race([
+            supabase.auth.getSession(),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Session fetch timeout')), 5000)
+            )
+          ]);
+          sessionData = data?.session;
+        } catch (sessionError) {
+          console.warn('Session fetch failed:', sessionError);
+        }
         
         if (!isMounted) return;
         
-        // If we got here, we have session data
-        const { data: sessionData } = sessionResult as any;
-        setSession(sessionData?.session ?? null);
+        setSession(sessionData);
         
-        // Now get user data
-        const userPromise = supabase.auth.getUser();
-        const userResult = await Promise.race([
-          userPromise,
-          new Promise<null>((_, reject) => 
-            setTimeout(() => reject(new Error('User fetch timeout')), 3000)
-          )
-        ]);
-        
-        if (!isMounted) return;
-        
-        // If we got here, we have user data
-        const { data: userData } = userResult as any;
-        setUser(mapSupabaseUserToAppUser(userData?.user ?? null));
+        // Only try to get user if we have a session
+        if (sessionData) {
+          let userData = null;
+          try {
+            const { data } = await Promise.race([
+              supabase.auth.getUser(),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('User fetch timeout')), 5000)
+              )
+            ]);
+            userData = data?.user;
+          } catch (userError) {
+            console.warn('User fetch failed:', userError);
+          }
+          
+          if (!isMounted) return;
+          
+          setUser(mapSupabaseUserToAppUser(userData));
+        } else {
+          // No session, check if we should proceed as guest
+          setUser({ id: 'no-session-guest', username: 'Guest User', role: ROLES.GUEST });
+        }
       } catch (e) {
         console.warn('Auth initialization error:', e);
         // Non-fatal; fallback to guest/local state
+        setUser({ id: 'error-guest', username: 'Guest User', role: ROLES.GUEST });
       } finally {
         if (isMounted) {
           setLoading(false);
           clearTimeout(initTimeout);
         }
       }
-    })();
+    };
+    
+    initializeAuth();
     
     return () => {
       isMounted = false;
