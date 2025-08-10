@@ -309,8 +309,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const error = err as { message?: string };
       return { error: { message: error?.message || 'Login failed' } };
     } finally {
-      // End protected operation and restore console methods
-      endProtectedOperation();
+      // End of login
     }
   };
 
