@@ -1,21 +1,22 @@
 export interface LayoutComponent {
   id: string;
-  type: 'metric' | 'chart' | 'table' | 'widget' | 'text';
+  type: string;
   title: string;
-  size: { width: number; height: number };
+  description?: string;
+  width?: number;
+  height?: number;
   position: { x: number; y: number };
   data?: any;
-  config?: any;
 }
 
 export interface GridConfig {
   columns: number;
   gap: number;
   minItemWidth: number;
-  breakpoints: ResponsiveBreakpoint[];
+  breakpoints: Breakpoint[];
 }
 
-export interface ResponsiveBreakpoint {
+export interface Breakpoint {
   name: string;
   minWidth: number;
   columns: number;
@@ -26,11 +27,4 @@ export interface LayoutTemplate {
   name: string;
   components: LayoutComponent[];
   config: GridConfig;
-}
-
-export interface DragDropState {
-  isDragging: boolean;
-  draggedItem: LayoutComponent | null;
-  draggedOverId: string | null;
-  dragOffset: { x: number; y: number };
 }

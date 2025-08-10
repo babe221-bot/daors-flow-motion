@@ -10,13 +10,13 @@ export const navigationAnimationPresets = {
     duration: 200,
     easing: 'easeOutBack',
   },
-  dropdownSlide: {
-    duration: 250,
-    easing: 'easeOutCubic',
-  },
   breadcrumbTransition: {
-    duration: 150,
+    duration: 250,
     easing: 'easeInOutQuad',
+  },
+  mobileSlide: {
+    duration: 350,
+    easing: 'easeOutExpo',
   },
 };
 
@@ -60,20 +60,6 @@ export const animateMenuItemHover = (
   });
 };
 
-export const animateDropdownSlide = (
-  element: HTMLElement,
-  isOpen: boolean,
-  config: AnimationConfig = navigationAnimationPresets.dropdownSlide
-) => {
-  return anime({
-    targets: element,
-    opacity: isOpen ? [0, 1] : [1, 0],
-    translateY: isOpen ? [-10, 0] : [0, -10],
-    duration: config.duration,
-    easing: config.easing,
-  });
-};
-
 export const animateBreadcrumbTransition = (
   elements: HTMLElement[],
   config: AnimationConfig = navigationAnimationPresets.breadcrumbTransition
@@ -84,6 +70,19 @@ export const animateBreadcrumbTransition = (
     translateX: [-10, 0],
     duration: config.duration,
     delay: anime.stagger(50),
+    easing: config.easing,
+  });
+};
+
+export const animateMobileSlide = (
+  element: HTMLElement,
+  isVisible: boolean,
+  config: AnimationConfig = navigationAnimationPresets.mobileSlide
+) => {
+  return anime({
+    targets: element,
+    translateX: isVisible ? 0 : '-100%',
+    duration: config.duration,
     easing: config.easing,
   });
 };

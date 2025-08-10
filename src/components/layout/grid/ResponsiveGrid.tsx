@@ -1,92 +1,42 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { LayoutComponent } from '@/types/layout';
-import { useLayout } from '@/components/providers/LayoutProvider';
-import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
-import { useAnimations } from '@/hooks/useAnimations';
 
 interface ResponsiveGridProps {
   components?: LayoutComponent[];
   gap?: number;
   minItemWidth?: number;
-  onComponentUpdate?: (id: string, updates: Partial<LayoutComponent>) => void;
+  onComponentUpdate?: (component: LayoutComponent) => void;
   className?: string;
 }
 
 export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
-  components: externalComponents,
+  components = [],
   gap = 16,
   minItemWidth = 200,
   onComponentUpdate,
   className = '',
 }) => {
-  const { components: contextComponents, config } = useLayout();
-  const { currentBreakpoint, calculateGridColumns } = useResponsiveLayout();
-  const { animateGridReorder } = useAnimations();
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  const components = externalComponents || contextComponents;
-  const columns = calculateGridColumns(currentBreakpoint);
-
-  useEffect(() => {
-    if (gridRef.current) {
-      const elements = Array.from(gridRef.current.children) as HTMLElement[];
-      if (elements.length > 0) {
-        animateGridReorder(elements, [], {
-          duration: 300,
-          easing: 'easeOutQuad',
-        });
-      }
-    }
-  }, [columns, animateGridReorder]);
-
-  const calculateGridStyles = () => {
-    const columnWidth = `calc((100% - ${(columns - 1) * gap}px) / ${columns})`;
-    
-    return {
-      display: 'grid',
-      gridTemplateColumns: `repeat(${columns}, 1fr)`,
-      gap: `${gap}px`,
-      gridAutoRows: 'minmax(200px, auto)',
-    };
-  };
-
-  const renderComponent = (component: LayoutComponent) => {
-    const style = {
-      gridColumn: `span ${Math.min(component.size.width, columns)}`,
-      gridRow: `span ${component.size.height}`,
-    };
-
-    return (
-      <div
-        key={component.id}
-        className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
-        style={style}
-      >
-        <h3 className="text-lg font-semibold mb-2">{component.title}</h3>
-        <div className="text-gray-600">
-          {component.type === 'metric' && (
-            <div className="text-2xl font-bold text-blue-600">1,234</div>
-          )}
-          {component.type === 'chart' && (
-            <div className="h-32 bg-gray-100 rounded flex items-center justify-center">
-              Chart Placeholder
-            </div>
-          )}
-          {component.type === 'table' && (
-            <div className="text-sm">Table data would go here</div>
-          )}
-        </div>
-      </div>
-    );
+  const gridStyle = {
+    display: 'grid',
+    gap: `${gap}px`,
+    gridTemplateColumns: `repeat(auto-fit, minmax(${minItemWidth}px, 1fr))`,
   };
 
   return (
-    <div
-      ref={gridRef}
-      className={`w-full ${className}`}
-      style={calculateGridStyles()}
-    >
-      {components.map(renderComponent)}
+    <div className={className} style={gridStyle}>
+      {components.map((component) => (
+        <div
+          key={component.id}
+          className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+          style={{
+            gridColumn: `span ${component.width || 1}`,
+            gridRow: `span ${component.height || 1}`,
+          }}
+        >
+          <h3 className="text-lg font-semibold mb-2">{component.title}</h3>
+          <p className="text-gray-600">{component.description}</p>
+        </div>
+      ))}
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, AlertTriangle, Home, Package, Truck, BarChart3, Settings } from 'lucide-react';
-import { useNavigation } from '@/hooks/useNavigation';
-import { NavigationItem } from '@/types/navigation';
+import { Home, BarChart3, Package, Truck, Settings, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useAnimations } from '@/hooks/useAnimations';
 
 interface CollapsibleSidebarProps {
@@ -12,37 +10,12 @@ interface CollapsibleSidebarProps {
   className?: string;
 }
 
-const navigationItems: NavigationItem[] = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: Home,
-    href: '/',
-  },
-  {
-    id: 'shipments',
-    label: 'Shipments',
-    icon: Package,
-    href: '/shipments',
-  },
-  {
-    id: 'tracking',
-    label: 'Tracking',
-    icon: Truck,
-    href: '/tracking',
-  },
-  {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: BarChart3,
-    href: '/analytics',
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    icon: Settings,
-    href: '/settings',
-  },
+const navigationItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: Home, href: '/' },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3, href: '/analytics' },
+  { id: 'shipments', label: 'Shipments', icon: Package, href: '/shipments' },
+  { id: 'fleet', label: 'Fleet', icon: Truck, href: '/fleet' },
+  { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
 ];
 
 export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
@@ -53,80 +26,69 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
   className = '',
 }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const { filteredItems, setActiveItem, activeItem } = useNavigation(navigationItems);
-  const { createAnimation } = useAnimations();
+  const { animateSidebarToggle } = useAnimations();
 
   useEffect(() => {
     if (sidebarRef.current) {
-      createAnimation(sidebarRef.current, {
-        width: isOpen ? '256px' : '64px',
-        duration: 300,
-        easing: 'easeOutQuad',
-      });
+      animateSidebarToggle(sidebarRef.current, isOpen);
     }
-  }, [isOpen, createAnimation]);
+  }, [isOpen, animateSidebarToggle]);
 
   return (
-    <aside
+    <div
       ref={sidebarRef}
-      className={`bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40 transition-all duration-300 ${className}`}
+      className={`fixed left-0 top-0 h-full bg-white shadow-lg border-r border-gray-200 transition-all duration-300 z-40 ${className}`}
+      style={{ width: isOpen ? '256px' : '64px' }}
     >
       <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          {isOpen && <span className="font-semibold text-gray-900">Menu</span>}
+        {/* Toggle button */}
+        <div className="flex justify-end p-4">
           <button
             onClick={onToggle}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
           >
-            {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            {isOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            {filteredItems.map((item) => (
-              <li key={item.id}>
-                <a
-                  href={item.href}
-                  onClick={() => setActiveItem(item.id)}
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                    activeItem === item.id
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.icon && <item.icon className="h-5 w-5 flex-shrink-0" />}
-                  {isOpen && <span className="text-sm font-medium">{item.label}</span>}
-                </a>
-              </li>
-            ))}
-          </ul>
+        {/* Navigation items */}
+        <nav className="flex-1 px-2 space-y-1">
+          {navigationItems.map((item) => (
+            <a
+              key={item.id}
+              href={item.href}
+              className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            >
+              <item.icon
+                className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                aria-hidden="true"
+              />
+              {isOpen && (
+                <span className="ml-3" data-animate-child>
+                  {item.label}
+                </span>
+              )}
+            </a>
+          ))}
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t">
-          {onAlertsClick && (
+        {/* Alerts section */}
+        {onAlertsClick && (
+          <div className="p-4 border-t border-gray-200">
             <button
               onClick={onAlertsClick}
-              className="flex items-center space-x-3 p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors w-full"
+              className="w-full flex items-center justify-center px-2 py-2 text-sm font-medium rounded-md text-red-700 hover:bg-red-50"
             >
-              <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5" />
               {isOpen && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium">Alerts</span>
-                  {alertsCount > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                      {alertsCount}
-                    </span>
-                  )}
-                </div>
+                <span className="ml-3" data-animate-child>
+                  Alerts {alertsCount > 0 && `(${alertsCount})`}
+                </span>
               )}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </aside>
+    </div>
   );
 };

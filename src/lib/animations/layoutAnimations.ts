@@ -4,19 +4,15 @@ import { AnimationConfig } from '@/types/animations';
 export const layoutAnimationPresets = {
   gridReorder: {
     duration: 400,
-    easing: 'easeOutCubic',
-  },
-  componentAdd: {
-    duration: 300,
     easing: 'easeOutBack',
   },
-  componentRemove: {
-    duration: 250,
-    easing: 'easeInCubic',
-  },
-  componentUpdate: {
-    duration: 200,
+  componentResize: {
+    duration: 300,
     easing: 'easeInOutQuad',
+  },
+  layoutTransition: {
+    duration: 500,
+    easing: 'easeOutExpo',
   },
 };
 
@@ -32,7 +28,7 @@ export const animateGridReorder = (
       translateX: newPos.x,
       translateY: newPos.y,
       duration: config.duration || 400,
-      easing: config.easing || 'easeOutCubic',
+      easing: config.easing || 'easeOutBack',
       autoplay: false,
     });
   });
@@ -41,40 +37,30 @@ export const animateGridReorder = (
   return animations;
 };
 
-export const animateComponentAdd = (
+export const animateComponentResize = (
   element: HTMLElement,
-  config: AnimationConfig = layoutAnimationPresets.componentAdd
+  newSize: { width: number; height: number },
+  config: AnimationConfig = layoutAnimationPresets.componentResize
 ) => {
   return anime({
     targets: element,
-    opacity: [0, 1],
-    scale: [0.8, 1],
+    width: newSize.width,
+    height: newSize.height,
     duration: config.duration || 300,
-    easing: config.easing || 'easeOutBack',
-  });
-};
-
-export const animateComponentRemove = (
-  element: HTMLElement,
-  config: AnimationConfig = layoutAnimationPresets.componentRemove
-) => {
-  return anime({
-    targets: element,
-    opacity: [1, 0],
-    scale: [1, 0.8],
-    duration: config.duration || 250,
-    easing: config.easing || 'easeInCubic',
-  });
-};
-
-export const animateComponentUpdate = (
-  element: HTMLElement,
-  config: AnimationConfig = layoutAnimationPresets.componentUpdate
-) => {
-  return anime({
-    targets: element,
-    opacity: [0.5, 1],
-    duration: config.duration || 200,
     easing: config.easing || 'easeInOutQuad',
+  });
+};
+
+export const animateLayoutTransition = (
+  elements: HTMLElement[],
+  config: AnimationConfig = layoutAnimationPresets.layoutTransition
+) => {
+  return anime({
+    targets: elements,
+    opacity: [0, 1],
+    scale: [0.9, 1],
+    duration: config.duration || 500,
+    delay: anime.stagger(100),
+    easing: config.easing || 'easeOutExpo',
   });
 };
