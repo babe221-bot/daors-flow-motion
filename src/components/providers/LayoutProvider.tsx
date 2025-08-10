@@ -1,114 +1,94 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { LayoutComponent, GridConfig } from '@/types/layout';
-import { generateLayoutTemplate } from '@/lib/layout/layoutUtils';
+import { LayoutComponent, LayoutTemplate } from '@/types/layout';
 
 interface LayoutState {
   components: LayoutComponent[];
-  config: GridConfig;
-  isLoading: boolean;
-  error: string | null;
+  currentTemplate: string;
+  isSidebarOpen: boolean;
+  isMobileMenuOpen: boolean;
 }
+
+type LayoutAction =
+  | { type: 'SET_COMPONENTS'; payload: LayoutComponent[] }
+  | { type: 'ADD_COMPONENT'; payload: LayoutComponent }
+  | { type: 'REMOVE_COMPONENT'; payload: string }
+  | { type: 'UPDATE_COMPONENT'; payload: LayoutComponent }
+  | { type: 'SET_TEMPLATE'; payload: string }
+  | { type: 'TOGGLE_SIDEBAR' }
+  | { type: 'TOGGLE_MOBILE_MENU' }
+  | { type: 'RESET_LAYOUT' };
 
 interface LayoutContextType {
   state: LayoutState;
   actions: {
-    loadLayout: (template: string) => void;
-    updateComponent: (id: string, updates: Partial<LayoutComponent>) => void;
+    setComponents: (components: LayoutComponent[]) => void;
     addComponent: (component: LayoutComponent) => void;
     removeComponent: (id: string) => void;
-    reorderComponents: (newOrder: LayoutComponent[]) => void;
+    updateComponent: (component: LayoutComponent) => void;
+    setTemplate: (template: string) => void;
+    toggleSidebar: () => void;
+    toggleMobileMenu: () => void;
+    resetLayout: () => void;
   };
 }
 
 const initialState: LayoutState = {
   components: [],
-  config: {
-    columns: 12,
-    gap: 16,
-    minItemWidth: 200,
-    breakpoints: [
-      { name: 'xs', minWidth: 0, columns: 1, containerPadding: 8 },
-      { name: 'sm', minWidth: 640, columns: 2, containerPadding: 12 },
-      { name: 'md', minWidth: 768, columns: 3, containerPadding: 16 },
-      { name: 'lg', minWidth: 1024, columns: 4, containerPadding: 20 },
-      { name: 'xl', minWidth: 1280, columns: 6, containerPadding: 24 },
-    ],
-  },
-  isLoading: false,
-  error: null,
+  currentTemplate: 'dashboard',
+  isSidebarOpen: true,
+  isMobileMenuOpen: false,
 };
 
-type LayoutAction =
-  | { type: 'LOAD_LAYOUT_START' }
-  | { type: 'LOAD_LAYOUT_SUCCESS'; payload: LayoutComponent[] }
-  | { type: 'LOAD_LAYOUT_ERROR'; payload: string }
-  | { type: 'UPDATE_COMPONENT'; payload: { id: string; updates: Partial<LayoutComponent> } }
-  | { type: 'ADD_COMPONENT'; payload: LayoutComponent }
-  | { type: 'REMOVE_COMPONENT'; payload: string }
-  | { type: 'REORDER_COMPONENTS'; payload: LayoutComponent[] };
+const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 
 const layoutReducer = (state: LayoutState, action: LayoutAction): LayoutState => {
   switch (action.type) {
-    case 'LOAD_LAYOUT_START':
-      return { ...state, isLoading: true, error: null };
-    case 'LOAD_LAYOUT_SUCCESS':
-      return { ...state, components: action.payload, isLoading: false };
-    case 'LOAD_LAYOUT_ERROR':
-      return { ...state, error: action.payload, isLoading: false };
-    case 'UPDATE_COMPONENT':
-      return {
-        ...state,
-        components: state.components.map(comp =>
-          comp.id === action.payload.id ? { ...comp, ...action.payload.updates } : comp
-        ),
-      };
+    case 'SET_COMPONENTS':
+      return { ...state, components: action.payload };
     case 'ADD_COMPONENT':
-      return {
-        ...state,
-        components: [...state.components, action.payload],
-      };
+      return { ...state, components: [...state.components, action.payload] };
     case 'REMOVE_COMPONENT':
       return {
         ...state,
-        components: state.components.filter(comp => comp.id !== action.payload),
+        components: state.components.filter((c) => c.id !== action.payload),
       };
-    case 'REORDER_COMPONENTS':
+    case 'UPDATE_COMPONENT':
       return {
         ...state,
-        components: action.payload,
+        components: state.components.map((c) =>
+          c.id === action.payload.id ? action.payload : c
+        ),
       };
+    case 'SET_TEMPLATE':
+      return { ...state, currentTemplate: action.payload };
+    case 'TOGGLE_SIDEBAR':
+      return { ...state, isSidebarOpen: !state.isSidebarOpen };
+    case 'TOGGLE_MOBILE_MENU':
+      return { ...state, isMobileMenuOpen: !state.isMobileMenuOpen };
+    case 'RESET_LAYOUT':
+      return initialState;
     default:
       return state;
   }
 };
 
-const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
-
 export const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(layoutReducer, initialState);
 
   const actions = {
-    loadLayout: (template: string) => {
-      dispatch({ type: 'LOAD_LAYOUT_START' });
-      try {
-        const components = generateLayoutTemplate(template);
-        dispatch({ type: 'LOAD_LAYOUT_SUCCESS', payload: components });
-      } catch (error) {
-        dispatch({ type: 'LOAD_LAYOUT_ERROR', payload: 'Failed to load layout' });
-      }
-    },
-    updateComponent: (id: string, updates: Partial<LayoutComponent>) => {
-      dispatch({ type: 'UPDATE_COMPONENT', payload: { id, updates } });
-    },
-    addComponent: (component: LayoutComponent) => {
-      dispatch({ type: 'ADD_COMPONENT', payload: component });
-    },
-    removeComponent: (id: string) => {
-      dispatch({ type: 'REMOVE_COMPONENT', payload: id });
-    },
-    reorderComponents: (newOrder: LayoutComponent[]) => {
-      dispatch({ type: 'REORDER_COMPONENTS', payload: newOrder });
-    },
+    setComponents: (components: LayoutComponent[]) =>
+      dispatch({ type: 'SET_COMPONENTS', payload: components }),
+    addComponent: (component: LayoutComponent) =>
+      dispatch({ type: 'ADD_COMPONENT', payload: component }),
+    removeComponent: (id: string) =>
+      dispatch({ type: 'REMOVE_COMPONENT', payload: id }),
+    updateComponent: (component: LayoutComponent) =>
+      dispatch({ type: 'UPDATE_COMPONENT', payload: component }),
+    setTemplate: (template: string) =>
+      dispatch({ type: 'SET_TEMPLATE', payload: template }),
+    toggleSidebar: () => dispatch({ type: 'TOGGLE_SIDEBAR' }),
+    toggleMobileMenu: () => dispatch({ type: 'TOGGLE_MOBILE_MENU' }),
+    resetLayout: () => dispatch({ type: 'RESET_LAYOUT' }),
   };
 
   return (
@@ -118,7 +98,7 @@ export const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   );
 };
 
-export const useLayout = (): LayoutContextType => {
+export const useLayout = () => {
   const context = useContext(LayoutContext);
   if (!context) {
     throw new Error('useLayout must be used within a LayoutProvider');
