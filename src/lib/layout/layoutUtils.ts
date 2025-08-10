@@ -1,133 +1,116 @@
-import { LayoutComponent, LayoutTemplate, GridConfig } from '@/types/layout';
+import { LayoutComponent } from '@/types/layout';
 
-export const generateLayoutTemplate = (templateName: string): LayoutComponent[] => {
+export const generateLayoutTemplate = (template: string): LayoutComponent[] => {
   const templates: Record<string, LayoutComponent[]> = {
     dashboard: [
       {
         id: 'metrics-1',
-        type: 'metric',
+        type: 'metric-card',
         title: 'Total Shipments',
-        size: { width: 3, height: 2 },
+        description: '1,234 shipments today',
+        width: 1,
+        height: 1,
         position: { x: 0, y: 0 },
-        data: { value: 1234, trend: '+12%' },
       },
       {
         id: 'metrics-2',
-        type: 'metric',
-        title: 'Active Orders',
-        size: { width: 3, height: 2 },
-        position: { x: 3, y: 0 },
-        data: { value: 89, trend: '+5%' },
+        type: 'metric-card',
+        title: 'Active Routes',
+        description: '45 routes active',
+        width: 1,
+        height: 1,
+        position: { x: 1, y: 0 },
       },
       {
         id: 'metrics-3',
-        type: 'metric',
+        type: 'metric-card',
         title: 'Delivered Today',
-        size: { width: 3, height: 2 },
-        position: { x: 6, y: 0 },
-        data: { value: 45, trend: '-3%' },
-      },
-      {
-        id: 'metrics-4',
-        type: 'metric',
-        title: 'Pending Issues',
-        size: { width: 3, height: 2 },
-        position: { x: 9, y: 0 },
-        data: { value: 7, trend: '-2%' },
+        description: '89 deliveries completed',
+        width: 1,
+        height: 1,
+        position: { x: 2, y: 0 },
       },
       {
         id: 'chart-1',
         type: 'chart',
         title: 'Shipment Trends',
-        size: { width: 6, height: 4 },
-        position: { x: 0, y: 2 },
-        data: { type: 'line' },
+        description: 'Weekly shipment analysis',
+        width: 2,
+        height: 2,
+        position: { x: 0, y: 1 },
       },
       {
-        id: 'table-1',
-        type: 'table',
-        title: 'Recent Shipments',
-        size: { width: 6, height: 4 },
-        position: { x: 6, y: 2 },
-        data: { columns: ['ID', 'Status', 'ETA'] },
+        id: 'map-1',
+        type: 'map',
+        title: 'Live Tracking',
+        description: 'Real-time fleet tracking',
+        width: 2,
+        height: 2,
+        position: { x: 2, y: 1 },
       },
     ],
     analytics: [
       {
         id: 'analytics-1',
         type: 'chart',
-        title: 'Revenue Overview',
-        size: { width: 8, height: 4 },
+        title: 'Revenue Analytics',
+        description: 'Monthly revenue trends',
+        width: 3,
+        height: 2,
         position: { x: 0, y: 0 },
-        data: { type: 'bar' },
       },
       {
         id: 'analytics-2',
-        type: 'metric',
-        title: 'Conversion Rate',
-        size: { width: 4, height: 2 },
-        position: { x: 8, y: 0 },
-        data: { value: '3.2%', trend: '+0.5%' },
+        type: 'table',
+        title: 'Performance Metrics',
+        description: 'Key performance indicators',
+        width: 2,
+        height: 3,
+        position: { x: 0, y: 2 },
       },
     ],
   };
 
-  return templates[templateName] || templates.dashboard;
+  return templates[template] || templates.dashboard;
 };
 
-export const normalizeLayout = (components: LayoutComponent[]): LayoutComponent[] => {
-  return components.map((component, index) => ({
-    ...component,
-    id: component.id || `component-${index}`,
-    position: component.position || { x: 0, y: 0 },
-    size: component.size || { width: 1, height: 1 },
-  }));
-};
-
-export const calculateResponsiveColumns = (
-  containerWidth: number,
-  minItemWidth: number,
+export const calculateGridPosition = (
+  index: number,
+  columns: number,
+  itemWidth: number,
+  itemHeight: number,
   gap: number
-): number => {
-  const availableWidth = containerWidth + gap;
-  return Math.max(1, Math.floor(availableWidth / (minItemWidth + gap)));
+) => {
+  const row = Math.floor(index / columns);
+  const col = index % columns;
+  
+  return {
+    x: col * (itemWidth + gap),
+    y: row * (itemHeight + gap),
+  };
+};
+
+export const getResponsiveColumns = (containerWidth: number, minItemWidth: number) => {
+  return Math.max(1, Math.floor(containerWidth / minItemWidth));
 };
 
 export const generateResponsiveLayout = (
   components: LayoutComponent[],
-  columns: number
-): LayoutComponent[] => {
-  let currentX = 0;
-  let currentY = 0;
-  let maxHeightInRow = 0;
+  containerWidth: number,
+  config: { gap: number; minItemWidth: number }
+) => {
+  const columns = getResponsiveColumns(containerWidth, config.minItemWidth);
+  const itemWidth = (containerWidth - (columns - 1) * config.gap) / columns;
 
-  return components.map(component => {
-    const adjustedWidth = Math.min(component.size.width, columns);
-    
-    if (currentX + adjustedWidth > columns) {
-      currentX = 0;
-      currentY += maxHeightInRow;
-      maxHeightInRow = 0;
-    }
-
-    const positionedComponent = {
-      ...component,
-      position: { x: currentX, y: currentY },
-      size: { ...component.size, width: adjustedWidth },
-    };
-
-    currentX += adjustedWidth;
-    maxHeightInRow = Math.max(maxHeightInRow, component.size.height);
-
-    return positionedComponent;
-  });
-};
-
-export const validateLayout = (components: LayoutComponent[]): boolean => {
-  return components.every(component => 
-    component.id &&
-    component.type &&
-    component.size.width > 0 &&
-    component.size.height > 0
-  );
+  return components.map((component, index) => ({
+    ...component,
+    width: itemWidth,
+    position: calculateGridPosition(
+      index,
+      columns,
+      itemWidth,
+      200, // Default height
+      config.gap
+    ),
+  }));
 };

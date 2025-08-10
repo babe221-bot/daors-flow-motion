@@ -1,14 +1,3 @@
-import { LucideIcon } from 'lucide-react';
-
-export interface NavigationItem {
-  id: string;
-  label: string;
-  icon?: LucideIcon;
-  href: string;
-  children?: NavigationItem[];
-  allowedRoles?: string[];
-}
-
 export interface NavigationConfig {
   title: string;
   subtitle?: string;
@@ -24,8 +13,18 @@ export interface NavigationConfig {
   sticky?: boolean;
 }
 
-export interface BreadcrumbItem {
+export interface NavigationItem {
+  id: string;
   label: string;
+  icon: React.ComponentType<{ className?: string }>;
   href: string;
-  icon?: LucideIcon;
+  allowedRoles?: string[];
+  children?: NavigationItem[];
+}
+
+export interface MobileNavigationConfig {
+  swipeGestures: boolean;
+  bottomNavigation: boolean;
+  collapsibleSections: boolean;
+  quickActions: NavigationItem[];
 }
