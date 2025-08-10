@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useCallback } from 'react';
 import { LayoutComponent, GridConfig } from '@/types/layout';
-import { generateLayoutTemplate, validateLayout, normalizeLayout } from '@/lib/layout/layoutUtils';
+import { generateLayoutTemplate, normalizeLayout } from '@/lib/layout/layoutUtils';
 
 interface LayoutState {
   components: LayoutComponent[];
@@ -24,11 +24,11 @@ const defaultGridConfig: GridConfig = {
   gap: 16,
   minItemWidth: 200,
   breakpoints: [
-    { name: 'xs', minWidth: 0, columns: 1 },
-    { name: 'sm', minWidth: 640, columns: 2 },
-    { name: 'md', minWidth: 768, columns: 3 },
-    { name: 'lg', minWidth: 1024, columns: 4 },
-    { name: 'xl', minWidth: 1280, columns: 6 },
+    { name: 'xs', minWidth: 0, columns: 1, containerPadding: 8 },
+    { name: 'sm', minWidth: 640, columns: 2, containerPadding: 12 },
+    { name: 'md', minWidth: 768, columns: 3, containerPadding: 16 },
+    { name: 'lg', minWidth: 1024, columns: 4, containerPadding: 20 },
+    { name: 'xl', minWidth: 1280, columns: 6, containerPadding: 24 },
   ],
 };
 

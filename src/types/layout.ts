@@ -1,13 +1,14 @@
 export interface LayoutComponent {
   id: string;
   type: string;
-  props: Record<string, any>;
+  title: string;
   position: { x: number; y: number };
   size: { width: number; height: number };
+  props?: Record<string, any>;
   minSize?: { width: number; height: number };
   maxSize?: { width: number; height: number };
-  isDraggable?: boolean;
   isResizable?: boolean;
+  isDraggable?: boolean;
   zIndex?: number;
 }
 
@@ -15,30 +16,25 @@ export interface ResponsiveBreakpoint {
   name: string;
   minWidth: number;
   columns: number;
-  containerPadding: string;
+  containerPadding?: number;
 }
 
 export interface GridConfig {
+  columns: number;
   gap: number;
   minItemWidth: number;
-  maxItemWidth?: number;
-  breakpoints?: ResponsiveBreakpoint[];
+  breakpoints: ResponsiveBreakpoint[];
 }
 
-export interface LayoutState {
+export interface LayoutTemplate {
+  name: string;
   components: LayoutComponent[];
-  sidebarOpen: boolean;
-  isMobile: boolean;
-  currentBreakpoint: string;
+  config: GridConfig;
 }
 
-export interface LayoutActions {
-  addComponent: (component: LayoutComponent) => void;
-  removeComponent: (id: string) => void;
-  updateComponent: (id: string, updates: Partial<LayoutComponent>) => void;
-  reorderComponents: (newOrder: string[]) => void;
-  toggleSidebar: () => void;
-  setMobile: (isMobile: boolean) => void;
-  setBreakpoint: (breakpoint: string) => void;
-  loadLayout: (layout: LayoutState) => void;
+export interface DragDropState {
+  isDragging: boolean;
+  draggedItem: LayoutComponent | null;
+  draggedOverId: string | null;
+  dragOffset: { x: number; y: number };
 }

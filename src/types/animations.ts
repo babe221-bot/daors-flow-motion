@@ -5,20 +5,30 @@ export interface AnimationConfig {
   autoplay?: boolean;
   loop?: boolean;
   direction?: 'normal' | 'reverse' | 'alternate';
+  [key: string]: unknown;
 }
+
+export type AnimationPreset = 
+  | 'slideUp' 
+  | 'slideDown' 
+  | 'slideLeft' 
+  | 'slideRight' 
+  | 'fadeIn' 
+  | 'scaleIn' 
+  | 'bounce' 
+  | 'pulse';
 
 export interface NavigationAnimations {
   sidebarToggle: AnimationConfig;
   menuItemHover: AnimationConfig;
-  dropdownSlide: AnimationConfig;
   breadcrumbTransition: AnimationConfig;
+  mobileSlide: AnimationConfig;
 }
 
 export interface LayoutAnimations {
   gridReorder: AnimationConfig;
-  componentAdd: AnimationConfig;
-  componentRemove: AnimationConfig;
-  componentUpdate: AnimationConfig;
+  componentResize: AnimationConfig;
+  layoutTransition: AnimationConfig;
 }
 
 export interface InteractionAnimations {
@@ -26,13 +36,4 @@ export interface InteractionAnimations {
   cardHover: AnimationConfig;
   inputFocus: AnimationConfig;
   modalSlide: AnimationConfig;
-}
-
-export type AnimationPreset = 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'fadeIn' | 'scaleIn' | 'bounce' | 'pulse';
-
-export interface AnimationContextValue {
-  createAnimation: (element: HTMLElement, config: AnimationConfig) => any;
-  animateEntrance: (element: HTMLElement, preset: AnimationPreset, config?: AnimationConfig) => any;
-  createHoverAnimation: (element: HTMLElement, hoverConfig: AnimationConfig, normalConfig: AnimationConfig) => any;
-  cleanup: () => void;
 }
