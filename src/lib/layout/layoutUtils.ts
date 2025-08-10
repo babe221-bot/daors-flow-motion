@@ -1,88 +1,230 @@
-import { LayoutTemplate, LayoutComponent } from '@/types/layout';
+import { LayoutComponent, LayoutTemplate } from '@/types/layout';
+import { v4 as uuidv4 } from 'uuid';
+
+export const generateComponentId = (): string => {
+  return `component_${uuidv4()}`;
+};
+
+export const createLayoutComponent = (
+  type: LayoutComponent['type'],
+  overrides?: Partial<LayoutComponent>
+): LayoutComponent => {
+  const defaultComponent: LayoutComponent = {
+    id: generateComponentId(),
+    type,
+    title: `${type.charAt(0).toUpperCase() + type.slice(1)} Component`,
+    width: 300,
+    height: 200,
+    x: 0,
+    y: 0,
+    minWidth: 200,
+    minHeight: 150,
+    resizable: true,
+    draggable: true,
+    config: {},
+  };
+
+  return {
+    ...defaultComponent,
+    ...overrides,
+  };
+};
+
+export const duplicateComponent = (component: LayoutComponent): LayoutComponent => {
+  return {
+    ...component,
+    id: generateComponentId(),
+    title: `${component.title} (Copy)`,
+    x: component.x + 20,
+    y: component.y + 20,
+  };
+};
+
+export const layoutTemplates: Record<string, () => LayoutComponent[]> = {
+  dashboard: () => [
+    createLayoutComponent('chart', { 
+      title: 'Revenue Overview', 
+      width: 600, 
+      height: 300,
+      x: 0, 
+      y: 0 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Total Orders', 
+      width: 300, 
+      height: 150,
+      x: 620, 
+      y: 0 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Active Shipments', 
+      width: 300, 
+      height: 150,
+      x: 620, 
+      y: 170 
+    }),
+    createLayoutComponent('table', { 
+      title: 'Recent Activity', 
+      width: 920, 
+      height: 400,
+      x: 0, 
+      y: 320 
+    }),
+  ],
+  
+  analytics: () => [
+    createLayoutComponent('chart', { 
+      title: 'Performance Metrics', 
+      width: 460, 
+      height: 300,
+      x: 0, 
+      y: 0 
+    }),
+    createLayoutComponent('chart', { 
+      title: 'Traffic Analysis', 
+      width: 460, 
+      height: 300,
+      x: 480, 
+      y: 0 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Conversion Rate', 
+      width: 300, 
+      height: 200,
+      x: 0, 
+      y: 320 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Bounce Rate', 
+      width: 300, 
+      height: 200,
+      x: 320, 
+      y: 320 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Page Views', 
+      width: 300, 
+      height: 200,
+      x: 640, 
+      y: 320 
+    }),
+  ],
+
+  monitoring: () => [
+    createLayoutComponent('widget', { 
+      title: 'System Status', 
+      width: 240, 
+      height: 120,
+      x: 0, 
+      y: 0 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'CPU Usage', 
+      width: 240, 
+      height: 120,
+      x: 260, 
+      y: 0 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Memory Usage', 
+      width: 240, 
+      height: 120,
+      x: 520, 
+      y: 0 
+    }),
+    createLayoutComponent('widget', { 
+      title: 'Network I/O', 
+      width: 240, 
+      height: 120,
+      x: 780, 
+      y: 0 
+    }),
+    createLayoutComponent('chart', { 
+      title: 'Response Time', 
+      width: 500, 
+      height: 250,
+      x: 0, 
+      y: 140 
+    }),
+    createLayoutComponent('chart', { 
+      title: 'Error Rate', 
+      width: 500, 
+      height: 250,
+      x: 520, 
+      y: 140 
+    }),
+  ],
+};
 
 export const generateTemplate = (templateName: string): LayoutComponent[] => {
-  const templates: Record<string, LayoutComponent[]> = {
-    dashboard: [
-      {
-        id: 'metrics-overview',
-        type: 'MetricCard',
-        props: { title: 'Total Shipments', value: 1247, trend: '+12%' },
-        position: { x: 0, y: 0 },
-        size: { width: 3, height: 1 },
-      },
-      {
-        id: 'active-routes',
-        type: 'RouteMap',
-        props: { showActiveRoutes: true },
-        position: { x: 3, y: 0 },
-        size: { width: 5, height: 3 },
-      },
-      {
-        id: 'recent-orders',
-        type: 'OrderList',
-        props: { limit: 10 },
-        position: { x: 0, y: 1 },
-        size: { width: 3, height: 2 },
-      },
-    ],
-    analytics: [
-      {
-        id: 'performance-chart',
-        type: 'AnimatedChart',
-        props: { type: 'line', data: [] },
-        position: { x: 0, y: 0 },
-        size: { width: 6, height: 2 },
-      },
-      {
-        id: 'kpi-cards',
-        type: 'MetricCard',
-        props: { title: 'On-Time Delivery', value: '94%', trend: '+2%' },
-        position: { x: 0, y: 2 },
-        size: { width: 2, height: 1 },
-      },
-    ],
-  };
-
-  return templates[templateName] || templates.dashboard;
+  const generator = layoutTemplates[templateName];
+  if (!generator) {
+    throw new Error(`Template "${templateName}" not found`);
+  }
+  return generator();
 };
 
-export const calculateGridPosition = (
-  index: number,
-  columns: number,
-  gap: number,
-  itemWidth: number,
-  itemHeight: number
-): { x: number; y: number } => {
-  const row = Math.floor(index / columns);
-  const col = index % columns;
-  
+export const saveLayoutAsTemplate = (
+  name: string,
+  components: LayoutComponent[]
+): LayoutTemplate => {
   return {
-    x: col * (itemWidth + gap),
-    y: row * (itemHeight + gap),
+    id: uuidv4(),
+    name,
+    components: components.map(component => ({
+      ...component,
+      id: generateComponentId(), // Generate new IDs for template
+    })),
   };
 };
 
-export const generateGridAreas = (
-  components: LayoutComponent[],
-  columns: number
-): string => {
-  const maxRow = Math.max(...components.map(c => c.position?.y || 0)) + 1;
-  const maxCol = Math.max(...components.map(c => c.position?.x || 0)) + 1;
-  
-  const grid = Array(maxRow).fill(null).map(() => Array(maxCol).fill('.'));
-  
-  components.forEach(component => {
-    const { x, y } = component.position || { x: 0, y: 0 };
-    const { width = 1, height = 1 } = component.size || {};
-    
-    for (let row = y; row < y + height; row++) {
-      for (let col = x; col < x + width; col++) {
-        if (grid[row] && grid[row][col] !== undefined) {
-          grid[row][col] = component.id;
-        }
-      }
+export const exportLayout = (components: LayoutComponent[]): string => {
+  return JSON.stringify({
+    version: '1.0',
+    timestamp: new Date().toISOString(),
+    components,
+  }, null, 2);
+};
+
+export const importLayout = (layoutData: string): LayoutComponent[] => {
+  try {
+    const parsed = JSON.parse(layoutData);
+    if (!parsed.components || !Array.isArray(parsed.components)) {
+      throw new Error('Invalid layout data format');
     }
-  });
-  
-  return grid.map(row => `"${row.join(' ')}"`).join(' ');
+    
+    return parsed.components.map((component: any) => ({
+      ...component,
+      id: generateComponentId(), // Generate new IDs on import
+    }));
+  } catch (error) {
+    throw new Error('Failed to parse layout data: ' + (error as Error).message);
+  }
+};
+
+export const calculateLayoutBounds = (components: LayoutComponent[]): {
+  width: number;
+  height: number;
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+} => {
+  if (components.length === 0) {
+    return { width: 0, height: 0, minX: 0, minY: 0, maxX: 0, maxY: 0 };
+  }
+
+  const minX = Math.min(...components.map(c => c.x));
+  const minY = Math.min(...components.map(c => c.y));
+  const maxX = Math.max(...components.map(c => c.x + c.width));
+  const maxY = Math.max(...components.map(c => c.y + c.height));
+
+  return {
+    width: maxX - minX,
+    height: maxY - minY,
+    minX,
+    minY,
+    maxX,
+    maxY,
+  };
 };
