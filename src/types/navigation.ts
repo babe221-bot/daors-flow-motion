@@ -1,16 +1,12 @@
-import { ComponentType } from 'react';
+import { LucideIcon } from 'lucide-react';
 
 export interface NavigationItem {
   id: string;
   label: string;
-  icon?: ComponentType<{ className?: string }>;
-  href?: string;
+  icon?: LucideIcon;
+  href: string;
   children?: NavigationItem[];
   allowedRoles?: string[];
-  badge?: number;
-  isExternal?: boolean;
-  target?: string;
-  onClick?: () => void;
 }
 
 export interface NavigationConfig {
@@ -22,22 +18,14 @@ export interface NavigationConfig {
     showSuggestions?: boolean;
   };
   userMenu?: {
-    showNotifications?: boolean;
+    showNotifications: boolean;
     notificationCount?: number;
-    showProfile?: boolean;
   };
   sticky?: boolean;
 }
 
 export interface BreadcrumbItem {
   label: string;
-  href?: string;
-  icon?: ComponentType<{ className?: string }>;
-}
-
-export interface MobileNavigationConfig {
-  swipeGestures?: boolean;
-  bottomNavigation?: boolean;
-  collapsibleSections?: boolean;
-  quickActions?: NavigationItem[];
+  href: string;
+  icon?: LucideIcon;
 }

@@ -1,22 +1,20 @@
+import { AnimeInstance } from 'animejs';
+
 export interface AnimationConfig {
   duration?: number;
   easing?: string;
   delay?: number;
   autoplay?: boolean;
-  loop?: boolean;
-  direction?: 'normal' | 'reverse' | 'alternate';
-  [key: string]: unknown;
 }
 
 export type AnimationPreset = 
+  | 'fadeIn' 
   | 'slideUp' 
   | 'slideDown' 
   | 'slideLeft' 
   | 'slideRight' 
-  | 'fadeIn' 
   | 'scaleIn' 
-  | 'bounce' 
-  | 'pulse';
+  | 'rotateIn';
 
 export interface NavigationAnimations {
   sidebarToggle: AnimationConfig;
@@ -34,6 +32,17 @@ export interface LayoutAnimations {
 export interface InteractionAnimations {
   buttonHover: AnimationConfig;
   cardHover: AnimationConfig;
-  inputFocus: AnimationConfig;
-  modalSlide: AnimationConfig;
+  modalOpen: AnimationConfig;
+  modalClose: AnimationConfig;
+}
+
+export interface AnimationContextType {
+  createAnimation: (element: HTMLElement, config: AnimationConfig) => AnimeInstance;
+  animateEntrance: (element: HTMLElement, preset: AnimationPreset, config?: AnimationConfig) => AnimeInstance;
+  createHoverAnimation: (
+    element: HTMLElement, 
+    hoverConfig: AnimationConfig, 
+    normalConfig: AnimationConfig
+  ) => () => void;
+  cleanupAnimations: () => void;
 }
