@@ -1,68 +1,61 @@
-// Navigation-related TypeScript definitions
-import { Role } from '@/lib/types';
-
 export interface NavigationItem {
   id: string;
   label: string;
-  icon: React.ComponentType<any>;
+  icon?: React.ComponentType<{ className?: string }>;
   href?: string;
-  badge?: string | number;
-  color?: string;
-  allowedRoles: Role[];
   children?: NavigationItem[];
-  isCollapsible?: boolean;
-  isExternal?: boolean;
+  allowedRoles?: string[];
+  isActive?: boolean;
+  isExpanded?: boolean;
+  badge?: {
+    count: number;
+    variant?: 'default' | 'destructive' | 'warning';
+  };
+  tooltip?: string;
+  onClick?: () => void;
+}
+
+export interface NavbarConfig {
+  title: string;
+  subtitle?: string;
+  logo?: string;
+  search?: {
+    enabled: boolean;
+    placeholder?: string;
+    showSuggestions?: boolean;
+    onSearch?: (query: string) => void;
+  };
+  userMenu?: {
+    showNotifications?: boolean;
+    notificationCount?: number;
+    showProfile?: boolean;
+    onProfileClick?: () => void;
+    onNotificationsClick?: () => void;
+    onLogout?: () => void;
+  };
+  sticky?: boolean;
+  themeToggle?: boolean;
+}
+
+export interface SidebarConfig {
+  isOpen: boolean;
+  onToggle: () => void;
+  navigationItems: NavigationItem[];
+  userRole?: string;
+  alertsCount?: number;
+  onAlertsClick?: () => void;
+}
+
+export interface MobileNavigationConfig {
+  swipeGestures?: boolean;
+  bottomNavigation?: boolean;
+  collapsibleSections?: boolean;
+  quickActions?: NavigationItem[];
+  onItemClick?: (item: NavigationItem) => void;
 }
 
 export interface BreadcrumbItem {
   label: string;
   href?: string;
-  icon?: React.ComponentType<any>;
-  isActive?: boolean;
-}
-
-export interface NavigationState {
-  activeItem: string | null;
-  expandedItems: string[];
-  searchQuery: string;
-  searchResults: NavigationItem[];
-  recentItems: NavigationItem[];
-}
-
-export interface UserMenuConfig {
-  showAvatar: boolean;
-  showName: boolean;
-  showRole: boolean;
-  showNotifications: boolean;
-  notificationCount?: number;
-}
-
-export interface SearchConfig {
-  enabled: boolean;
-  placeholder: string;
-  showSuggestions: boolean;
-  maxSuggestions: number;
-  searchableFields: ('label' | 'href' | 'id')[];
-}
-
-export interface MobileNavConfig {
-  swipeGestures: boolean;
-  bottomNavigation: boolean;
-  collapsibleSections: boolean;
-  quickActions: NavigationItem[];
-}
-
-export interface NavbarConfig {
-  logo: {
-    src: string;
-    alt: string;
-    href: string;
-    showText: boolean;
-  };
-  title?: string;
-  subtitle?: string;
-  search: SearchConfig;
-  userMenu: UserMenuConfig;
-  sticky: boolean;
-  transparent: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
 }

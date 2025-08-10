@@ -1,42 +1,42 @@
-// Responsive grid system utilities
-import { ResponsiveBreakpoint, GridConfig, LayoutComponent } from '@/types/layout';
+import { LayoutComponent, GridConfig } from '@/types/layout';
+import { getResponsiveValue } from './breakpoints';
 
-// Default responsive breakpoints
-export const defaultBreakpoints: ResponsiveBreakpoint[] = [
-  { name: 'xs', minWidth: 0, columns: 1, containerPadding: '16px' },
-  { name: 'sm', minWidth: 640, columns: 2, containerPadding: '20px' },
-  { name: 'md', minWidth: 768, columns: 3, containerPadding: '24px' },
-  { name: 'lg', minWidth: 1024, columns: 4, containerPadding: '32px' },
-  { name: 'xl', minWidth: 1280, columns: 6, containerPadding: '40px' },
-  { name: '2xl', minWidth: 1536, columns: 8, containerPadding: '48px' },
-];
+export interface GridPosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
-// Default grid configuration
-export const defaultGridConfig: GridConfig = {
-  columns: 12,
-  gap: '24px',
-  breakpoints: {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-  },
-};
+export interface GridItem extends LayoutComponent {
+  gridPosition: GridPosition;
+}
 
-// Get current breakpoint based on window width
-export const getCurrentBreakpoint = (
-  width: number,
-  breakpoints: ResponsiveBreakpoint[] = defaultBreakpoints
-): ResponsiveBreakpoint => {
-  return breakpoints
-    .slice()
-    .reverse()
-    .find(bp => width >= bp.minWidth) || breakpoints[0];
-};
+export class GridSystem {
+  private config: GridConfig;
+  private containerWidth: number;
+  private breakpoint: string;
 
-// Calculate grid item dimensions
-export const calculateGridItemSize = (
-  component: LayoutComponent,
+  constructor(config: GridConfig, containerWidth: number, breakpoint: string) {
+    this.config = config;
+    this.containerWidth = containerWidth;
+    this.breakpoint = breakpoint;
+  }
+
+  calculateGridPositions(components: LayoutComponent[]): GridItem[] {
+    const columns = getResponsiveValue(
+      this.config.breakpoints?.reduce((acc, bp) => ({ ...acc, [bp.name]: bp.columns }), {}) || {},
+      this.breakpoint
+    ) as number;
+
+    const gap = this.config.gap;
+    const minItemWidth = this.config.minItemWidth;
+    
+    const availableWidth = this.containerWidth - (columns - 1) * gap;
+    const itemWidth = Math.max(minItemWidth, availableWidth / columns);
+    
+    const gridItems: GridItem[] = [];
+    let currentX = 0;
   containerWidth: number,
   columns: number,
   gap: number

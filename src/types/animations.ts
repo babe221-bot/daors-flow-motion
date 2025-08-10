@@ -1,66 +1,38 @@
-// Animation configuration types for anime.js integration
 export interface AnimationConfig {
-  duration: number;
-  easing: string;
+  duration?: number;
+  easing?: string;
   delay?: number;
-  direction?: 'normal' | 'reverse' | 'alternate';
-  loop?: boolean | number;
   autoplay?: boolean;
-}
-
-export interface TransitionConfig extends AnimationConfig {
-  enter: {
-    from: Record<string, any>;
-    to: Record<string, any>;
-  };
-  exit: {
-    from: Record<string, any>;
-    to: Record<string, any>;
-  };
+  loop?: boolean;
+  direction?: 'normal' | 'reverse' | 'alternate';
 }
 
 export interface NavigationAnimations {
   sidebarToggle: AnimationConfig;
   menuItemHover: AnimationConfig;
+  dropdownSlide: AnimationConfig;
   breadcrumbTransition: AnimationConfig;
-  mobileMenuSlide: AnimationConfig;
-  searchExpand: AnimationConfig;
 }
 
 export interface LayoutAnimations {
   gridReorder: AnimationConfig;
-  componentDrag: AnimationConfig;
-  headerSticky: AnimationConfig;
-  footerReveal: AnimationConfig;
-  responsiveReflow: AnimationConfig;
+  componentAdd: AnimationConfig;
+  componentRemove: AnimationConfig;
+  componentUpdate: AnimationConfig;
 }
 
 export interface InteractionAnimations {
-  buttonPress: AnimationConfig;
+  buttonHover: AnimationConfig;
   cardHover: AnimationConfig;
-  modalOpen: AnimationConfig;
-  tooltipShow: AnimationConfig;
-  loadingSpinner: AnimationConfig;
+  inputFocus: AnimationConfig;
+  modalSlide: AnimationConfig;
 }
 
-export interface AnimationPresets {
-  navigation: NavigationAnimations;
-  layout: LayoutAnimations;
-  interaction: InteractionAnimations;
-}
+export type AnimationPreset = 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'fadeIn' | 'scaleIn' | 'bounce' | 'pulse';
 
-export type AnimationTrigger = 
-  | 'hover' 
-  | 'click' 
-  | 'focus' 
-  | 'scroll' 
-  | 'resize' 
-  | 'mount' 
-  | 'unmount';
-
-export interface AnimatedElementConfig {
-  trigger: AnimationTrigger;
-  animation: AnimationConfig;
-  threshold?: number; // For scroll-triggered animations
-  once?: boolean; // Play animation only once
+export interface AnimationContextValue {
+  createAnimation: (element: HTMLElement, config: AnimationConfig) => any;
+  animateEntrance: (element: HTMLElement, preset: AnimationPreset, config?: AnimationConfig) => any;
+  createHoverAnimation: (element: HTMLElement, hoverConfig: AnimationConfig, normalConfig: AnimationConfig) => any;
+  cleanup: () => void;
 }

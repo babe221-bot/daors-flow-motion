@@ -1,60 +1,44 @@
-// Layout-related TypeScript definitions
-export interface GridConfig {
-  columns: number;
-  gap: string;
-  breakpoints: {
-    sm: number;
-    md: number;
-    lg: number;
-    xl: number;
-  };
-}
-
 export interface LayoutComponent {
   id: string;
-  type: 'widget' | 'chart' | 'table' | 'form';
-  position: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  props?: Record<string, any>;
+  type: string;
+  props: Record<string, any>;
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  minSize?: { width: number; height: number };
+  maxSize?: { width: number; height: number };
   isDraggable?: boolean;
   isResizable?: boolean;
+  zIndex?: number;
 }
 
 export interface ResponsiveBreakpoint {
-  name: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  name: string;
   minWidth: number;
   columns: number;
   containerPadding: string;
 }
 
-export interface StickyConfig {
-  top?: number;
-  bottom?: number;
-  zIndex?: number;
-  backgroundColor?: string;
-  backdropBlur?: boolean;
-}
-
-export interface DragDropConfig {
-  enabled: boolean;
-  snapToGrid: boolean;
-  gridSize: number;
-  constraints?: {
-    minWidth: number;
-    minHeight: number;
-    maxWidth?: number;
-    maxHeight?: number;
-  };
+export interface GridConfig {
+  gap: number;
+  minItemWidth: number;
+  maxItemWidth?: number;
+  breakpoints?: ResponsiveBreakpoint[];
 }
 
 export interface LayoutState {
-  isMobile: boolean;
-  currentBreakpoint: ResponsiveBreakpoint['name'];
-  sidebarCollapsed: boolean;
   components: LayoutComponent[];
-  dragDropConfig: DragDropConfig;
+  sidebarOpen: boolean;
+  isMobile: boolean;
+  currentBreakpoint: string;
+}
+
+export interface LayoutActions {
+  addComponent: (component: LayoutComponent) => void;
+  removeComponent: (id: string) => void;
+  updateComponent: (id: string, updates: Partial<LayoutComponent>) => void;
+  reorderComponents: (newOrder: string[]) => void;
+  toggleSidebar: () => void;
+  setMobile: (isMobile: boolean) => void;
+  setBreakpoint: (breakpoint: string) => void;
+  loadLayout: (layout: LayoutState) => void;
 }
