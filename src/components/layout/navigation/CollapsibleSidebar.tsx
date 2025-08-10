@@ -224,8 +224,7 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
         >
           {IconComponent && (
             <IconComponent 
-              size={18} 
-              className={`flex-shrink-0 ${!isOpen && level === 0 ? 'mx-auto' : ''}`}
+              className={`w-[18px] h-[18px] flex-shrink-0 ${!isOpen && level === 0 ? 'mx-auto' : ''}`}
             />
           )}
           
@@ -237,8 +236,7 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
               
               {hasChildren && (
                 <ChevronDown 
-                  size={16} 
-                  className={`transform transition-transform duration-200 ${
+                  className={`w-4 h-4 transform transition-transform duration-200 ${
                     isItemExpanded ? 'rotate-180' : ''
                   }`}
                 />
@@ -295,7 +293,7 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
             "
             aria-label={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+            {isOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </button>
         </div>
 
@@ -318,7 +316,7 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
               title={!isOpen ? 'Alerts' : undefined}
             >
               <div className="relative flex-shrink-0">
-                <Bell size={18} />
+                <Bell className="w-[18px] h-[18px]" />
                 {alertsCount > 0 && (
                   <span className="
                     absolute -top-1 -right-1 bg-destructive text-destructive-foreground
@@ -362,7 +360,7 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
             "
             title={!isOpen ? 'Settings' : undefined}
           >
-            <Settings size={18} className="flex-shrink-0" />
+            <Settings className="w-[18px] h-[18px] flex-shrink-0" />
             
             {isOpen && (
               <span className="flex-1 text-left" data-animate-child>
@@ -390,7 +388,7 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
             "
             title={!isOpen ? 'Help' : undefined}
           >
-            <HelpCircle size={18} className="flex-shrink-0" />
+            <HelpCircle className="w-[18px] h-[18px] flex-shrink-0" />
             
             {isOpen && (
               <span className="flex-1 text-left" data-animate-child>
