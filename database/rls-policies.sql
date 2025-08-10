@@ -74,7 +74,7 @@ CREATE POLICY "Admins can read all users" ON public.users
 -- Admins can update all users
 CREATE POLICY "Admins can update all users" ON public.users
     FOR UPDATE USING (get_user_role() = 'ADMIN');
-
+    
 -- Allow user creation during signup
 CREATE POLICY "Allow user creation during signup" ON public.users
     FOR INSERT WITH CHECK (auth.uid() = id);

@@ -56,7 +56,7 @@ const handleSignUp = async (e: React.FormEvent) => {
 
   return (
     <div className="relative flex items-center justify-center min-h-screen">
-      <MediaBackground mediaSrc="/src/assets/hero-logistics.jpg" type="image" />
+      <MediaBackground mediaSrc="/hero-logistics.jpg" type="image" />
       <div className="relative z-10">
         <Card className="w-full max-w-md glass hover-lift transition-all duration-300">
           <CardHeader className="text-center">
@@ -84,7 +84,7 @@ const handleSignUp = async (e: React.FormEvent) => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder={t('signup.email.placeholder', 'user@example.com')}
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

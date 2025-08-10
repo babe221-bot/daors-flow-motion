@@ -6,12 +6,12 @@ import Logo from "@/components/Logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-// import { useTranslation } from 'react-i18next'; // Temporarily disabled
+import { useTranslation } from 'react-i18next';
 import { ROLES } from "@/lib/types"; // Import Role type
-import ParticleBackground from "@/components/ParticleBackground";
+import MediaBackground from "@/components/MediaBackground";
 
 const Login = () => {
-  // const { t } = useTranslation(); // Temporarily disabled
+  const { t } = useTranslation();
   const { isAuthenticated, login, user, loading: authLoading, loginAsGuest } = useAuth(); // Destructure loginAsGuest
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,76 +67,56 @@ const Login = () => {
   }
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-background overflow-hidden">
-      <ParticleBackground />
-      <div className="relative z-10 w-full max-w-md p-4 sm:p-6 md:p-8">
-        <Card className="w-full bg-card/80 backdrop-blur-lg border-border/20 shadow-2xl rounded-2xl">
-          <CardHeader className="text-center pb-4">
-            <div className="flex justify-center mb-4">
-              <Logo size="lg" showText={true} linkTo="/" />
+    <div className="relative flex flex-col items-center justify-center min-h-screen">
+      <MediaBackground mediaSrc="/hero-logistics.jpg" type="image" />
+      <div className="relative z-10 w-full max-w-md">
+        <Card className="w-full glass hover-lift transition-all duration-300">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-6">
+              <Logo size="lg" showText={true} linkTo={null} />
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-              Welcome Back
-            </CardTitle>
-            <CardDescription className="text-muted-foreground pt-2">
-              Sign in to continue to Daors Flow-Motion
-            </CardDescription>
+            <CardTitle className="text-xl">{t('login.title', 'Login to your Account')}</CardTitle>
+            <CardDescription>{t('login.description', 'Enter your credentials to access the dashboard.')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-muted-foreground">Email</Label>
+                <Label htmlFor="email">{t('login.email', 'Email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@company.com"
+                  placeholder={t('login.email.placeholder', 'user@example.com')}
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-input/50 border-border/30 focus:ring-primary/50"
                 />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-muted-foreground">Password</Label>
-                  <Link to="#" className="text-sm text-primary/80 hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">{t('login.password', 'Password')}</Label>
                 <Input
                   id="password"
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-input/50 border-border/30 focus:ring-primary/50"
                 />
               </div>
-              {error && <p className="text-sm text-destructive text-center">{error}</p>}
-              <Button type="submit" className="w-full text-lg py-6 rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/90 transition-all duration-300 shadow-lg hover:shadow-primary/40" disabled={loading}>
-                {loading ? 'Signing In...' : 'Sign In'}
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
               </Button>
             </form>
-            <div className="mt-6 relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/20" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-            <div className="mt-6">
-              <Button variant="outline" className="w-full text-lg py-6 rounded-lg bg-input/50 border-border/30" onClick={handleGuestLogin} disabled={loading}>
-                Sign In as Guest
-              </Button>
-            </div>
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              No account yet?{' '}
-              <Link to="/signup" className="font-semibold text-primary/90 hover:underline">
-                Create one
+            <div className="mt-4 text-center text-sm">
+              {t('login.no_account', "Don't have an account?")}{' '}
+              <Link to="/signup" className="underline">
+                {t('login.signup', 'Sign up')}
               </Link>
+            </div>
+            {/* Guest Login Button */}
+            <div className="mt-4 text-center">
+              <Button variant="outline" className="w-full" onClick={handleGuestLogin} disabled={loading}>
+                {t('login.guest', 'Login as Guest')}
+              </Button>
             </div>
           </CardContent>
         </Card>

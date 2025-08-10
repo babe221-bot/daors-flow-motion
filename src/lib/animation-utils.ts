@@ -1,12 +1,3 @@
-// Animation utilities with fallback for missing anime.js
-let anime: any;
-try {
-  anime = require('animejs');
-} catch (e) {
-  console.warn('anime.js not available, using fallback animations');
-  anime = () => ({ pause: () => {}, play: () => {} });
-}
-
 // Theme transition animation
 export function animateThemeChange() {
   const overlay = document.createElement('div');
@@ -27,50 +18,62 @@ export function animateThemeChange() {
   setTimeout(() => {
     overlay.style.opacity = '0';
     setTimeout(() => {
-      document.body.removeChild(overlay);
+      if (document.body.contains(overlay)) {
+        document.body.removeChild(overlay);
+      }
     }, 300);
   }, 50);
 }
 
-// Toast notification animation
+// Toast notification animation using CSS transitions
 export function animateToast(element: HTMLElement) {
-anime({
-    targets: element,
-    translateY: [-20, 0],
-    opacity: [0, 1],
-    duration: 300,
-    easing: 'easeOutCubic'
+  element.style.transform = 'translateY(-20px)';
+  element.style.opacity = '0';
+  element.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+  
+  requestAnimationFrame(() => {
+    element.style.transform = 'translateY(0)';
+    element.style.opacity = '1';
   });
 }
 
-// Page transition animation
+// Page transition animation using CSS transitions
 export function animatePageTransition() {
-anime({
-    targets: 'main',
-    opacity: [0, 1],
-    translateY: [20, 0],
-    duration: 500,
-    easing: 'easeOutQuart'
-  });
+  const main = document.querySelector('main');
+  if (main) {
+    main.style.opacity = '0';
+    main.style.transform = 'translateY(20px)';
+    main.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    
+    requestAnimationFrame(() => {
+      main.style.opacity = '1';
+      main.style.transform = 'translateY(0)';
+    });
+  }
 }
 
-// Button hover animation
+// Button hover animation using CSS transitions
 export function animateButtonHover(element: HTMLElement) {
-anime({
-    targets: element,
-    scale: [1, 1.05],
-    duration: 200,
-    easing: 'easeInQuad'
-  });
+  element.style.transition = 'transform 0.2s ease-in';
+  element.style.transform = 'scale(1.05)';
+  
+  const resetScale = () => {
+    element.style.transform = 'scale(1)';
+    element.removeEventListener('mouseleave', resetScale);
+  };
+  
+  element.addEventListener('mouseleave', resetScale);
 }
 
-// Form input focus animation
+// Form input focus animation using CSS transitions
 export function animateInputFocus(element: HTMLElement) {
-anime({
-    targets: element,
-    borderColor: ['#93c5fd', '#3b82f6'],
-    duration: 300,
-    easing: 'easeInOutQuad',
-    loop: false
-  });
+  element.style.transition = 'border-color 0.3s ease-in-out';
+  element.style.borderColor = '#3b82f6';
+  
+  const resetBorder = () => {
+    element.style.borderColor = '#93c5fd';
+    element.removeEventListener('blur', resetBorder);
+  };
+  
+  element.addEventListener('blur', resetBorder);
 }

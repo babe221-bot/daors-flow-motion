@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useMutation } from "@tanstack/react-query";
-import { fetchRoute } from "@/lib/api";
+import { RoutingAPI } from "@/lib/api/gateway";
 import { generateRouteOptions, RouteInfo } from "@/lib/route-optimizer";
 import MapView from "@/components/MapView";
 import { LatLngExpression } from "leaflet";
@@ -32,14 +32,22 @@ const RouteOptimization = () => {
   const [selectedRoute, setSelectedRoute] = useState<RouteInfo | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (variables: { from: Location; to: Location }) => fetchRoute(variables.from.coordinates, variables.to.coordinates),
+    mutationFn: (variables: { from: Location; to: Location }) =>
+      RoutingAPI.optimize({ stops: [variables.from.coordinates, variables.to.coordinates] }).then(r => r.data),
     onSuccess: (data) => {
-      const routeOptions = generateRouteOptions(data);
+      const routeOptions = generateRouteOptions({
+        geometry: {
+          coordinates: data.stops.map((s: any) => [s.lng, s.lat]),
+          type: 'LineString',
+        },
+        distance: data.stops.length * 50000, // placeholder
+        duration: data.stops.length * 1800,  // placeholder
+      } as any);
       setRoutes(routeOptions);
       setSelectedRoute(routeOptions[0]); // Select the first route by default
     },
     onError: (error) => {
-      console.error("Error fetching route:", error);
+      console.error("Error optimizing route:", error);
       // Here you would show a toast notification to the user
     },
   });

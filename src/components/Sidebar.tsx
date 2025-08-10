@@ -33,6 +33,9 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { ROLES, Role } from "@/lib/types";
 
+// Import the new advanced sidebar component
+import { CollapsibleSidebar } from "@/components/layout/navigation/CollapsibleSidebar";
+
 interface SubItem {
   id: string;
   label: string;

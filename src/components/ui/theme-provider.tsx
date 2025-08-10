@@ -1,24 +1,21 @@
+"use client"
+
 import * as React from "react"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+import type { ComponentProps } from "react"
+import { animateThemeChange } from "@/lib/animation-utils"
 
-interface ThemeProviderProps {
-  children: React.ReactNode
-  attribute?: string
-  defaultTheme?: string
-  enableSystem?: boolean
-  disableTransitionOnChange?: boolean
-}
-
-export function ThemeProvider({ 
-  children, 
-  attribute = "class",
-  defaultTheme = "dark",
-  enableSystem = false,
-  disableTransitionOnChange = false 
-}: ThemeProviderProps) {
+export function ThemeProvider({ children, ...props }: ComponentProps<typeof NextThemesProvider>) {
+const { theme } = props as { theme?: string }
+  
   React.useEffect(() => {
-    // Apply dark theme by default
-    document.documentElement.classList.add('dark')
-  }, [])
+    if (theme) {
+      // Use requestAnimationFrame to ensure the theme class is applied
+      requestAnimationFrame(() => {
+        animateThemeChange()
+      })
+    }
+  }, [theme])
 
-  return <>{children}</>
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
 }
