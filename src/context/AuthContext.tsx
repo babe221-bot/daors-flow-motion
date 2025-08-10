@@ -4,6 +4,7 @@ import { ROLES, Role, User as AppUser } from '@/lib/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { pingSupabase, waitForSupabase } from '../lib/supabase-health';
+import { startProtectedOperation, endProtectedOperation } from '../devtools-fix';
 import { checkReactDevToolsHooks } from '../auth-debug';
 import { checkReactDevToolsHooks } from '../auth-debug';
 
@@ -267,12 +268,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      // Disable React DevTools console patching temporarily if possible
-      const originalConsoleError = console.error;
-      const originalConsoleWarn = console.warn;
+      // Start protected operation to prevent React DevTools interference
+      startProtectedOperation();
       
-      // Try to prevent React DevTools from interfering with auth
+      // Try direct Supabase auth call first
       try {
+        console.log('Attempting direct Supabase authentication...');
+        
         // Direct call to Supabase auth to bypass potential React DevTools interference
         const { data, error: loginError } = await supabase.auth.signInWithPassword({ 
           email, 
@@ -286,6 +288,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Manually update the user state
         if (data?.user) {
+          console.log('Authentication successful, updating user state...');
           const userData = await supabase.auth.getUser();
           setUser(mapSupabaseUserToAppUser(userData?.data?.user ?? null));
           setSession(data.session);
@@ -293,22 +296,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Invalidate queries to refresh data
           await queryClient.invalidateQueries();
+          
+          console.log('User authenticated successfully:', data.user.email);
         }
         
         return { };
       } catch (directError) {
         console.warn('Direct auth attempt failed, falling back to mutation:', directError);
+        
         // Fall back to the original mutation approach
         await loginMutation.mutateAsync({ email, password });
         return { };
-      } finally {
-        // Restore console methods
-        console.error = originalConsoleError;
-        console.warn = originalConsoleWarn;
       }
     } catch (err) {
       const error = err as { message?: string };
       return { error: { message: error?.message || 'Login failed' } };
+    } finally {
+      // End protected operation and restore console methods
+      endProtectedOperation();
     }
   };
 

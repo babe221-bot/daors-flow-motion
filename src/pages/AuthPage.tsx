@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 // Import auth debug helpers
 import '../auth-debug';
+import { resetAuthState, fixAuthIssues } from '@/lib/auth-utils';
 
 const AuthPage = () => {
   const { t } = useTranslation();
@@ -196,6 +197,26 @@ const AuthPage = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
                     </Button>
+                    
+                    {/* Troubleshooting button */}
+                    <div className="mt-4">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="w-full text-sm" 
+                        onClick={async () => {
+                          try {
+                            const result = await fixAuthIssues();
+                            alert(result.message);
+                          } catch (error) {
+                            console.error('Error fixing auth issues:', error);
+                            alert('Failed to fix authentication issues. Please try again or contact support.');
+                          }
+                        }}
+                      >
+                        Having trouble logging in?
+                      </Button>
+                    </div>
                   </motion.form>
                 ) : (
                   <motion.form

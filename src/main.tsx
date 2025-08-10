@@ -1,3 +1,6 @@
+// Import React DevTools fix first to prevent console patching
+import './fix-react-devtools';
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
