@@ -139,11 +139,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             break; // Success, exit retry loop
           } catch (sessionError) {
             retryCount++;
-            console.warn(`Session fetch attempt ${retryCount} failed:`, sessionError);
+            const errorMessage = sessionError instanceof Error ? sessionError.message : 'Unknown error';
+            console.warn(`Session fetch attempt ${retryCount} failed: ${errorMessage}`);
+            
+            // Log specific timeout errors for debugging
+            if (errorMessage.includes('timeout')) {
+              console.warn(`⏱️ Timeout occurred on attempt ${retryCount}. This may indicate network issues or Supabase service problems.`);
+            }
             
             if (retryCount < maxRetries) {
               // Wait before retrying (exponential backoff)
-              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+              const delay = 1000 * retryCount;
+              console.log(`🔄 Retrying in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+            } else {
+              console.warn(`❌ All ${maxRetries} session fetch attempts failed. Proceeding with guest mode.`);
             }
           }
         }
@@ -169,11 +179,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               break; // Success, exit retry loop
             } catch (userError) {
               userRetryCount++;
-              console.warn(`User fetch attempt ${userRetryCount} failed:`, userError);
+              const errorMessage = userError instanceof Error ? userError.message : 'Unknown error';
+              console.warn(`User fetch attempt ${userRetryCount} failed: ${errorMessage}`);
+              
+              if (errorMessage.includes('timeout')) {
+                console.warn(`⏱️ User fetch timeout on attempt ${userRetryCount}`);
+              }
               
               if (userRetryCount < maxRetries) {
                 // Wait before retrying (exponential backoff)
-                await new Promise(resolve => setTimeout(resolve, 1000 * userRetryCount));
+                const delay = 1000 * userRetryCount;
+                console.log(`🔄 Retrying user fetch in ${delay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+              } else {
+                console.warn(`❌ All ${maxRetries} user fetch attempts failed.`);
               }
             }
           }
