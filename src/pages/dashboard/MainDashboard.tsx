@@ -8,10 +8,10 @@ import { getMetricData, getShipmentData, getRevenueData, getRouteData } from '@/
 
 // Components
 import MetricCard from '@/components/widgets/MetricCard';
-import { AnimatedChart } from '@/components/AnimatedChart';
-import { EnhancedTable } from '@/components/EnhancedTable';
-import { AlertsPanel } from '@/components/AlertsPanel';
-import { MapView } from '@/components/MapView';
+import AnimatedChart from '@/components/AnimatedChart';
+import EnhancedTable from '@/components/EnhancedTable';
+import AlertsPanel from '@/components/AlertsPanel';
+import MapView from '@/components/MapView';
 
 // Types
 import { Item, LiveRoute } from '@/lib/types';

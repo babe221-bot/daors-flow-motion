@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { Filter, RefreshCw, Truck, MapPin, AlertTriangle } from 'lucide-react';
 
 // Components
-import { MapView } from '@/components/MapView';
-import { EnhancedTable } from '@/components/EnhancedTable';
-import { AlertsPanel } from '@/components/AlertsPanel';
+import MapView from '@/components/MapView';
+import EnhancedTable from '@/components/EnhancedTable';
+import AlertsPanel from '@/components/AlertsPanel';
 
 // Types
 interface Vehicle {

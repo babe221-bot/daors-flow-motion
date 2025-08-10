@@ -1,7 +1,7 @@
 import React from 'react';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { EnhancedTable } from '@/components/EnhancedTable';
+import EnhancedTable from '@/components/EnhancedTable';
 
 const OrderManagement: React.FC = () => {
   const data = Array.from({ length: 12 }).map((_, i) => ({ id: `ORD-${1000+i}`, status: i%3===0?'Processing': i%3===1?'In Transit':'Delivered', customer: `Customer ${i+1}`, amount: Math.round(100+Math.random()*900) }))
