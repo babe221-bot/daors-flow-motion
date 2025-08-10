@@ -97,6 +97,23 @@ export const validateConfig = (): void => {
       throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
     }
   }
+
+  // Validate Supabase URL format
+  const supabaseUrl = config.supabase.url;
+  if (supabaseUrl && !supabaseUrl.startsWith('https://') && !supabaseUrl.startsWith('http://localhost')) {
+    console.warn('Supabase URL should start with https:// or http://localhost for local development');
+  }
+
+  // Validate Supabase URL is reachable (basic format check)
+  if (supabaseUrl && !supabaseUrl.includes('.supabase.co') && !supabaseUrl.includes('localhost')) {
+    console.warn('Supabase URL format may be incorrect. Expected format: https://[project-id].supabase.co');
+  }
+
+  console.log('Configuration validation completed', {
+    supabaseUrl: config.supabase.url,
+    hasAnonKey: !!config.supabase.anonKey,
+    environment: import.meta.env.MODE
+  });
 };
 
 // Initialize configuration validation

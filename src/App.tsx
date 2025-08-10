@@ -5,6 +5,7 @@ import LoadingScreen from './components/LoadingScreen';
 import LanguageChangeNotification from './components/LanguageChangeNotification';
 import ErrorBoundary from './components/ErrorBoundary';
 import DebugOverlay from './components/DebugOverlay';
+import ConnectionStatus from './components/ConnectionStatus';
 import { debug } from './lib/debug';
 
 // Simple fallback component for lazy loading errors
@@ -132,6 +133,10 @@ const AppContent = () => {
     <div className="flex flex-col min-h-screen">
       <ErrorBoundary>
         <LanguageChangeNotification />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <ConnectionStatus className="fixed top-4 right-4 z-50 max-w-sm" />
       </ErrorBoundary>
       
       <AnimatePresence mode="wait" initial={false}>
