@@ -103,8 +103,10 @@ const AuthPage = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSignUp = async (e?: React.FormEvent | React.MouseEvent) => {
+    // Prevent native form submission reload for both submit and click events
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (e as any)?.preventDefault?.();
     setLoading(true);
     setSignupError('');
     setSignupMessage('');
@@ -197,7 +199,7 @@ const AuthPage = () => {
                       />
                     </div>
                     {loginError && <p className="text-sm text-destructive">{loginError}</p>}
-                    <Button type="submit" className="w-full" disabled={loading}>
+                    <Button type="submit" className="w-full" disabled={loading} onClick={handleLogin}>
                       {loading ? t('login.loading', 'Logging in...') : t('login.submit', 'Login')}
                     </Button>
                     
