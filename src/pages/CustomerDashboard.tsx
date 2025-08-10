@@ -21,32 +21,35 @@ import { Item } from '@/lib/types';
 import { Link } from 'react-router-dom';
 import AnimatedChart from '@/components/AnimatedChart';
 
+
+// Move static mock data outside the component
+const recentActivityData = [
+  {
+    id: 1,
+    type: 'shipment_update',
+    message: 'Shipment #12345 has been picked up',
+    timestamp: '2 hours ago',
+    icon: Truck
+  },
+  {
+    id: 2,
+    type: 'delivery',
+    message: 'Package delivered to Zagreb, Croatia',
+    timestamp: '1 day ago',
+    icon: CheckCircle
+  },
+  {
+    id: 3,
+    type: 'alert',
+    message: 'Route delay on shipment #12344',
+    timestamp: '2 days ago',
+    icon: AlertTriangle
+  }
+];
+
 const CustomerDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [recentActivity, setRecentActivity] = useState([
-    {
-      id: 1,
-      type: 'shipment_update',
-      message: 'Shipment #12345 has been picked up',
-      timestamp: '2 hours ago',
-      icon: Truck
-    },
-    {
-      id: 2,
-      type: 'delivery',
-      message: 'Package delivered to Zagreb, Croatia',
-      timestamp: '1 day ago',
-      icon: CheckCircle
-    },
-    {
-      id: 3,
-      type: 'alert',
-      message: 'Route delay on shipment #12344',
-      timestamp: '2 days ago',
-      icon: AlertTriangle
-    }
-  ]);
 
   const { data: items = [] } = useQuery({
     queryKey: ['customerItems'],
@@ -54,34 +57,35 @@ const CustomerDashboard: React.FC = () => {
   });
 
   // Filter items for current user (in a real app, this would be done server-side)
-  const userItems = items.filter(item => 
-    user?.associatedItemIds?.includes(item.id) || items.slice(0, 3)
-  );
+  const userItems = user?.associatedItemIds
+    ? items.filter(item => user.associatedItemIds.includes(item.id))
+    : items.slice(0, 3);
 
-  const activeShipments = userItems.filter(item => 
+
+  // Memoize computed values for performance
+  const activeShipments = React.useMemo(() => userItems.filter(item => 
     item.status === 'In Transit' || item.status === 'Processing'
-  ).length;
+  ).length, [userItems]);
 
-  const deliveredThisMonth = userItems.filter(item => 
+  const deliveredThisMonth = React.useMemo(() => userItems.filter(item => 
     item.status === 'Delivered'
-  ).length;
+  ).length, [userItems]);
 
-  const pendingShipments = userItems.filter(item => 
+  const pendingShipments = React.useMemo(() => userItems.filter(item => 
     item.status === 'Pending'
-  ).length;
+  ).length, [userItems]);
 
-  // Mock data for charts
-  const shipmentStatusData = [
+  const shipmentStatusData = React.useMemo(() => [
     { label: 'In Transit', value: activeShipments, color: 'bg-blue-500' },
     { label: 'Delivered', value: deliveredThisMonth, color: 'bg-green-500' },
     { label: 'Pending', value: pendingShipments, color: 'bg-yellow-500' },
-  ];
+  ], [activeShipments, deliveredThisMonth, pendingShipments]);
 
-  const monthlyShipmentsData = Array.from({ length: 6 }, (_, i) => ({
+  const monthlyShipmentsData = React.useMemo(() => Array.from({ length: 6 }, (_, i) => ({
     label: new Date(Date.now() - (5-i) * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en', { month: 'short' }),
     value: Math.floor(Math.random() * 10) + 5,
     color: 'bg-primary'
-  }));
+  })), []);
 
   return (
     <div className="p-6 space-y-6">
@@ -181,7 +185,7 @@ const CustomerDashboard: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {recentActivity.map((activity) => {
+              {recentActivityData.map((activity) => {
                 const IconComponent = activity.icon;
                 return (
                   <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
