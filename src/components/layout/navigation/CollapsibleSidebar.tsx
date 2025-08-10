@@ -132,3 +132,31 @@ export const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({
           ))}
         </nav>
 
+        {/* Alerts Section */}
+        {onAlertsClick && (
+          <div className="border-t p-4">
+            <button
+              onClick={onAlertsClick}
+              className={cn(
+                'w-full flex items-center px-4 py-3 text-sm text-destructive hover:bg-destructive/10 rounded-md transition-colors',
+                !isOpen && 'justify-center'
+              )}
+            >
+              <AlertTriangle className="h-5 w-5" />
+              {isOpen && (
+                <span className="ml-3 flex items-center">
+                  Alerts
+                  {alertsCount > 0 && (
+                    <span className="ml-2 px-2 py-1 bg-destructive text-white text-xs rounded-full">
+                      {alertsCount}
+                    </span>
+                  )}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+};
