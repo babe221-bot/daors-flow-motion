@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import Logo from "@/components/Logo";
@@ -11,6 +11,8 @@ import { ROLES } from "@/lib/types";
 import VideoBackground from "@/components/VideoBackground";
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
+// Import auth debug helpers
+import '../auth-debug';
 
 const AuthPage = () => {
   const { t } = useTranslation();
@@ -31,17 +33,67 @@ const AuthPage = () => {
   
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
+  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setLoginError('');
+    
     try {
+      // First, try to clear any stale auth data
+      if (window.debugAuth) {
+        window.debugAuth.clearAuthData();
+      }
+      
+      // Attempt login
       const { error: loginError } = await login(loginEmail, loginPassword);
+      
       if (loginError) {
         setLoginError(loginError.message);
+        return;
       }
+      
+      // If login succeeded but we're still on this page, force navigation
+      setTimeout(() => {
+        // Check if we're still on the login page after successful login
+        if (window.location.pathname.includes('/login')) {
+          console.log('Login successful but no redirect occurred. Forcing navigation...');
+          
+          // Force navigation based on role
+          const currentUser = user;
+          if (currentUser?.role === ROLES.CLIENT) {
+            navigate('/portal');
+          } else {
+            navigate('/');
+          }
+        }
+      }, 1000);
     } catch (err) {
-      setLoginError('An unexpected error occurred.');
+      console.error('Login error:', err);
+      setLoginError('An unexpected error occurred during login.');
+      
+      // Try direct Supabase login as fallback
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: loginEmail,
+          password: loginPassword
+        });
+        
+        if (error) {
+          setLoginError(error.message);
+        } else if (data?.user) {
+          // Force navigation based on role
+          if (data.user.app_metadata?.userrole === 'CLIENT' || 
+              data.user.user_metadata?.role === 'CLIENT') {
+            navigate('/portal');
+          } else {
+            navigate('/');
+          }
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback login failed:', fallbackErr);
+      }
     } finally {
       setLoading(false);
     }

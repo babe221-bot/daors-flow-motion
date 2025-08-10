@@ -4,6 +4,8 @@ import { ROLES, Role, User as AppUser } from '@/lib/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { pingSupabase, waitForSupabase } from '../lib/supabase-health';
+import { checkReactDevToolsHooks } from '../auth-debug';
+import { checkReactDevToolsHooks } from '../auth-debug';
 
 // Define proper types for auth responses
 interface AuthError {
@@ -265,8 +267,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      await loginMutation.mutateAsync({ email, password });
-      return { };
+      // Disable React DevTools console patching temporarily if possible
+      const originalConsoleError = console.error;
+      const originalConsoleWarn = console.warn;
+      
+      // Try to prevent React DevTools from interfering with auth
+      try {
+        // Direct call to Supabase auth to bypass potential React DevTools interference
+        const { data, error: loginError } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password 
+        });
+        
+        if (loginError) {
+          console.warn('Login error:', loginError.message);
+          return { error: { message: loginError.message } };
+        }
+        
+        // Manually update the user state
+        if (data?.user) {
+          const userData = await supabase.auth.getUser();
+          setUser(mapSupabaseUserToAppUser(userData?.data?.user ?? null));
+          setSession(data.session);
+          localStorage.removeItem('df_guest_session');
+          
+          // Invalidate queries to refresh data
+          await queryClient.invalidateQueries();
+        }
+        
+        return { };
+      } catch (directError) {
+        console.warn('Direct auth attempt failed, falling back to mutation:', directError);
+        // Fall back to the original mutation approach
+        await loginMutation.mutateAsync({ email, password });
+        return { };
+      } finally {
+        // Restore console methods
+        console.error = originalConsoleError;
+        console.warn = originalConsoleWarn;
+      }
     } catch (err) {
       const error = err as { message?: string };
       return { error: { message: error?.message || 'Login failed' } };
