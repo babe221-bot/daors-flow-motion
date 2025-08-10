@@ -36,8 +36,11 @@ const AuthPage = () => {
 
   const navigate = useNavigate();
   
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (e?: React.FormEvent | React.MouseEvent) => {
+    // Guard against native form submission reloads
+    // Works for both submit and click events
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (e as any)?.preventDefault?.();
     setLoading(true);
     setLoginError('');
     
