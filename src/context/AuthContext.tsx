@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Optionally set as guest user to allow app to function
         setUser({ id: 'timeout-guest', username: 'Guest User', role: ROLES.GUEST });
       }
-    }, 8000); // Increased to 8 seconds to give more time
+    }, 15000); // Increased to 15 seconds to accommodate retries
     
     const initializeAuth = async () => {
       try {
@@ -104,18 +104,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        // Try to get session with timeout
+        // Try to get session with increased timeout and retry logic
         let sessionData = null;
-        try {
-          const { data } = await Promise.race([
-            supabase.auth.getSession(),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Session fetch timeout')), 5000)
-            )
-          ]);
-          sessionData = data?.session;
-        } catch (sessionError) {
-          console.warn('Session fetch failed:', sessionError);
+        let retryCount = 0;
+        const maxRetries = 3;
+        const timeoutMs = 10000; // Increased to 10 seconds
+        
+        while (retryCount < maxRetries && !sessionData) {
+          try {
+            const { data } = await Promise.race([
+              supabase.auth.getSession(),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Session fetch timeout')), timeoutMs)
+              )
+            ]);
+            sessionData = data?.session;
+            break; // Success, exit retry loop
+          } catch (sessionError) {
+            retryCount++;
+            console.warn(`Session fetch attempt ${retryCount} failed:`, sessionError);
+            
+            if (retryCount < maxRetries) {
+              // Wait before retrying (exponential backoff)
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            }
+          }
         }
         
         if (!isMounted) return;
@@ -125,16 +138,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Only try to get user if we have a session
         if (sessionData) {
           let userData = null;
-          try {
-            const { data } = await Promise.race([
-              supabase.auth.getUser(),
-              new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('User fetch timeout')), 5000)
-              )
-            ]);
-            userData = data?.user;
-          } catch (userError) {
-            console.warn('User fetch failed:', userError);
+          let userRetryCount = 0;
+          
+          while (userRetryCount < maxRetries && !userData) {
+            try {
+              const { data } = await Promise.race([
+                supabase.auth.getUser(),
+                new Promise((_, reject) => 
+                  setTimeout(() => reject(new Error('User fetch timeout')), timeoutMs)
+                )
+              ]);
+              userData = data?.user;
+              break; // Success, exit retry loop
+            } catch (userError) {
+              userRetryCount++;
+              console.warn(`User fetch attempt ${userRetryCount} failed:`, userError);
+              
+              if (userRetryCount < maxRetries) {
+                // Wait before retrying (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * userRetryCount));
+              }
+            }
           }
           
           if (!isMounted) return;
