@@ -2,31 +2,16 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { supabase } from '../lib/supabaseClient';
 import { ROLES, Role, User as AppUser } from '@/lib/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
-// Define proper types for Supabase session and user
-interface SupabaseSession {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  token_type: string;
-  user?: {
-    id: string;
-    email?: string;
-    user_metadata?: Record<string, unknown>;
-    app_metadata?: Record<string, unknown>;
-  };
-}
-
-interface SupabaseUser {
-  id: string;
-  email?: string;
-  user_metadata?: Record<string, unknown>;
-  app_metadata?: Record<string, unknown>;
+// Define proper types for auth responses
+interface AuthError {
+  message: string;
 }
 
 interface AuthContextType {
   // Session & user state
-  session: SupabaseSession | null;
+  session: Session | null;
   user: (AppUser & { email?: string }) | null;
   loading: boolean;
   isAuthenticated: boolean;
@@ -81,7 +66,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-  const [session, setSession] = useState<SupabaseSession | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<(AppUser & { email?: string }) | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -222,8 +207,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await loginMutation.mutateAsync({ email, password });
       return { };
-    } catch (err: any) {
-      return { error: { message: err?.message || 'Login failed' } };
+    } catch (err) {
+      const error = err as { message?: string };
+      return { error: { message: error?.message || 'Login failed' } };
     }
   };
 
@@ -243,8 +229,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) return { error: { message: error.message } };
       return {};
-    } catch (err: any) {
-      return { error: { message: err?.message || 'Signup failed' } };
+    } catch (err) {
+      const error = err as { message?: string };
+      return { error: { message: error?.message || 'Signup failed' } };
     }
   };
 
@@ -255,8 +242,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({ id: 'guest', username: 'guest', role: ROLES.GUEST });
       setSession(null);
       return {};
-    } catch (err: any) {
-      return { error: { message: err?.message || 'Guest login failed' } };
+    } catch (err) {
+      const error = err as { message?: string };
+      return { error: { message: error?.message || 'Guest login failed' } };
     }
   };
 
