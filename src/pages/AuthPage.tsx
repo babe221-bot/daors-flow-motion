@@ -168,9 +168,8 @@ const AuthPage = () => {
             <CardContent>
               <AnimatePresence mode="wait">
                 {isLoginMode ? (
-                  <motion.form
+                  <motion.div
                     key="login"
-                    onSubmit={handleLogin}
                     className="space-y-4"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -222,11 +221,10 @@ const AuthPage = () => {
                         Having trouble logging in?
                       </Button>
                     </div>
-                  </motion.form>
+                  </motion.div>
                 ) : (
-                  <motion.form
+                  <motion.div
                     key="signup"
-                    onSubmit={handleSignUp}
                     className="space-y-4"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
