@@ -4,8 +4,6 @@ import { ROLES, Role, User as AppUser } from '@/lib/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { pingSupabase, waitForSupabase } from '../lib/supabase-health';
-import { startProtectedOperation, endProtectedOperation } from '../devtools-fix';
-import { checkReactDevToolsHooks } from '../auth-debug';
 
 // Define proper types for auth responses
 interface AuthError {

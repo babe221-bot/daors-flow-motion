@@ -11,8 +11,7 @@ import { ROLES } from "@/lib/types";
 import VideoBackground from "@/components/VideoBackground";
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
-// Import auth debug helpers
-import '../auth-debug';
+
 import { resetAuthState, fixAuthIssues } from '@/lib/auth-utils';
 
 const AuthPage = () => {
