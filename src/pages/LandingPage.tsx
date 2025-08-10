@@ -16,36 +16,46 @@ import MediaBackground from '@/components/MediaBackground';
 import ParticleBackground from '@/components/ParticleBackground';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 
+
+// Memoized static features array (translation keys only)
+const featuresData = [
+  {
+    icon: Truck,
+    titleKey: 'landing.features.tracking.title',
+    defaultTitle: 'Real-time Tracking',
+    descKey: 'landing.features.tracking.description',
+    defaultDesc: 'Monitor your shipments in real-time with our advanced GPS tracking system.'
+  },
+  {
+    icon: Globe,
+    titleKey: 'landing.features.coverage.title',
+    defaultTitle: 'Global Coverage',
+    descKey: 'landing.features.coverage.description',
+    defaultDesc: 'Seamless logistics across borders with our extensive international network.'
+  },
+  {
+    icon: Shield,
+    titleKey: 'landing.features.security.title',
+    defaultTitle: 'Secure Handling',
+    descKey: 'landing.features.security.description',
+    defaultDesc: 'Military-grade security protocols to ensure your cargo arrives safely.'
+  },
+  {
+    icon: Zap,
+    titleKey: 'landing.features.speed.title',
+    defaultTitle: 'Fast Delivery',
+    descKey: 'landing.features.speed.description',
+    defaultDesc: 'Optimized routes and efficient processes for the fastest delivery times.'
+  }
+];
+
 const LandingPage = () => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
-  
+
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  const features = [
-    {
-      icon: Truck,
-      title: t('landing.features.tracking.title', 'Real-time Tracking'),
-      description: t('landing.features.tracking.description', 'Monitor your shipments in real-time with our advanced GPS tracking system.')
-    },
-    {
-      icon: Globe,
-      title: t('landing.features.coverage.title', 'Global Coverage'),
-      description: t('landing.features.coverage.description', 'Seamless logistics across borders with our extensive international network.')
-    },
-    {
-      icon: Shield,
-      title: t('landing.features.security.title', 'Secure Handling'),
-      description: t('landing.features.security.description', 'Military-grade security protocols to ensure your cargo arrives safely.')
-    },
-    {
-      icon: Zap,
-      title: t('landing.features.speed.title', 'Fast Delivery'),
-      description: t('landing.features.speed.description', 'Optimized routes and efficient processes for the fastest delivery times.')
-    }
-  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -178,7 +188,7 @@ const LandingPage = () => {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {features.map((feature, index) => (
+              {featuresData.map((feature, index) => (
                 <motion.div
                   key={index}
                   variants={itemVariants}
@@ -190,8 +200,8 @@ const LandingPage = () => {
                       <div className="bg-primary/10 p-3 rounded-full mb-4">
                         <feature.icon className="h-8 w-8 text-primary" />
                       </div>
-                      <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                      <p className="text-muted-foreground">{feature.description}</p>
+                      <h3 className="text-xl font-semibold mb-2">{t(feature.titleKey, feature.defaultTitle)}</h3>
+                      <p className="text-muted-foreground">{t(feature.descKey, feature.defaultDesc)}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
