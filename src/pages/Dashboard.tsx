@@ -1,32 +1,180 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import NaviBar from '@/components/NaviBar';
-import { motion, AnimatePresence } from 'framer-motion';
+import ParticleBackground from '@/components/ParticleBackground';
+import VideoBackground from '@/components/VideoBackground';
+import ModernFooter from '@/components/ModernFooter';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartLegend } from '@/components/ui/chart';
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Bar, BarChart } from 'recharts';
+import { 
+  BarChart3, 
+  Zap, 
+  Users, 
+  Radar, 
+  Route, 
+  Shield,
+  Package,
+  FileText,
+  BarChart4,
+  UserCheck,
+  ArrowUp,
+  TrendingUp,
+  Activity,
+  Clock,
+  CheckCircle,
+  AlertTriangle
+} from 'lucide-react';
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Initialize particles background
-  useEffect(() => {
-    // Video autoplay logic
-    if (videoRef.current) {
-      videoRef.current.play().catch(e => console.error("Video autoplay failed:", e));
-    }
-  }, []);
 
   // Sample data for charts
-  const chartData = [
-    { month: 'Jan', revenue: 450 },
-    { month: 'Feb', revenue: 620 },
-    { month: 'Mar', revenue: 580 },
-    { month: 'Apr', revenue: 740 },
-    { month: 'May', revenue: 820 },
-    { month: 'Jun', revenue: 950 },
+  const revenueData = [
+    { month: 'Jan', revenue: 450, deliveries: 120 },
+    { month: 'Feb', revenue: 620, deliveries: 180 },
+    { month: 'Mar', revenue: 580, deliveries: 165 },
+    { month: 'Apr', revenue: 740, deliveries: 200 },
+    { month: 'May', revenue: 820, deliveries: 235 },
+    { month: 'Jun', revenue: 950, deliveries: 290 },
+  ];
+
+  const deliveryData = [
+    { day: 'Mon', onTime: 85, delayed: 15 },
+    { day: 'Tue', onTime: 92, delayed: 8 },
+    { day: 'Wed', onTime: 88, delayed: 12 },
+    { day: 'Thu', onTime: 95, delayed: 5 },
+    { day: 'Fri', onTime: 90, delayed: 10 },
+    { day: 'Sat', onTime: 78, delayed: 22 },
+    { day: 'Sun', onTime: 82, delayed: 18 },
+  ];
+
+  const features = [
+    {
+      icon: BarChart3,
+      title: t('dashboard.features.analytics.title'),
+      description: t('dashboard.features.analytics.description'),
+      color: 'from-blue-500 to-blue-600'
+    },
+    {
+      icon: Zap,
+      title: t('dashboard.features.automation.title'),
+      description: t('dashboard.features.automation.description'),
+      color: 'from-yellow-500 to-orange-500'
+    },
+    {
+      icon: Users,
+      title: t('dashboard.features.collaboration.title'),
+      description: t('dashboard.features.collaboration.description'),
+      color: 'from-green-500 to-green-600'
+    },
+    {
+      icon: Radar,
+      title: t('dashboard.features.tracking.title'),
+      description: t('dashboard.features.tracking.description'),
+      color: 'from-purple-500 to-purple-600'
+    },
+    {
+      icon: Route,
+      title: t('dashboard.features.optimization.title'),
+      description: t('dashboard.features.optimization.description'),
+      color: 'from-red-500 to-red-600'
+    },
+    {
+      icon: Shield,
+      title: t('dashboard.features.security.title'),
+      description: t('dashboard.features.security.description'),
+      color: 'from-indigo-500 to-indigo-600'
+    }
+  ];
+
+  const metrics = [
+    {
+      label: 'Monthly Revenue',
+      value: '$48,328',
+      change: '+15.2%',
+      trend: 'up',
+      icon: TrendingUp,
+      color: 'text-green-500'
+    },
+    {
+      label: 'Active Shipments',
+      value: '1,847',
+      change: '+8.5%',
+      trend: 'up',
+      icon: Package,
+      color: 'text-blue-500'
+    },
+    {
+      label: 'On-Time Delivery',
+      value: '94.2%',
+      change: '+2.1%',
+      trend: 'up',
+      icon: CheckCircle,
+      color: 'text-green-500'
+    },
+    {
+      label: 'Active Drivers',
+      value: '287',
+      change: '+5.8%',
+      trend: 'up',
+      icon: UserCheck,
+      color: 'text-purple-500'
+    },
+    {
+      label: 'Fleet Efficiency',
+      value: '87.6%',
+      change: '+3.4%',
+      trend: 'up',
+      icon: Activity,
+      color: 'text-orange-500'
+    },
+    {
+      label: 'Avg Response Time',
+      value: '2.3min',
+      change: '-12%',
+      trend: 'down',
+      icon: Clock,
+      color: 'text-green-500'
+    }
+  ];
+
+  const quickAccessItems = [
+    {
+      title: t('dashboard.quickAccess.inventory'),
+      description: 'Manage stock levels',
+      href: '/inventory',
+      icon: Package,
+      color: 'from-blue-500/20 to-blue-600/20',
+      iconColor: 'text-blue-600'
+    },
+    {
+      title: t('dashboard.quickAccess.shipments'),
+      description: 'Track deliveries',
+      href: '/item-tracking',
+      icon: Route,
+      color: 'from-green-500/20 to-green-600/20',
+      iconColor: 'text-green-600'
+    },
+    {
+      title: t('dashboard.quickAccess.reports'),
+      description: 'View analytics',
+      href: '/reports',
+      icon: BarChart4,
+      color: 'from-purple-500/20 to-purple-600/20',
+      iconColor: 'text-purple-600'
+    },
+    {
+      title: t('dashboard.quickAccess.team'),
+      description: 'Manage drivers',
+      href: '/team',
+      icon: Users,
+      color: 'from-orange-500/20 to-orange-600/20',
+      iconColor: 'text-orange-600'
+    }
   ];
 
   return (
