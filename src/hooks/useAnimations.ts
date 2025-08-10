@@ -1,117 +1,178 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect, useMemo } from 'react';
+import { useAnimation } from 'framer-motion';
 import anime from 'animejs';
-import { AnimationConfig, AnimationPreset } from '@/types/animations';
+import { 
+  AnimationConfig, 
+  AnimationContext, 
+  AnimationPresets, 
+  EntranceAnimation,
+  AnimationIntensity
+} from '@/types/animations';
+import { 
+  navigationAnimationPresets,
+  animateEntrance,
+  animateStaggeredEntrance,
+  createRippleEffect,
+} from '@/lib/animations/interactionAnimations';
+import {
+  layoutAnimationPresets
+} from '@/lib/animations/layoutAnimations';
+import {
+  interactionAnimationPresets
+} from '@/lib/animations/interactionAnimations';
 
-export const useAnimations = () => {
-  const animationsRef = useRef<any[]>([]);
-
-  const createAnimation = useCallback((element: HTMLElement, config: AnimationConfig) => {
-    const animation = anime({
-      targets: element,
-      ...config,
-    });
-    
-    animationsRef.current.push(animation);
-    return animation;
+export const useAnimations = (intensity: AnimationIntensity = 'medium') => {
+  const activeAnimations = useRef<anime.AnimeInstance[]>([]);
+  const reducedMotion = useMemo(() => {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, []);
 
-  const animateEntrance = useCallback((
-    element: HTMLElement,
-    preset: AnimationPreset,
-    config: AnimationConfig = {}
-  ) => {
-    const presets: Record<AnimationPreset, any> = {
-      fadeIn: {
-        opacity: [0, 1],
-        duration: config.duration || 400,
-        easing: config.easing || 'easeOutQuad',
-      },
-      slideUp: {
-        opacity: [0, 1],
-        translateY: [20, 0],
-        duration: config.duration || 400,
-        easing: config.easing || 'easeOutBack',
-      },
-      slideDown: {
-        opacity: [0, 1],
-        translateY: [-20, 0],
-        duration: config.duration || 400,
-        easing: config.easing || 'easeOutBack',
-      },
-      slideLeft: {
-        opacity: [0, 1],
-        translateX: [20, 0],
-        duration: config.duration || 400,
-        easing: config.easing || 'easeOutBack',
-      },
-      slideRight: {
-        opacity: [0, 1],
-        translateX: [-20, 0],
-        duration: config.duration || 400,
-        easing: config.easing || 'easeOutBack',
-      },
-      scaleIn: {
-        opacity: [0, 1],
-        scale: [0.8, 1],
-        duration: config.duration || 400,
-        easing: config.easing || 'easeOutBack',
-      },
-      rotateIn: {
-        opacity: [0, 1],
-        rotate: [180, 0],
-        duration: config.duration || 600,
-        easing: config.easing || 'easeOutBack',
-      },
+  const presets: AnimationPresets = useMemo(() => ({
+    navigation: navigationAnimationPresets,
+    layout: layoutAnimationPresets,
+    interaction: interactionAnimationPresets,
+  }), []);
+
+  // Adjust animation configs based on intensity and reduced motion
+  const adjustConfig = useCallback((config: AnimationConfig): AnimationConfig => {
+    if (reducedMotion) {
+      return {
+        ...config,
+        duration: Math.min(config.duration || 300, 150),
+        easing: 'linear',
+      };
+    }
+
+    const intensityMultipliers = {
+      low: 0.7,
+      medium: 1,
+      high: 1.3,
     };
 
-    const animation = anime({
-      targets: element,
-      ...presets[preset],
+    const multiplier = intensityMultipliers[intensity];
+
+    return {
       ...config,
-    });
+      duration: Math.round((config.duration || 300) * multiplier),
+    };
+  }, [intensity, reducedMotion]);
 
-    animationsRef.current.push(animation);
+  const createAnimation = useCallback((config: AnimationConfig) => {
+    const adjustedConfig = adjustConfig(config);
+    const animation = anime(adjustedConfig);
+    activeAnimations.current.push(animation);
     return animation;
-  }, []);
+  }, [adjustConfig]);
 
-  const animateSidebarToggle = useCallback((
+  const animateEntranceHook = useCallback((
     element: HTMLElement,
-    isExpanded: boolean,
-    config: AnimationConfig = {}
+    type: EntranceAnimation,
+    config?: Partial<AnimationConfig>
   ) => {
-    return anime({
-      targets: element,
-      width: isExpanded ? '256px' : '64px',
-      duration: config.duration || 300,
-      easing: config.easing || 'easeOutQuad',
-    });
-  }, []);
+    const adjustedConfig = adjustConfig({ duration: 300, easing: 'easeOutQuad', ...config });
+    return animateEntrance(element, type, adjustedConfig);
+  }, [adjustConfig]);
+
+  const animateExit = useCallback((
+    element: HTMLElement,
+    type: EntranceAnimation,
+    config?: Partial<AnimationConfig>
+  ) => {
+    const adjustedConfig = adjustConfig({ duration: 250, easing: 'easeInQuad', ...config });
+    
+    // Reverse the entrance animation
+    const reverseConfig = { ...adjustedConfig };
+    
+    switch (type) {
+      case 'fadeIn':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+        });
+      case 'slideUp':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+          translateY: [0, 30],
+        });
+      case 'slideDown':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+          translateY: [0, -30],
+        });
+      case 'slideLeft':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+          translateX: [0, 30],
+        });
+      case 'slideRight':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+          translateX: [0, -30],
+        });
+      case 'scaleIn':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+          scale: [1, 0.8],
+        });
+      case 'bounceIn':
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+          scale: [1, 0.3],
+          easing: 'easeInBack',
+        });
+      default:
+        return anime({
+          ...reverseConfig,
+          targets: element,
+          opacity: [1, 0],
+        });
+    }
+  }, [adjustConfig]);
 
   const createHoverAnimation = useCallback((
     element: HTMLElement,
-    hoverConfig: AnimationConfig,
-    normalConfig: AnimationConfig
+    config?: Partial<AnimationConfig>
   ) => {
-    const enterAnimation = anime({
-      targets: element,
-      ...hoverConfig,
-      autoplay: false,
-    });
+    const defaultConfig = {
+      duration: 200,
+      easing: 'easeOutQuad',
+      scale: 1.02,
+      translateY: -2,
+    };
 
-    const leaveAnimation = anime({
-      targets: element,
-      ...normalConfig,
-      autoplay: false,
-    });
+    const adjustedConfig = adjustConfig({ ...defaultConfig, ...config });
 
     const handleMouseEnter = () => {
-      leaveAnimation.pause();
-      enterAnimation.play();
+      anime({
+        targets: element,
+        scale: adjustedConfig.scale,
+        translateY: adjustedConfig.translateY,
+        duration: adjustedConfig.duration,
+        easing: adjustedConfig.easing,
+      });
     };
 
     const handleMouseLeave = () => {
-      enterAnimation.pause();
-      leaveAnimation.play();
+      anime({
+        targets: element,
+        scale: 1,
+        translateY: 0,
+        duration: adjustedConfig.duration,
+        easing: adjustedConfig.easing,
+      });
     };
 
     element.addEventListener('mouseenter', handleMouseEnter);
@@ -120,29 +181,87 @@ export const useAnimations = () => {
     return () => {
       element.removeEventListener('mouseenter', handleMouseEnter);
       element.removeEventListener('mouseleave', handleMouseLeave);
-      enterAnimation.pause();
-      leaveAnimation.pause();
     };
-  }, []);
+  }, [adjustConfig]);
 
-  const cleanupAnimations = useCallback(() => {
-    animationsRef.current.forEach(animation => {
-      if (animation && animation.pause) {
+  const createScrollAnimation = useCallback((
+    elements: HTMLElement[],
+    config?: Partial<AnimationConfig & { threshold?: number; stagger?: number }>
+  ) => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            const delay = (config?.stagger || 100) * index;
+            setTimeout(() => {
+              animateEntranceHook(entry.target as HTMLElement, 'slideUp', {
+                ...config,
+                delay: 0,
+              });
+            }, delay);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: config?.threshold || 0.1,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
+    elements.forEach(element => observer.observe(element));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [animateEntranceHook]);
+
+  const createRipple = useCallback((
+    element: HTMLElement,
+    event: MouseEvent
+  ) => {
+    if (reducedMotion) return;
+    createRippleEffect(element, event);
+  }, [reducedMotion]);
+
+  // Cleanup function
+  const cleanup = useCallback(() => {
+    activeAnimations.current.forEach(animation => {
+      if (animation && typeof animation.pause === 'function') {
         animation.pause();
       }
     });
-    animationsRef.current = [];
+    activeAnimations.current = [];
   }, []);
 
   useEffect(() => {
-    return cleanupAnimations;
-  }, [cleanupAnimations]);
+    return cleanup;
+  }, [cleanup]);
+
+  const context: AnimationContext = useMemo(() => ({
+    presets,
+    intensity,
+    reducedMotion,
+    createAnimation,
+    animateEntrance: animateEntranceHook,
+    animateExit,
+    createHoverAnimation,
+  }), [
+    presets,
+    intensity,
+    reducedMotion,
+    createAnimation,
+    animateEntranceHook,
+    animateExit,
+    createHoverAnimation,
+  ]);
 
   return {
-    createAnimation,
-    animateEntrance,
-    animateSidebarToggle,
-    createHoverAnimation,
-    cleanupAnimations,
+    ...context,
+    createScrollAnimation,
+    createRipple,
+    cleanup,
+    // Utility functions
+    staggeredEntrance: animateStaggeredEntrance,
   };
 };
