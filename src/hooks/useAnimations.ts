@@ -9,11 +9,13 @@ import {
   AnimationIntensity
 } from '@/types/animations';
 import { 
-  navigationAnimationPresets,
   animateEntrance,
   animateStaggeredEntrance,
   createRippleEffect,
 } from '@/lib/animations/interactionAnimations';
+import {
+  navigationAnimationPresets
+} from '@/lib/animations/navigationAnimations';
 import {
   layoutAnimationPresets
 } from '@/lib/animations/layoutAnimations';
