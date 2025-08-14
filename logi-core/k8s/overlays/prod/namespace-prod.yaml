@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logi-core-prod
+  labels:
+    name: logi-core-prod
+    environment: production

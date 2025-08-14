@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logi-core-dev
+  labels:
+    name: logi-core-dev
+    environment: development

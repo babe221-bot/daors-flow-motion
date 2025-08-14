@@ -6,12 +6,14 @@ resources:
   - namespace.yaml
   - secrets.yaml
   - rbac.yaml
+  - frontend.deployment.yaml
   - api-gateway.deployment.yaml
   - api-gateway.service.yaml
   - user-service.deployment.yaml
   - user-service.service.yaml
   - inventory-service.deployment.yaml
   - inventory-service.service.yaml
+  - ingress.yaml
   - hpa.yaml
   - network-policy.yaml
 
@@ -22,3 +24,5 @@ commonLabels:
 images:
   - name: ghcr.io/your-org/logi-core-api-gateway
     newTag: dev
+  - name: flow-motion-frontend
+    newTag: latest
