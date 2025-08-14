@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, Link } from 'react-router-dom';
 import { Suspense, lazy, useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
@@ -100,6 +100,7 @@ const AppContent = () => {
   useEffect(() => {
     debug('AppContent component mounted', 'info');
     debug(`Current location: ${location.pathname}`, 'info');
+    console.log('🚀 Current route:', location.pathname);
     
     return () => {
       debug('AppContent component unmounted', 'info');
@@ -332,6 +333,29 @@ const AppContent = () => {
                   />
                 </Route>
               </Route>
+
+              {/* Test route to verify routing works */}
+              <Route
+                path="/test"
+                element={
+                  <ErrorBoundary>
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="min-h-screen flex items-center justify-center"
+                    >
+                      <div className="text-center">
+                        <h1 className="text-4xl font-bold mb-4">Test Route Works!</h1>
+                        <p className="text-xl">Routing is functioning correctly.</p>
+                        <Link to="/" className="text-primary underline mt-4 block">Back to Home</Link>
+                      </div>
+                    </motion.div>
+                  </ErrorBoundary>
+                }
+              />
 
               <Route
                 path="*"

@@ -122,14 +122,14 @@ const LandingPage = () => {
               className="flex flex-col sm:flex-row gap-6 justify-center items-center"
             >
               <Button asChild size="lg" className="group text-xl px-10 py-7 bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full">
-                <Link to="/signup">
+                <Link to="/signup" onClick={() => console.log('Signup button clicked, navigating to /signup')}>
                   {t('landing.cta.getStarted', 'Get Started')}
                   <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               
               <Button asChild variant="outline" size="lg" className="text-xl px-10 py-7 border-2 backdrop-blur-sm bg-background/30 hover:bg-background/50 rounded-full">
-                <Link to="/login">
+                <Link to="/login" onClick={() => console.log('Login button clicked, navigating to /login')}>
                   {t('landing.cta.login', 'Login')}
                 </Link>
               </Button>
@@ -226,14 +226,14 @@ const LandingPage = () => {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="group text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary">
-                  <Link to="/signup">
+                  <Link to="/signup" onClick={() => console.log('Start Trial button clicked, navigating to /signup')}>
                     {t('landing.cta.startTrial', 'Start Free Trial')}
                     <CheckCircle className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 
                 <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2">
-                  <Link to="/contact">
+                  <Link to="/contact" onClick={() => console.log('Contact Sales button clicked, navigating to /contact')}>
                     {t('landing.cta.contactSales', 'Contact Sales')}
                   </Link>
                 </Button>
