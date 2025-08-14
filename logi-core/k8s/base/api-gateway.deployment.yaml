@@ -2,8 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api-gateway
+  labels:
+    app: api-gateway
+    component: gateway
+    version: v1
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: api-gateway
@@ -11,21 +20,116 @@ spec:
     metadata:
       labels:
         app: api-gateway
+        component: gateway
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
     spec:
+      serviceAccountName: api-gateway
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
         - name: api-gateway
           image: ghcr.io/your-org/logi-core-api-gateway:dev
           ports:
             - containerPort: 8080
+              name: http
+              protocol: TCP
           env:
             - name: PORT
               value: "8080"
+            - name: NODE_ENV
+              value: "production"
             - name: JWT_SECRET
               valueFrom:
-                configMapKeyRef:
-                  name: api-gateway-config
+                secretKeyRef:
+                  name: jwt-secrets
                   key: JWT_SECRET
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: JWT_REFRESH_SECRET
+            - name: JWT_EXPIRY
+              value: "15m"
+            - name: JWT_REFRESH_EXPIRY
+              value: "7d"
+            - name: RATE_LIMIT
+              value: "1000"
+            - name: SERVICE_TIMEOUT
+              value: "5000"
+            - name: ERROR_THRESHOLD
+              value: "50"
+            - name: CIRCUIT_RESET_TIMEOUT
+              value: "30000"
             - name: USER_SERVICE_URL
               value: http://user-service:4001
             - name: INVENTORY_SERVICE_URL
               value: http://inventory-service:8000
+            - name: ORDER_SERVICE_URL
+              value: http://order-service:4003
+            - name: ROUTING_SERVICE_URL
+              value: http://routing-service:4004
+            - name: GEO_SERVICE_URL
+              value: http://geolocation-service:4005
+            - name: NOTIFY_SERVICE_URL
+              value: http://notification-service:4006
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - api-gateway
+                topologyKey: kubernetes.io/hostname

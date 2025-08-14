@@ -1,93 +1,40 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { Module, Controller, Get } from '@nestjs/common';
-import { PreferencesController } from './controllers/preferences.controller';
-import { NavigationController } from './controllers/navigation.controller';
-import { PreferencesService } from './services/preferences.service';
-import { NavigationService } from './services/navigation.service';
-
-@Controller('users')
-class UsersController {
-  @Get('me')
-  me() {
-    return { 
-      id: 'dev', 
-      roles: ['ADMIN'], 
-      email: 'dev@example.com',
-      name: 'Development User',
-      avatar: null,
-      permissions: {
-        canManageUsers: true,
-        canManageSystem: true,
-        canViewAnalytics: true
-      }
-    };
-  }
-
-  @Get(':userId/profile')
-  getUserProfile() {
-    return {
-      id: 'dev',
-      name: 'Development User',
-      email: 'dev@example.com',
-      role: 'ADMIN',
-      avatar: null,
-      createdAt: new Date(),
-      lastLoginAt: new Date(),
-      preferences: {
-        theme: 'light',
-        notifications: true,
-        language: 'en'
-      }
-    };
-  }
-}
-
-@Controller()
-class HealthController {
-  @Get('health')
-  health() {
-    return { status: 'ok', timestamp: new Date(), service: 'user-service' };
-  }
-}
-
-@Module({ 
-  controllers: [
-    UsersController, 
-    HealthController,
-    PreferencesController,
-    NavigationController
-  ],
-  providers: [
-    PreferencesService,
-    NavigationService
-  ]
-})
-class AppModule {}
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  // Global validation pipe
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+    forbidNonWhitelisted: true
+  }));
+  
+  // Enable CORS
   app.enableCors({
     origin: process.env.NODE_ENV === 'production' 
       ? ['https://yourdomain.com'] 
-      : ['http://localhost:3000', 'http://localhost:5173'],
+      : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'],
     credentials: true,
   });
-  
-  // Global prefix for all routes
-  app.setGlobalPrefix('api');
-  
+
+  // Trust proxy headers (for correct IP addresses behind load balancers)
+  app.set('trust proxy', true);
+
   const port = process.env.PORT || 4001;
   await app.listen(port);
   
-  // eslint-disable-next-line no-console
-  console.log(`🚀 User Service listening on ${port}`);
-  console.log(`📡 Available endpoints:`);
-  console.log(`   - GET  /api/health`);
-  console.log(`   - GET  /api/users/me`);
-  console.log(`   - GET  /api/preferences/layout/:userId`);
-  console.log(`   - GET  /api/navigation/menu/:role`);
-  console.log(`   - And more...`);
+  console.log(`🚀 Enhanced User Service is running on port ${port}`);
+  console.log(`📊 Health check: http://localhost:${port}/users/health`);
+  console.log(`👥 User endpoints: http://localhost:${port}/users`);
+  console.log(`🔍 Search users: http://localhost:${port}/users/search?q=term`);
+  console.log(`📈 User stats: http://localhost:${port}/users/stats`);
 }
 
-bootstrap();
+bootstrap().catch(error => {
+  console.error('Failed to start User Service:', error);
+  process.exit(1);
+});

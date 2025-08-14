@@ -1,0 +1,123 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-gateway-network-policy
+  labels:
+    app: api-gateway
+spec:
+  podSelector:
+    matchLabels:
+      app: api-gateway
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+        - namespaceSelector:
+            matchLabels:
+              name: istio-system
+        - podSelector:
+            matchLabels:
+              app: load-balancer
+      ports:
+        - protocol: TCP
+          port: 8080
+    # Allow health checks from kube-system
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow communication with backend services
+    - to:
+        - podSelector:
+            matchLabels:
+              component: service
+      ports:
+        - protocol: TCP
+          port: 4001  # user-service
+        - protocol: TCP
+          port: 8000  # inventory-service
+        - protocol: TCP
+          port: 4003  # order-service
+        - protocol: TCP
+          port: 4004  # routing-service
+        - protocol: TCP
+          port: 4005  # geolocation-service
+        - protocol: TCP
+          port: 4006  # notification-service
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-services-network-policy
+  labels:
+    component: service
+spec:
+  podSelector:
+    matchLabels:
+      component: service
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Only allow traffic from API Gateway
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 4001
+        - protocol: TCP
+          port: 8000
+        - protocol: TCP
+          port: 4003
+        - protocol: TCP
+          port: 4004
+        - protocol: TCP
+          port: 4005
+        - protocol: TCP
+          port: 4006
+    # Allow health checks
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow database connections (adjust ports as needed)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: database
+      ports:
+        - protocol: TCP
+          port: 5432  # PostgreSQL
+        - protocol: TCP
+          port: 3306  # MySQL
+    # Allow inter-service communication
+    - to:
+        - podSelector:
+            matchLabels:
+              component: service
