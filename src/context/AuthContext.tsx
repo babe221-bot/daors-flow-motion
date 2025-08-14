@@ -71,6 +71,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<(AppUser & { email?: string }) | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Emergency fallback to ensure app never stays in loading state forever
+  useEffect(() => {
+    const emergencyTimeout = setTimeout(() => {
+      if (loading) {
+        console.warn('Emergency timeout: Forcing auth loading to false');
+        setLoading(false);
+        setUser({ id: 'emergency-guest', username: 'Guest User', role: ROLES.GUEST });
+      }
+    }, 10000); // 10 second emergency timeout
+
+    return () => clearTimeout(emergencyTimeout);
+  }, [loading]);
+
   // Restore guest session if any
   useEffect(() => {
     const guest = localStorage.getItem('df_guest_session');
@@ -93,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Optionally set as guest user to allow app to function
         setUser({ id: 'timeout-guest', username: 'Guest User', role: ROLES.GUEST });
       }
-    }, 15000); // Increased to 15 seconds to accommodate retries
+    }, 5000); // Reduced to 5 seconds for faster fallback
     
     const initializeAuth = async () => {
       try {
@@ -374,7 +387,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
