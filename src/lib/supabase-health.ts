@@ -59,22 +59,40 @@ export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
  */
 export async function pingSupabase(): Promise<boolean> {
   try {
+    const url = config.supabase.url;
+    if (!url) {
+      console.warn('Supabase URL is not configured');
+      return false;
+    }
+    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     
-    const response = await fetch(`${config.supabase.url}/rest/v1/`, {
-      method: 'HEAD',
-      headers: {
-        'apikey': config.supabase.anonKey,
-        'Authorization': `Bearer ${config.supabase.anonKey}`
-      },
+    // Prefer Auth health endpoint which doesn't require auth and has CORS enabled
+    const healthEndpoint = `${url.replace(/\/$/, '')}/auth/v1/health`;
+    const response = await fetch(healthEndpoint, {
+      method: 'GET',
+      // No custom headers to avoid CORS preflight issues
       signal: controller.signal
     });
     
     clearTimeout(timeoutId);
+    if (response.ok) return true; // 200 OK
     
-    // 401 or 200 means the service is responding
-    return response.status === 401 || response.status === 200;
+    // Fallback: try a lightweight REST GET which should return 401/200 if service is up
+    const restUrl = `${url.replace(/\/$/, '')}/rest/v1/?select=1`;
+    const controller2 = new AbortController();
+    const timeoutId2 = setTimeout(() => controller2.abort(), 5000);
+    const res2 = await fetch(restUrl, {
+      method: 'GET',
+      headers: {
+        'apikey': config.supabase.anonKey,
+        'Authorization': `Bearer ${config.supabase.anonKey}`,
+      },
+      signal: controller2.signal,
+    });
+    clearTimeout(timeoutId2);
+    return res2.status === 200 || res2.status === 401;
   } catch (error) {
     console.warn('Supabase ping failed:', error);
     return false;
