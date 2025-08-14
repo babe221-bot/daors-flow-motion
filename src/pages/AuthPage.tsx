@@ -267,7 +267,7 @@ const AuthPage = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? t('signup.loading', 'Creating account...') : t('signup.submit', 'Sign Up')}
                     </Button>
-                  </motion.form>
+                  </motion.div>
                 )}
               </AnimatePresence>
               
