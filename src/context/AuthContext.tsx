@@ -106,19 +106,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         // First, check if Supabase is reachable
-        console.log('Checking Supabase connectivity...');
+        console.log('🔗 Checking Supabase connectivity...');
         const isSupabaseReachable = await pingSupabase();
         
         if (!isSupabaseReachable) {
-          console.warn('Supabase is not reachable, waiting for connection...');
+          console.warn('⚠️ Supabase is not reachable, waiting for connection...');
           const connectionEstablished = await waitForSupabase(10000); // Wait up to 10 seconds
           
           if (!connectionEstablished) {
-            console.warn('Could not establish connection to Supabase, proceeding as guest');
+            console.warn('❌ Could not establish connection to Supabase, proceeding as guest');
             setUser({ id: 'offline-guest', username: 'Guest User (Offline)', role: ROLES.GUEST });
             setLoading(false);
             return;
           }
+          console.log('✅ Connection to Supabase established');
+        } else {
+          console.log('✅ Supabase is reachable');
         }
 
         // Try to get session with increased timeout and retry logic

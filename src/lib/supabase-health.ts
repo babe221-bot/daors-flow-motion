@@ -68,11 +68,13 @@ export async function pingSupabase(): Promise<boolean> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     
-    // Prefer Auth health endpoint which doesn't require auth and has CORS enabled
+    // Prefer Auth health endpoint with API key
     const healthEndpoint = `${url.replace(/\/$/, '')}/auth/v1/health`;
     const response = await fetch(healthEndpoint, {
       method: 'GET',
-      // No custom headers to avoid CORS preflight issues
+      headers: {
+        'apikey': config.supabase.anonKey,
+      },
       signal: controller.signal
     });
     

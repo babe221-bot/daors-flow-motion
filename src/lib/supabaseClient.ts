@@ -40,7 +40,7 @@ const supabaseInstance = createClient(
             
             // If response is not ok and we haven't exceeded retries, retry
             if (!response.ok && retryCount < maxRetries) {
-              console.warn(`Fetch attempt ${retryCount + 1} failed with status ${response.status}, retrying...`);
+              console.warn(`🔄 Fetch attempt ${retryCount + 1} failed with status ${response.status} (${response.statusText}), retrying...`);
               await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
               return fetchWithRetry(retryCount + 1);
             }
@@ -48,11 +48,16 @@ const supabaseInstance = createClient(
             return response;
           } catch (error) {
             if (retryCount < maxRetries) {
-              console.warn(`Fetch attempt ${retryCount + 1} failed:`, error, 'retrying...');
+              const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+              console.warn(`❌ Fetch attempt ${retryCount + 1} failed: ${errorMessage}, retrying...`);
               await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
               return fetchWithRetry(retryCount + 1);
             }
-            throw error;
+            // Add more context to the error
+            const enhancedError = error instanceof Error 
+              ? new Error(`Supabase fetch failed after ${maxRetries} attempts: ${error.message}`)
+              : new Error(`Supabase fetch failed after ${maxRetries} attempts: ${String(error)}`);
+            throw enhancedError;
           }
         };
         
@@ -62,6 +67,9 @@ const supabaseInstance = createClient(
   }
 );
 
-console.log('Supabase client initialized successfully');
+console.log('✅ Supabase client initialized successfully', {
+  url: config.supabase.url,
+  hasAnonKey: !!config.supabase.anonKey
+});
 
 export const supabase = supabaseInstance;
